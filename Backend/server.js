@@ -3,9 +3,16 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 const connectDB = require("./src/config/db");
+<<<<<<< HEAD
 const projectController = require("./src/controllers/ProjectController");
 const deadlineController =
   require("./src/controllers/DeadlineController");
+=======
+const taskRoutes = require("./src/routes/taskRoutes");
+const memberRoutes = require("./src/routes/memberRoutes");
+const projectController = require("./src/controllers/taskController");
+
+>>>>>>> origin/eva
 dotenv.config();
 
 connectDB();
@@ -66,6 +73,16 @@ app.patch("/api/projects/:id/archive", (req, res) => {
   projectController.archiveProject(req, res);
 });
 
+<<<<<<< HEAD
+=======
+
+app.use("/api/members", memberRoutes);
+
+app.use("/api/tasks", taskRoutes);
+
+
+
+>>>>>>> origin/eva
 // ==============================
 // SERVEUR
 // ==============================
