@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>TaskFlow Pro - Tâches</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body class="bg-slate-100 text-slate-800">
+
+
+<!-- ================================================= -->
+<!-- SIDEBAR -->
+<!-- ================================================= -->
+
+<aside
+    class="fixed top-0 left-0 z-50 w-64 h-screen bg-slate-900 text-white flex flex-col"
+>
+
+
+    <!-- LOGO -->
+
+    <div
+        class="h-20 px-6 flex items-center border-b border-slate-800"
+    >
+
+        <div class="flex items-center gap-3">
+
+            <div
+                class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold"
+            >
+                TF
+            </div>
+
+            <div>
+
+                <h1 class="font-bold text-lg">
+                    TaskFlow Pro
+                </h1>
+
+                <p class="text-xs text-slate-400">
+                    Gestion de projets
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MENU -->
+
+    <nav class="flex-1 px-4 py-6">
+
+        <p
+            class="px-3 mb-3 text-xs uppercase tracking-wider text-slate-500"
+        >
+            Menu principal
+        </p>
+
+
+        <!-- DASHBOARD -->
+
+        <a
+            href="index.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+
+            <span class="w-6">
+                ▣
+            </span>
+
+            Dashboard
+
+        </a>
+
+
+        <!-- TACHES ACTIF -->
+
+        <a
+            href="tasks.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl bg-indigo-600 text-white"
+        >
+
+            <span class="w-6">
+                ✓
+            </span>
+
+            Tâches
+
+        </a>
+
+
+        <!-- PROJETS -->
+
+        <a
+            href="projects.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+
+            <span class="w-6">
+                □
+            </span>
+
+            Projets
+
+        </a>
+
+
+        <!-- MEMBRES -->
+
+        <a
+            href="members.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+
+            <span class="w-6">
+                ◎
+            </span>
+
+            Membres
+
+        </a>
+
+
+        <div class="border-t border-slate-800 my-6"></div>
+
+
+        <!-- PARAMETRES -->
+
+        <a
+            href="settings.html"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+
+            <span class="w-6">
+                ⚙
+            </span>
+
+            Paramètres
+
+        </a>
+
+    </nav>
+
+
+    <!-- UTILISATEUR -->
+
+    <div class="p-4 border-t border-slate-800">
+
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800">
+
+            <div
+                class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center font-bold"
+            >
+                F
+            </div>
+
+            <div class="flex-1">
+
+                <p class="text-sm font-semibold">
+                    Fatou
+                </p>
+
+                <p class="text-xs text-slate-400">
+                    Administrateur
+                </p>
+
+            </div>
+
+            <button
+                id="logoutBtn"
+                class="text-slate-400 hover:text-white"
+            >
+                ⇥
+            </button>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+<!-- ================================================= -->
+<!-- CONTENU -->
+<!-- ================================================= -->
+
+<div class="ml-64 min-h-screen">
+
+
+    <!-- HEADER -->
+
+    <header
+        class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8"
+    >
+
+        <div>
+
+            <h2 class="text-xl font-bold">
+                Gestion des tâches
+            </h2>
+
+            <p class="text-sm text-slate-500">
+                Créez et gérez toutes vos tâches
+            </p>
+
+        </div>
+
+
+        <!-- RECHERCHE -->
+
+        <div
+            class="flex items-center w-80 bg-slate-100 rounded-xl px-4"
+        >
+
+            <span class="text-slate-400">
+                🔍
+            </span>
+
+            <input
+                id="taskSearch"
+                type="text"
+                placeholder="Rechercher une tâche..."
+                class="w-full bg-transparent outline-none px-3 py-3"
+            >
+
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main class="p-8">
+
+
+        <!-- TITRE -->
+
+        <div class="flex items-center justify-between mb-8">
+
+            <div>
+
+                <h1 class="text-3xl font-bold">
+                    Tâches
+                </h1>
+
+                <p class="text-slate-500 mt-1">
+                    Gérez vos tâches et leur progression.
+                </p>
+
+            </div>
+
+
+            <button
+                id="addTaskBtn"
+                class="bg-indigo-600 text-white px-5 py-3 rounded-xl font-semibold hover:bg-indigo-700"
+            >
+                + Nouvelle tâche
+            </button>
+
+        </div>
+
+
+        <!-- FILTRES -->
+
+        <div
+            class="bg-white rounded-2xl border border-slate-200 p-5 mb-6"
+        >
+
+            <div class="grid grid-cols-4 gap-4">
+
+
+                <select
+                    id="statusFilter"
+                    class="border border-slate-200 rounded-xl px-4 py-3 outline-none"
+                >
+
+                    <option value="">
+                        Tous les statuts
+                    </option>
+
+                    <option value="todo">
+                        À faire
+                    </option>
+
+                    <option value="in-progress">
+                        En cours
+                    </option>
+
+                    <option value="paused">
+                        En pause
+                    </option>
+
+                    <option value="completed">
+                        Terminées
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="priorityFilter"
+                    class="border border-slate-200 rounded-xl px-4 py-3 outline-none"
+                >
+
+                    <option value="">
+                        Toutes les priorités
+                    </option>
+
+                    <option value="low">
+                        Low
+                    </option>
+
+                    <option value="medium">
+                        Medium
+                    </option>
+
+                    <option value="high">
+                        High
+                    </option>
+
+                    <option value="urgent">
+                        Urgent
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="projectFilter"
+                    class="border border-slate-200 rounded-xl px-4 py-3 outline-none"
+                >
+
+                    <option value="">
+                        Tous les projets
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="memberFilter"
+                    class="border border-slate-200 rounded-xl px-4 py-3 outline-none"
+                >
+
+                    <option value="">
+                        Tous les membres
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- LISTE DES TACHES -->
+
+        <div
+            id="tasksContainer"
+            class="space-y-4"
+        >
+
+            <!-- Les tâches seront ajoutées ici -->
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ================================================= -->
+
+<script src="js/tasks.js"></script>
+
+
+<script>
+
+    const logoutBtn =
+        document.getElementById("logoutBtn");
+
+
+    logoutBtn.addEventListener(
+        "click",
+        () => {
+
+            if (
+                confirm(
+                    "Voulez-vous vraiment vous déconnecter ?"
+                )
+            ) {
+
+                localStorage.removeItem(
+                    "isLoggedIn"
+                );
+
+                window.location.href =
+                    "login.html";
+
+            }
+
+        }
+    );
+
+</script>
+<!-- MODALE NOUVELLE TÂCHE -->
+<div
+    id="taskModal"
+    class="hidden fixed inset-0 z-[100] bg-black/50 items-center justify-center p-4"
+>
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl">
+
+        <div class="flex items-center justify-between p-6 border-b">
+
+            <div>
+                <h2 class="text-xl font-bold">
+                    Nouvelle tâche
+                </h2>
+
+                <p class="text-sm text-slate-500">
+                    Créer une nouvelle tâche
+                </p>
+            </div>
+
+            <button
+                id="closeTaskModal"
+                class="text-2xl text-slate-400 hover:text-slate-800"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="taskForm" class="p-6 space-y-5">
+
+            <div>
+
+                <label class="block text-sm font-semibold mb-2">
+                    Titre
+                </label>
+
+                <input
+                    id="taskTitle"
+                    type="text"
+                    required
+                    placeholder="Ex : Créer la page d'accueil"
+                    class="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label class="block text-sm font-semibold mb-2">
+                    Description
+                </label>
+
+                <textarea
+                    id="taskDescription"
+                    rows="3"
+                    placeholder="Description de la tâche..."
+                    class="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                ></textarea>
+
+            </div>
+
+
+            <div class="grid grid-cols-2 gap-4">
+
+                <div>
+
+                    <label class="block text-sm font-semibold mb-2">
+                        Statut
+                    </label>
+
+                    <select
+                        id="taskStatus"
+                        class="w-full border rounded-xl px-4 py-3"
+                    >
+
+                        <option value="todo">
+                            À faire
+                        </option>
+
+                        <option value="in-progress">
+                            En cours
+                        </option>
+
+                        <option value="paused">
+                            En pause
+                        </option>
+
+                        <option value="completed">
+                            Terminée
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label class="block text-sm font-semibold mb-2">
+                        Priorité
+                    </label>
+
+                    <select
+                        id="taskPriority"
+                        class="w-full border rounded-xl px-4 py-3"
+                    >
+
+                        <option value="low">
+                            Low
+                        </option>
+
+                        <option value="medium">
+                            Medium
+                        </option>
+
+                        <option value="high">
+                            High
+                        </option>
+
+                        <option value="urgent">
+                            Urgent
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-2 gap-4">
+
+                <div>
+
+                    <label class="block text-sm font-semibold mb-2">
+                        Deadline
+                    </label>
+
+                    <input
+                        id="taskDeadline"
+                        type="date"
+                        class="w-full border rounded-xl px-4 py-3"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label class="block text-sm font-semibold mb-2">
+                        Tags
+                    </label>
+
+                    <input
+                        id="taskTags"
+                        type="text"
+                        placeholder="design, frontend..."
+                        class="w-full border rounded-xl px-4 py-3"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="flex justify-end gap-3 pt-3">
+
+                <button
+                    type="button"
+                    id="cancelTaskBtn"
+                    class="px-5 py-3 rounded-xl border"
+                >
+                    Annuler
+                </button>
+
+                <button
+                    type="submit"
+                    class="px-5 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700"
+                >
+                    Créer la tâche
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+<script>
+
+const taskModal = document.getElementById("taskModal");
+
+const addTaskBtn = document.getElementById("addTaskBtn");
+
+const closeTaskModal =
+    document.getElementById("closeTaskModal");
+
+const cancelTaskBtn =
+    document.getElementById("cancelTaskBtn");
+
+const taskForm =
+    document.getElementById("taskForm");
+
+
+/* OUVRIR */
+
+addTaskBtn.addEventListener("click", () => {
+
+    taskModal.classList.remove("hidden");
+
+    taskModal.classList.add("flex");
+
+});
+
+
+/* FERMER */
+
+function closeTask() {
+
+    taskModal.classList.add("hidden");
+
+    taskModal.classList.remove("flex");
+
+    taskForm.reset();
+
+}
+
+
+closeTaskModal.addEventListener(
+    "click",
+    closeTask
+);
+
+cancelTaskBtn.addEventListener(
+    "click",
+    closeTask
+);
+
+
+/* CLIQUER SUR LE FOND */
+
+taskModal.addEventListener("click", (event) => {
+
+    if (event.target === taskModal) {
+
+        closeTask();
+
+    }
+
+});
+
+
+/* CREATION */
+
+taskForm.addEventListener("submit", (event) => {
+
+    event.preventDefault();
+
+
+    const task = {
+
+        id:
+            "task_" +
+            Date.now(),
+
+        title:
+            document.getElementById("taskTitle").value,
+
+        description:
+            document.getElementById("taskDescription").value,
+
+        status:
+            document.getElementById("taskStatus").value,
+
+        priority:
+            document.getElementById("taskPriority").value,
+
+        deadline:
+            document.getElementById("taskDeadline").value,
+
+        tags:
+            document.getElementById("taskTags").value
+                .split(",")
+                .map(tag => tag.trim())
+                .filter(Boolean),
+
+        createdAt:
+            new Date().toISOString()
+
+    };
+
+
+    const tasks =
+        JSON.parse(
+            localStorage.getItem("tasks")
+        ) || [];
+
+
+    tasks.unshift(task);
+
+
+    localStorage.setItem(
+        "tasks",
+        JSON.stringify(tasks)
+    );
+
+
+    alert("Tâche créée avec succès !");
+
+
+    closeTask();
+
+
+    if (typeof renderTasks === "function") {
+
+        renderTasks();
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>

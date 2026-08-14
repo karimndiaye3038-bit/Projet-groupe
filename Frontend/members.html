@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>TaskFlow Pro - Membres</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+
+<body class="bg-slate-100 text-slate-800">
+
+
+<!-- ===================================================== -->
+<!-- SIDEBAR -->
+<!-- ===================================================== -->
+
+<aside
+    class="fixed top-0 left-0 z-50 w-64 h-screen bg-slate-900 text-white flex flex-col"
+>
+
+    <!-- LOGO -->
+
+    <div class="h-20 px-6 flex items-center border-b border-slate-800">
+
+        <div class="flex items-center gap-3">
+
+            <div
+                class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold"
+            >
+                TF
+            </div>
+
+            <div>
+                <h1 class="font-bold text-lg">
+                    TaskFlow Pro
+                </h1>
+
+                <p class="text-xs text-slate-400">
+                    Gestion de projets
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MENU -->
+
+    <nav class="flex-1 px-4 py-6">
+
+        <p class="px-3 mb-3 text-xs uppercase tracking-wider text-slate-500">
+            Menu principal
+        </p>
+
+
+        <!-- DASHBOARD -->
+
+        <a
+            href="index.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+            <span class="w-6 text-center">▣</span>
+
+            <span>Dashboard</span>
+        </a>
+
+
+        <!-- TACHES -->
+
+        <a
+            href="tasks.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+            <span class="w-6 text-center">✓</span>
+
+            <span>Tâches</span>
+        </a>
+
+
+        <!-- PROJETS -->
+
+        <a
+            href="projects.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+            <span class="w-6 text-center">□</span>
+
+            <span>Projets</span>
+        </a>
+
+
+        <!-- MEMBRES ACTIF -->
+
+        <a
+            href="members.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl bg-indigo-600 text-white"
+        >
+            <span class="w-6 text-center">◎</span>
+
+            <span>Membres</span>
+        </a>
+
+
+        <div class="border-t border-slate-800 my-6"></div>
+
+
+        <!-- PARAMETRES -->
+
+        <a
+            href="#"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+            <span class="w-6 text-center">⚙</span>
+
+            <span>Paramètres</span>
+        </a>
+
+    </nav>
+
+
+    <!-- UTILISATEUR -->
+
+    <div class="p-4 border-t border-slate-800">
+
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800">
+
+            <div
+                class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center font-bold"
+            >
+                F
+            </div>
+
+            <div class="flex-1">
+
+                <p class="text-sm font-semibold">
+                    Fatou
+                </p>
+
+                <p class="text-xs text-slate-400">
+                    Administrateur
+                </p>
+
+            </div>
+
+            <button
+                id="logoutBtn"
+                type="button"
+                class="text-slate-400 hover:text-white text-xl"
+            >
+                ⇥
+            </button>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+
+<!-- ===================================================== -->
+<!-- CONTENU -->
+<!-- ===================================================== -->
+
+<div class="ml-64 min-h-screen">
+
+
+    <!-- HEADER -->
+
+    <header
+        class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-40"
+    >
+
+        <div>
+
+            <h2 class="text-xl font-bold">
+                Gestion des membres
+            </h2>
+
+            <p class="text-sm text-slate-500">
+                Gérez les membres de votre équipe
+            </p>
+
+        </div>
+
+
+        <div class="flex items-center gap-3">
+
+            <div
+                class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold"
+            >
+                F
+            </div>
+
+            <div>
+
+                <p class="text-sm font-semibold">
+                    Fatou
+                </p>
+
+                <p class="text-xs text-slate-500">
+                    Administrateur
+                </p>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ===================================================== -->
+    <!-- MAIN -->
+    <!-- ===================================================== -->
+
+    <main class="p-8">
+
+
+        <!-- TITRE -->
+
+        <div class="flex items-center justify-between mb-8">
+
+            <div>
+
+                <h1 class="text-3xl font-bold">
+                    Membres
+                </h1>
+
+                <p class="text-slate-500 mt-1">
+                    Gérez les membres de votre équipe.
+                </p>
+
+            </div>
+
+
+            <!-- NOUVEAU MEMBRE -->
+
+            <button
+                id="addMemberBtn"
+                type="button"
+                class="bg-indigo-600 text-white px-5 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition shadow-sm"
+            >
+                + Nouveau membre
+            </button>
+
+        </div>
+
+
+
+        <!-- ===================================================== -->
+        <!-- STATISTIQUES -->
+        <!-- ===================================================== -->
+
+        <div class="grid grid-cols-3 gap-5 mb-6">
+
+
+            <!-- TOTAL -->
+
+            <div
+                class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+            >
+
+                <p class="text-sm text-slate-500">
+                    Total membres
+                </p>
+
+                <p
+                    id="membersCount"
+                    class="text-3xl font-bold text-indigo-600 mt-2"
+                >
+                    0
+                </p>
+
+            </div>
+
+
+            <!-- DEVELOPPEURS -->
+
+            <div
+                class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+            >
+
+                <p class="text-sm text-slate-500">
+                    Développeurs
+                </p>
+
+                <p
+                    id="developersCount"
+                    class="text-3xl font-bold mt-2"
+                >
+                    0
+                </p>
+
+            </div>
+
+
+            <!-- DESIGNERS -->
+
+            <div
+                class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+            >
+
+                <p class="text-sm text-slate-500">
+                    Designers
+                </p>
+
+                <p
+                    id="designersCount"
+                    class="text-3xl font-bold mt-2"
+                >
+                    0
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ===================================================== -->
+        <!-- RECHERCHE -->
+        <!-- ===================================================== -->
+
+        <div
+            class="bg-white border border-slate-200 rounded-2xl p-5 mb-6"
+        >
+
+            <div class="relative">
+
+                <span
+                    class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                >
+                    🔍
+                </span>
+
+                <input
+                    id="memberSearch"
+                    type="text"
+                    placeholder="Rechercher un membre par nom, email ou rôle..."
+                    class="w-full border border-slate-200 rounded-xl pl-11 pr-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ===================================================== -->
+        <!-- LISTE DES MEMBRES -->
+        <!-- ===================================================== -->
+
+        <div
+            id="membersContainer"
+            class="grid grid-cols-3 gap-6"
+        >
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- ===================================================== -->
+<!-- MODALE -->
+<!-- ===================================================== -->
+
+<div
+    id="memberModal"
+    class="hidden fixed inset-0 z-[999] bg-black/50 items-center justify-center p-4"
+>
+
+    <div
+        class="bg-white w-full max-w-xl rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
+    >
+
+
+        <!-- HEADER MODALE -->
+
+        <div
+            class="flex items-center justify-between p-6 border-b"
+        >
+
+            <div>
+
+                <h2
+                    id="modalTitle"
+                    class="text-xl font-bold"
+                >
+                    Nouveau membre
+                </h2>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Ajouter un membre à votre équipe
+                </p>
+
+            </div>
+
+
+            <button
+                id="closeMemberModal"
+                type="button"
+                class="w-9 h-9 rounded-lg hover:bg-slate-100 text-slate-500 text-2xl"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+
+        <!-- FORMULAIRE -->
+
+        <form
+            id="memberForm"
+            class="p-6 space-y-5"
+        >
+
+
+            <!-- PRENOM -->
+
+            <div>
+
+                <label
+                    for="memberFirstName"
+                    class="block text-sm font-semibold mb-2"
+                >
+                    Prénom
+                </label>
+
+                <input
+                    id="memberFirstName"
+                    type="text"
+                    required
+                    placeholder="Ex : Fatou"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+
+            </div>
+
+
+            <!-- NOM -->
+
+            <div>
+
+                <label
+                    for="memberLastName"
+                    class="block text-sm font-semibold mb-2"
+                >
+                    Nom
+                </label>
+
+                <input
+                    id="memberLastName"
+                    type="text"
+                    required
+                    placeholder="Ex : Ndiaye"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div>
+
+                <label
+                    for="memberEmail"
+                    class="block text-sm font-semibold mb-2"
+                >
+                    Email
+                </label>
+
+                <input
+                    id="memberEmail"
+                    type="email"
+                    required
+                    placeholder="exemple@gmail.com"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+
+            </div>
+
+
+            <!-- ROLE -->
+
+            <div>
+
+                <label
+                    for="memberRole"
+                    class="block text-sm font-semibold mb-2"
+                >
+                    Rôle
+                </label>
+
+                <select
+                    id="memberRole"
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+
+                    <option value="Développeur">
+                        Développeur
+                    </option>
+
+                    <option value="Designer">
+                        Designer
+                    </option>
+
+                    <option value="Chef de projet">
+                        Chef de projet
+                    </option>
+
+                    <option value="Product manager">
+                        Product manager
+                    </option>
+
+                    <option value="Testeur">
+                        Testeur
+                    </option>
+
+                    <option value="Autre">
+                        Autre
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- AVATAR -->
+
+            <div>
+
+                <label
+                    for="memberAvatar"
+                    class="block text-sm font-semibold mb-2"
+                >
+                    Avatar
+                </label>
+
+                <input
+                    id="memberAvatar"
+                    type="url"
+                    placeholder="https://..."
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+
+                <p class="text-xs text-slate-400 mt-1">
+                    Facultatif
+                </p>
+
+            </div>
+
+
+            <!-- BOUTONS -->
+
+            <div
+                class="flex justify-end gap-3 pt-3"
+            >
+
+                <button
+                    id="cancelMemberBtn"
+                    type="button"
+                    class="px-5 py-3 rounded-xl border border-slate-300 hover:bg-slate-100 transition"
+                >
+                    Annuler
+                </button>
+
+
+                <button
+                    id="submitMemberBtn"
+                    type="submit"
+                    class="px-5 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
+                >
+                    Ajouter le membre
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- ===================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ===================================================== -->
+
+<script src="js/members.js"></script>
+
+</body>
+
+</html>
