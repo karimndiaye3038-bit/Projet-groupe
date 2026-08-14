@@ -3,16 +3,19 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 const connectDB = require("./src/config/db");
-<<<<<<< HEAD
+// demoDataRoute
+const demoDataRoutes =
+  require("./src/routes/demoDataRoutes");
 const projectController = require("./src/controllers/ProjectController");
+// statisue
+const statisticsRoutes =
+  require("./src/routes/statisticsRoutes");
+    // exportRoute
+const exportRoutes =
+  require("./src/routes/exportRoutes");
+  // deadlineControllers
 const deadlineController =
   require("./src/controllers/DeadlineController");
-=======
-const taskRoutes = require("./src/routes/taskRoutes");
-const memberRoutes = require("./src/routes/memberRoutes");
-const projectController = require("./src/controllers/taskController");
-
->>>>>>> origin/eva
 dotenv.config();
 
 connectDB();
@@ -31,7 +34,17 @@ app.get("/", (req, res) => {
     message: "API Gestion des tâches",
   });
 });
-
+app.use("/api/demo-data", demoDataRoutes);
+// export route
+app.use("/api/export", exportRoutes);
+// settingsRoutes
+const settingsRoutes =
+  require("./src/routes/settingsRoutes");
+  // api statistique
+  app.use(
+  "/api/statistics",
+  statisticsRoutes
+);
 // ==============================
 // ROUTES PROJETS
 // ==============================
@@ -52,7 +65,8 @@ app.post("/api/deadlines/analyze", (req, res) => {
 app.get("/api/projects", (req, res) => {
   projectController.getProjects(req, res);
 });
-
+// settigsRoutes
+app.use("/api/settings", settingsRoutes);
 // Récupérer un projet
 app.get("/api/projects/:id", (req, res) => {
   projectController.getProjectById(req, res);
@@ -68,21 +82,13 @@ app.delete("/api/projects/:id", (req, res) => {
   projectController.deleteProject(req, res);
 });
 
+
 // 6.4 Archiver un projet
 app.patch("/api/projects/:id/archive", (req, res) => {
   projectController.archiveProject(req, res);
 });
 
-<<<<<<< HEAD
-=======
 
-app.use("/api/members", memberRoutes);
-
-app.use("/api/tasks", taskRoutes);
-
-
-
->>>>>>> origin/eva
 // ==============================
 // SERVEUR
 // ==============================
