@@ -4,8 +4,10 @@ const dotenv = require("dotenv");
 
 const connectDB = require("./src/config/db");
 const taskRoutes = require("./src/routes/taskRoutes");
+
 const memberRoutes = require("./src/routes/memberRoutes");
 const projectController = require("./src/controllers/taskController");
+const dashboardRoutes = require("./src/routes/dashboardRoutes");
 
 dotenv.config();
 
@@ -60,6 +62,8 @@ app.patch("/api/projects/:id/archive", (req, res) => {
   projectController.archiveProject(req, res);
 });
 
+
+app.use("/api/dashboard", dashboardRoutes);
 
 app.use("/api/members", memberRoutes);
 
