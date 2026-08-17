@@ -3,27 +3,38 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 const connectDB = require("./src/config/db");
-// demoDataRoute
-const demoDataRoutes =
-  require("./src/routes/demoDataRoutes");
+
+// ==============================
+// ROUTES
+// ==============================
+
+const demoDataRoutes = require("./src/routes/demoDataRoutes");
+const statisticsRoutes = require("./src/routes/statisticsRoutes");
+const exportRoutes = require("./src/routes/exportRoutes");
+const settingsRoutes = require("./src/routes/settingsRoutes");
+const deadlineRoutes = require("./src/routes/deadlineRoutes");
+const memberRoutes = require("./src/routes/memberRoutes");
+const taskRoutes = require("./src/routes/taskRoutes");
+
 const projectController = require("./src/controllers/ProjectController");
-// statisue
-const statisticsRoutes =
-  require("./src/routes/statisticsRoutes");
-    // exportRoute
-const exportRoutes =
-  require("./src/routes/exportRoutes");
-  // deadlineControllers
-const deadlineController =
-  require("./src/controllers/DeadlineController");
+const deadlineController = require("./src/controllers/DeadlineController");
+
 dotenv.config();
 
-connectDB();
+// ==============================
+// APPLICATION
+// ==============================
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// ==============================
+// CONNEXION MONGODB
+// ==============================
+
+connectDB();
 
 // ==============================
 // ROUTE ACCUEIL
@@ -34,60 +45,73 @@ app.get("/", (req, res) => {
     message: "API Gestion des tâches",
   });
 });
+
+// ==============================
+// ROUTES
+// ==============================
+
+// Demo Data
 app.use("/api/demo-data", demoDataRoutes);
-// export route
+
+// Export
 app.use("/api/export", exportRoutes);
-// settingsRoutes
-const settingsRoutes =
-  require("./src/routes/settingsRoutes");
-  // api statistique
-  app.use(
-  "/api/statistics",
-  statisticsRoutes
-);
+
+// Settings
+app.use("/api/settings", settingsRoutes);
+
+// Statistics
+app.use("/api/statistics", statisticsRoutes);
+
+// Tasks
+app.use("/api/tasks", taskRoutes);
+
+// Members
+app.use("/api/members", memberRoutes);
+
+// Deadlines
+app.use("/api/deadlines", deadlineRoutes);
+
 // ==============================
 // ROUTES PROJETS
 // ==============================
 
-// 6.1 Créer un projet
+// Créer un projet
 app.post("/api/projects", (req, res) => {
   projectController.createProject(req, res);
-});
-// ==============================
-// GESTION DES DEADLINES
-// ==============================
-
-app.post("/api/deadlines/analyze", (req, res) => {
-  deadlineController.analyzeDeadline(req, res);
 });
 
 // Récupérer tous les projets
 app.get("/api/projects", (req, res) => {
   projectController.getProjects(req, res);
 });
-// settigsRoutes
-app.use("/api/settings", settingsRoutes);
+
 // Récupérer un projet
 app.get("/api/projects/:id", (req, res) => {
   projectController.getProjectById(req, res);
 });
 
-// 6.2 Modifier un projet
+// Modifier un projet
 app.put("/api/projects/:id", (req, res) => {
   projectController.updateProject(req, res);
 });
 
-// 6.3 Supprimer un projet
+// Supprimer un projet
 app.delete("/api/projects/:id", (req, res) => {
   projectController.deleteProject(req, res);
 });
 
-
-// 6.4 Archiver un projet
+// Archiver un projet
 app.patch("/api/projects/:id/archive", (req, res) => {
   projectController.archiveProject(req, res);
 });
 
+// ==============================
+// ANALYSER UNE DEADLINE
+// ==============================
+
+app.post("/api/deadlines/analyze", (req, res) => {
+  deadlineController.analyzeDeadline(req, res);
+});
 
 // ==============================
 // SERVEUR
