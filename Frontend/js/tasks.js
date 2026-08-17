@@ -1,2168 +1,675 @@
-// ======================================================
-// TASKFLOW PRO
-// GESTION DES TÂCHES
-// ======================================================
+// =====================================================
+// TASKFLOW PRO - TASKS.JS
+// =====================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    // ==============================
+    // DONNÉES
+    // ==============================
+
+    const defaultTasks = [
+        {
+            id: 1,
+            title: "Créer la page d'accueil",
+            description: "Développer la homepage de TaskFlow Pro",
+            status: "completed",
+            priority: "high",
+            project: 1,
+            assignedTo: 1,
+            tags: ["frontend", "ui"],
+            deadline: "2026-08-20",
+            createdAt: "2026-08-10"
+        },
+        {
+            id: 2,
+            title: "Créer le Dashboard",
+            description: "Créer les statistiques du dashboard",
+            status: "in-progress",
+            priority: "urgent",
+            project: 1,
+            assignedTo: 1,
+            tags: ["dashboard"],
+            deadline: "2026-08-25",
+            createdAt: "2026-08-11"
+        }
+    ];
+
+    const defaultProjects = [
+        { id: 1, name: "TaskFlow Pro" },
+        { id: 2, name: "Site E-commerce" },
+        { id: 3, name: "Application Mobile" }
+    ];
+
+    const defaultMembers = [
+        { id: 1, firstName: "Fatou", lastName: "Diop", role: "Développeuse" },
+        { id: 2, firstName: "Aminata", lastName: "Ndiaye", role: "Designer" },
+        { id: 3, firstName: "Moussa", lastName: "Fall", role: "Chef de projet" }
+    ];
 
 
-// ======================================================
-// DONNÉES PAR DÉFAUT
-// ======================================================
-
-const defaultTasks = [
-    {
-        id: 1,
-        title: "Créer la page d'accueil",
-        description: "Développer la homepage de TaskFlow Pro",
-        status: "completed",
-        priority: "high",
-        project: 1,
-        assignedTo: 1,
-        tags: ["frontend", "ui"],
-        deadline: "2026-08-20",
-        createdAt: "2026-08-10"
-    },
-
-    {
-        id: 2,
-        title: "Créer le Dashboard",
-        description: "Créer les statistiques du dashboard",
-        status: "in-progress",
-        priority: "urgent",
-        project: 1,
-        assignedTo: 1,
-        tags: ["dashboard"],
-        deadline: "2026-08-25",
-        createdAt: "2026-08-11"
-    },
-
-    {
-        id: 3,
-        title: "Corriger le formulaire",
-        description: "Corriger les erreurs du formulaire",
-        status: "todo",
-        priority: "urgent",
-        project: 2,
-        assignedTo: 2,
-        tags: ["bug"],
-        deadline: "2026-08-28",
-        createdAt: "2026-08-12"
-    }
-];
-
-
-// ======================================================
-// PROJETS PAR DÉFAUT
-// ======================================================
-
-const defaultProjects = [
-    {
-        id: 1,
-        name: "TaskFlow Pro"
-    },
-
-    {
-        id: 2,
-        name: "Site E-commerce"
-    },
-
-    {
-        id: 3,
-        name: "Application Mobile"
-    }
-];
-
-
-// ======================================================
-// MEMBRES PAR DÉFAUT
-// ======================================================
-
-const defaultMembers = [
-    {
-        id: 1,
-        firstName: "Fatou",
-        lastName: "Diop",
-        role: "Développeuse"
-    },
-
-    {
-        id: 2,
-        firstName: "Aminata",
-        lastName: "Ndiaye",
-        role: "Designer"
-    },
-
-    {
-        id: 3,
-        firstName: "Moussa",
-        lastName: "Fall",
-        role: "Chef de projet"
-    }
-];
-
-
-// ======================================================
-// INITIALISATION
-// ======================================================
-
-function initializeData() {
+    // ==============================
+    // INITIALISATION
+    // ==============================
 
     if (!localStorage.getItem("tasks")) {
-
-        localStorage.setItem(
-            "tasks",
-            JSON.stringify(defaultTasks)
-        );
-
+        localStorage.setItem("tasks", JSON.stringify(defaultTasks));
     }
-
 
     if (!localStorage.getItem("projects")) {
-
-        localStorage.setItem(
-            "projects",
-            JSON.stringify(defaultProjects)
-        );
-
+        localStorage.setItem("projects", JSON.stringify(defaultProjects));
     }
-
 
     if (!localStorage.getItem("members")) {
-
-        localStorage.setItem(
-            "members",
-            JSON.stringify(defaultMembers)
-        );
-
+        localStorage.setItem("members", JSON.stringify(defaultMembers));
     }
 
-}
+
+    // ==============================
+    // ÉLÉMENTS HTML
+    // ==============================
+
+    const modal = document.getElementById("taskModal");
+    const form = document.getElementById("taskForm");
+    const container = document.getElementById("tasksContainer");
+
+    const newBtn = document.getElementById("newTaskBtn");
+    const emptyBtn = document.getElementById("emptyNewTaskBtn");
+    const closeBtn = document.getElementById("closeTaskModal");
+    const cancelBtn = document.getElementById("cancelTaskBtn");
+
+    const search = document.getElementById("taskSearch");
+    const statusFilter = document.getElementById("statusFilter");
+    const priorityFilter = document.getElementById("priorityFilter");
+    const projectFilter = document.getElementById("projectFilter");
+
+    const emptyState = document.getElementById("emptyTasks");
 
 
-// ======================================================
-// RÉCUPÉRER LES TÂCHES
-// ======================================================
+    // ==============================
+    // UTILITAIRES
+    // ==============================
 
-function getTasks() {
+    const getTasks = () =>
+        JSON.parse(localStorage.getItem("tasks") || "[]");
 
-    try {
+    const getProjects = () =>
+        JSON.parse(localStorage.getItem("projects") || "[]");
 
-        return JSON.parse(
-            localStorage.getItem("tasks")
-        ) || [];
+    const getMembers = () =>
+        JSON.parse(localStorage.getItem("members") || "[]");
 
-    } catch (error) {
-
-        console.error(
-            "Erreur lecture tâches :",
-            error
-        );
-
-        return [];
-
-    }
-
-}
+    const saveTasks = tasks =>
+        localStorage.setItem("tasks", JSON.stringify(tasks));
 
 
-// ======================================================
-// SAUVEGARDER LES TÂCHES
-// ======================================================
+    // ==============================
+    // MODALE
+    // ==============================
 
-function saveTasks(tasks) {
+    function openModal(task = null) {
 
-    localStorage.setItem(
-        "tasks",
-        JSON.stringify(tasks)
-    );
+        form.reset();
 
-}
+        document.getElementById("taskId").value =
+            task ? task.id : "";
 
+        document.getElementById("modalTitle").textContent =
+            task ? "Modifier la tâche" : "Nouvelle tâche";
 
-// ======================================================
-// RÉCUPÉRER PROJETS
-// ======================================================
+        document.getElementById("taskStatus").value =
+            task?.status || "todo";
 
-function getProjects() {
+        document.getElementById("taskPriority").value =
+            task?.priority || "medium";
 
-    try {
+        if (task) {
 
-        return JSON.parse(
-            localStorage.getItem("projects")
-        ) || [];
+            document.getElementById("taskTitle").value =
+                task.title || "";
 
-    } catch {
+            document.getElementById("taskDescription").value =
+                task.description || "";
 
-        return [];
+            document.getElementById("taskTags").value =
+                (task.tags || []).join(", ");
 
-    }
-
-}
-
-
-// ======================================================
-// RÉCUPÉRER MEMBRES
-// ======================================================
-
-function getMembers() {
-
-    try {
-
-        return JSON.parse(
-            localStorage.getItem("members")
-        ) || [];
-
-    } catch {
-
-        return [];
-
-    }
-
-}
-
-
-// ======================================================
-// ÉLÉMENTS HTML
-// ======================================================
-
-const modal =
-    document.getElementById("taskModal");
-
-const form =
-    document.getElementById("taskForm");
-
-const tasksContainer =
-    document.getElementById("tasksContainer");
-
-const emptyState =
-    document.getElementById("emptyState");
-
-const openTaskModal =
-    document.getElementById("openTaskModal");
-
-const closeTaskModal =
-    document.getElementById("closeTaskModal");
-
-const cancelTask =
-    document.getElementById("cancelTask");
-
-
-// ======================================================
-// OUVRIR MODALE
-// ======================================================
-
-openTaskModal.addEventListener(
-    "click",
-    function () {
-
-        openCreateModal();
-
-    }
-);
-
-
-// ======================================================
-// FERMER MODALE
-// ======================================================
-
-closeTaskModal.addEventListener(
-    "click",
-    closeModal
-);
-
-
-cancelTask.addEventListener(
-    "click",
-    closeModal
-);
-
-
-// ======================================================
-// FERMER EN CLIQUANT EN DEHORS
-// ======================================================
-
-modal.addEventListener(
-    "click",
-    function (event) {
-
-        if (
-            event.target === modal
-        ) {
-
-            closeModal();
+            document.getElementById("taskDeadline").value =
+                task.deadline || "";
 
         }
 
-    }
-);
+        loadProjects(task?.project);
+        loadMembers(task?.assignedTo);
 
-
-// ======================================================
-// FERMER MODALE
-// ======================================================
-
-function closeModal() {
-
-    modal.classList.add(
-        "hidden"
-    );
-
-    modal.classList.remove(
-        "flex"
-    );
-
-    form.reset();
-
-    document.getElementById(
-        "taskId"
-    ).value = "";
-
-    document.getElementById(
-        "taskModalTitle"
-    ).textContent =
-        "Nouvelle tâche";
-
-}
-
-
-// ======================================================
-// OUVRIR MODALE CRÉATION
-// ======================================================
-
-function openCreateModal() {
-
-    form.reset();
-
-    document.getElementById(
-        "taskId"
-    ).value = "";
-
-    document.getElementById(
-        "taskModalTitle"
-    ).textContent =
-        "Nouvelle tâche";
-
-
-    document.getElementById(
-        "taskStatus"
-    ).value =
-        "todo";
-
-
-    document.getElementById(
-        "taskPriority"
-    ).value =
-        "medium";
-
-
-    populateProjects();
-
-    populateMembers();
-
-
-    modal.classList.remove(
-        "hidden"
-    );
-
-    modal.classList.add(
-        "flex"
-    );
-
-}
-
-
-// ======================================================
-// REMPLIR PROJETS
-// ======================================================
-
-function populateProjects(
-    selectedId = ""
-) {
-
-    const select =
-        document.getElementById(
-            "taskProject"
-        );
-
-
-    const projects =
-        getProjects();
-
-
-    select.innerHTML = `
-        <option value="">
-            Sélectionner un projet
-        </option>
-    `;
-
-
-    projects.forEach(
-        function (project) {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-
-            option.value =
-                project.id;
-
-
-            option.textContent =
-                project.name;
-
-
-            if (
-                String(project.id) ===
-                String(selectedId)
-            ) {
-
-                option.selected =
-                    true;
-
-            }
-
-
-            select.appendChild(
-                option
-            );
-
-        }
-    );
-
-
-    populateProjectFilter();
-
-}
-
-
-// ======================================================
-// REMPLIR MEMBRES
-// ======================================================
-
-function populateMembers(
-    selectedId = ""
-) {
-
-    const select =
-        document.getElementById(
-            "taskMember"
-        );
-
-
-    const members =
-        getMembers();
-
-
-    select.innerHTML = `
-        <option value="">
-            Non assignée
-        </option>
-    `;
-
-
-    members.forEach(
-        function (member) {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-
-            option.value =
-                member.id;
-
-
-            option.textContent =
-                `${member.firstName} ${member.lastName}`;
-
-
-            if (
-                String(member.id) ===
-                String(selectedId)
-            ) {
-
-                option.selected =
-                    true;
-
-            }
-
-
-            select.appendChild(
-                option
-            );
-
-        }
-    );
-
-}
-
-
-// ======================================================
-// FILTRE PROJETS
-// ======================================================
-
-function populateProjectFilter() {
-
-    const select =
-        document.getElementById(
-            "filterProject"
-        );
-
-
-    const currentValue =
-        select.value;
-
-
-    const projects =
-        getProjects();
-
-
-    select.innerHTML = `
-        <option value="all">
-            Tous les projets
-        </option>
-    `;
-
-
-    projects.forEach(
-        function (project) {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-
-            option.value =
-                project.id;
-
-
-            option.textContent =
-                project.name;
-
-
-            select.appendChild(
-                option
-            );
-
-        }
-    );
-
-
-    if (
-        projects.some(
-            project =>
-                String(project.id) ===
-                String(currentValue)
-        )
-    ) {
-
-        select.value =
-            currentValue;
-
+        modal.classList.remove("hidden");
     }
 
-}
+
+    function closeModal() {
+        modal.classList.add("hidden");
+        form.reset();
+        document.getElementById("taskId").value = "";
+        document.getElementById("modalTitle").textContent =
+            "Nouvelle tâche";
+    }
 
 
-// ======================================================
-// ENREGISTREMENT
-// ======================================================
+    newBtn.addEventListener("click", () => openModal());
+    emptyBtn.addEventListener("click", () => openModal());
 
-form.addEventListener(
-    "submit",
-    function (event) {
-
-        event.preventDefault();
+    closeBtn.addEventListener("click", closeModal);
+    cancelBtn.addEventListener("click", closeModal);
 
 
-        // ------------------------------------------
-        // RÉCUPÉRATION
-        // ------------------------------------------
-
-        const taskId =
-            document.getElementById(
-                "taskId"
-            ).value;
+    modal.addEventListener("click", e => {
+        if (e.target === modal) closeModal();
+    });
 
 
-        const title =
-            document.getElementById(
-                "taskTitle"
-            ).value.trim();
+    // ==============================
+    // PROJETS
+    // ==============================
+
+    function loadProjects(selected = "") {
+
+        const projects = getProjects();
+
+        document.getElementById("taskProject").innerHTML = `
+            <option value="">Aucun projet</option>
+            ${projects.map(p => `
+                <option value="${p.id}"
+                    ${String(p.id) === String(selected) ? "selected" : ""}>
+                    ${escapeHTML(p.name)}
+                </option>
+            `).join("")}
+        `;
+
+        projectFilter.innerHTML = `
+            <option value="all">Tous les projets</option>
+            ${projects.map(p => `
+                <option value="${p.id}">
+                    ${escapeHTML(p.name)}
+                </option>
+            `).join("")}
+        `;
+    }
 
 
-        const description =
-            document.getElementById(
-                "taskDescription"
-            ).value.trim();
+    // ==============================
+    // MEMBRES
+    // ==============================
+
+    function loadMembers(selected = "") {
+
+        const members = getMembers();
+
+        document.getElementById("taskMember").innerHTML = `
+            <option value="">Non assignée</option>
+            ${members.map(m => `
+                <option value="${m.id}"
+                    ${String(m.id) === String(selected) ? "selected" : ""}>
+                    ${escapeHTML(m.firstName)} ${escapeHTML(m.lastName)}
+                </option>
+            `).join("")}
+        `;
+    }
 
 
-        const status =
-            document.getElementById(
-                "taskStatus"
-            ).value;
+    // ==============================
+    // ENREGISTRER
+    // ==============================
 
+    form.addEventListener("submit", e => {
 
-        const priority =
-            document.getElementById(
-                "taskPriority"
-            ).value;
+        e.preventDefault();
 
+        const id = document.getElementById("taskId").value;
 
-        const project =
-            document.getElementById(
-                "taskProject"
-            ).value;
+        const task = {
 
+            id: id ? Number(id) : Date.now(),
 
-        const assignedTo =
-            document.getElementById(
-                "taskMember"
-            ).value;
-
-
-        const tags =
-            document.getElementById(
-                "taskTags"
-            ).value
-                .split(",")
-                .map(
-                    tag =>
-                        tag.trim()
-                )
-                .filter(
-                    tag =>
-                        tag !== ""
-                );
-
-
-        const deadline =
-            document.getElementById(
-                "taskDeadline"
-            ).value;
-
-
-        // ------------------------------------------
-        // VALIDATION
-        // ------------------------------------------
-
-        if (!title) {
-
-            alert(
-                "Veuillez saisir le titre de la tâche."
-            );
-
-            return;
-
-        }
-
-
-        if (!project) {
-
-            alert(
-                "Veuillez sélectionner un projet."
-            );
-
-            return;
-
-        }
-
-
-        // ------------------------------------------
-        // DONNÉES
-        // ------------------------------------------
-
-        const taskData = {
-
-            title:
-                title,
+            title: document.getElementById("taskTitle").value.trim(),
 
             description:
-                description,
+                document.getElementById("taskDescription").value.trim(),
 
             status:
-                status,
+                document.getElementById("taskStatus").value,
 
             priority:
-                priority,
+                document.getElementById("taskPriority").value,
 
             project:
-                project,
+                document.getElementById("taskProject").value,
 
             assignedTo:
-                assignedTo,
+                document.getElementById("taskMember").value,
 
             tags:
-                tags,
+                document.getElementById("taskTags").value
+                    .split(",")
+                    .map(t => t.trim())
+                    .filter(Boolean),
 
             deadline:
-                deadline
+                document.getElementById("taskDeadline").value,
 
+            createdAt:
+                id
+                    ? getTasks().find(t => String(t.id) === String(id))?.createdAt
+                    : new Date().toISOString().split("T")[0]
         };
 
 
-        const tasks =
-            getTasks();
+        if (!task.title) {
+            alert("Veuillez saisir le titre de la tâche.");
+            return;
+        }
 
 
-        // ==================================================
-        // MODIFICATION
-        // ==================================================
-
-        if (taskId) {
-
-            const index =
-                tasks.findIndex(
-                    task =>
-                        String(task.id) ===
-                        String(taskId)
-                );
+        if (!task.project) {
+            alert("Veuillez sélectionner un projet.");
+            return;
+        }
 
 
-            if (
-                index === -1
-            ) {
+        const tasks = getTasks();
 
-                alert(
-                    "Tâche introuvable."
-                );
+        if (id) {
 
-                return;
+            const index = tasks.findIndex(
+                t => String(t.id) === String(id)
+            );
 
+            if (index !== -1) {
+                tasks[index] = task;
             }
 
+        } else {
 
-            tasks[index] = {
-
-                ...tasks[index],
-
-                ...taskData
-
-            };
-
-
-            saveTasks(
-                tasks
-            );
-
-
-            closeModal();
-
-
-            renderTasks();
-
-
-            alert(
-                "Tâche modifiée avec succès !"
-            );
-
-
-            return;
+            tasks.unshift(task);
 
         }
 
 
-        // ==================================================
-        // CRÉATION
-        // ==================================================
-
-        const newTask = {
-
-            id:
-                Date.now(),
-
-            ...taskData,
-
-            createdAt:
-                new Date()
-                    .toISOString()
-                    .split("T")[0]
-
-        };
-
-
-        // AJOUT EN PREMIÈRE POSITION
-
-        tasks.unshift(
-            newTask
-        );
-
-
-        // SAUVEGARDE
-
-        saveTasks(
-            tasks
-        );
-
-
-        // VÉRIFICATION
-
-        console.log(
-            "Tâche enregistrée :",
-            newTask
-        );
-
-        console.log(
-            "Toutes les tâches :",
-            getTasks()
-        );
-
-
-        // FERMER
+        saveTasks(tasks);
 
         closeModal();
 
-
-        // ACTUALISER
-
         renderTasks();
 
-
-        // MESSAGE
-
         alert(
-            "Tâche ajoutée avec succès !"
+            id
+                ? "Tâche modifiée avec succès !"
+                : "Tâche ajoutée avec succès !"
         );
+    });
 
-    }
-);
 
-
-// ======================================================
-// AFFICHER LES TÂCHES
-// ======================================================
-
-function renderTasks() {
-
-    let tasks =
-        getTasks();
-
-
-    // ------------------------------------------
-    // RECHERCHE
-    // ------------------------------------------
-
-    const search =
-        document.getElementById(
-            "taskSearch"
-        ).value
-            .trim()
-            .toLowerCase();
-
-
-    // ------------------------------------------
-    // FILTRE STATUT
-    // ------------------------------------------
-
-    const status =
-        document.getElementById(
-            "filterStatus"
-        ).value;
-
-
-    // ------------------------------------------
-    // FILTRE PRIORITÉ
-    // ------------------------------------------
-
-    const priority =
-        document.getElementById(
-            "filterPriority"
-        ).value;
-
-
-    // ------------------------------------------
-    // FILTRE PROJET
-    // ------------------------------------------
-
-    const project =
-        document.getElementById(
-            "filterProject"
-        ).value;
-
-
-    // ------------------------------------------
-    // TRI
-    // ------------------------------------------
-
-    const sort =
-        document.getElementById(
-            "sortTasks"
-        ).value;
-
-
-    // ==================================================
-    // RECHERCHE
-    // ==================================================
-
-    if (search) {
-
-        tasks =
-            tasks.filter(
-                function (task) {
-
-                    const text = `
-
-                        ${task.title}
-
-                        ${task.description}
-
-                        ${task.priority}
-
-                        ${task.status}
-
-                        ${(task.tags || []).join(" ")}
-
-                    `.toLowerCase();
-
-
-                    return text.includes(
-                        search
-                    );
-
-                }
-            );
-
-    }
-
-
-    // ==================================================
-    // STATUT
-    // ==================================================
-
-    if (
-        status !== "all"
-    ) {
-
-        tasks =
-            tasks.filter(
-                task =>
-                    task.status ===
-                    status
-            );
-
-    }
-
-
-    // ==================================================
-    // PRIORITÉ
-    // ==================================================
-
-    if (
-        priority !== "all"
-    ) {
-
-        tasks =
-            tasks.filter(
-                task =>
-                    task.priority ===
-                    priority
-            );
-
-    }
-
-
-    // ==================================================
-    // PROJET
-    // ==================================================
-
-    if (
-        project !== "all"
-    ) {
-
-        tasks =
-            tasks.filter(
-                task =>
-                    String(task.project) ===
-                    String(project)
-            );
-
-    }
-
-
-    // ==================================================
-    // TRI
-    // ==================================================
-
-    if (
-        sort === "newest"
-    ) {
-
-        tasks.sort(
-            function (a, b) {
-
-                return (
-                    new Date(b.createdAt) -
-                    new Date(a.createdAt)
-                );
-
-            }
-        );
-
-    }
-
-
-    if (
-        sort === "oldest"
-    ) {
-
-        tasks.sort(
-            function (a, b) {
-
-                return (
-                    new Date(a.createdAt) -
-                    new Date(b.createdAt)
-                );
-
-            }
-        );
-
-    }
-
-
-    if (
-        sort === "deadline"
-    ) {
-
-        tasks.sort(
-            function (a, b) {
-
-                if (!a.deadline)
-                    return 1;
-
-                if (!b.deadline)
-                    return -1;
-
-                return (
-                    new Date(a.deadline) -
-                    new Date(b.deadline)
-                );
-
-            }
-        );
-
-    }
-
-
-    if (
-        sort === "priority"
-    ) {
-
-        const order = {
-
-            urgent: 1,
-
-            high: 2,
-
-            medium: 3,
-
-            low: 4
-
-        };
-
-
-        tasks.sort(
-            function (a, b) {
-
-                return (
-                    (order[a.priority] || 99) -
-                    (order[b.priority] || 99)
-                );
-
-            }
-        );
-
-    }
-
-
-    // ==================================================
-    // STATISTIQUES
-    // ==================================================
-
-    updateTaskStats();
-
-
-    // ==================================================
-    // AUCUNE TÂCHE
-    // ==================================================
-
-    if (
-        tasks.length === 0
-    ) {
-
-        tasksContainer.innerHTML =
-            "";
-
-        emptyState.classList.remove(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    emptyState.classList.add(
-        "hidden"
-    );
-
-
-    // ==================================================
+    // ==============================
     // AFFICHAGE
-    // ==================================================
+    // ==============================
 
-    tasksContainer.innerHTML =
-        tasks
-            .map(
-                task =>
-                    createTaskCard(
-                        task
-                    )
-            )
-            .join("");
+    function renderTasks() {
 
-}
+        let tasks = getTasks();
+
+        const text = search.value.toLowerCase().trim();
+
+        const status = statusFilter.value;
+        const priority = priorityFilter.value;
+        const project = projectFilter.value;
 
 
-// ======================================================
-// CARTE TÂCHE
-// ======================================================
+        tasks = tasks.filter(task => {
 
-function createTaskCard(
-    task
-) {
+            const matchesSearch =
+                !text ||
+                task.title.toLowerCase().includes(text) ||
+                (task.description || "").toLowerCase().includes(text);
 
-    const projects =
-        getProjects();
+            const matchesStatus =
+                status === "all" ||
+                task.status === status;
+
+            const matchesPriority =
+                priority === "all" ||
+                task.priority === priority;
+
+            const matchesProject =
+                project === "all" ||
+                String(task.project) === String(project);
+
+            return (
+                matchesSearch &&
+                matchesStatus &&
+                matchesPriority &&
+                matchesProject
+            );
+        });
 
 
-    const members =
-        getMembers();
+        updateStats();
 
 
-    const project =
-        projects.find(
-            item =>
-                String(item.id) ===
-                String(task.project)
+        if (!tasks.length) {
+
+            container.innerHTML = "";
+
+            emptyState.classList.remove("hidden");
+
+            document.getElementById("taskCountText").textContent =
+                "0 tâche";
+
+            return;
+        }
+
+
+        emptyState.classList.add("hidden");
+
+        document.getElementById("taskCountText").textContent =
+            `${tasks.length} tâche${tasks.length > 1 ? "s" : ""}`;
+
+
+        container.innerHTML = tasks.map(createTaskCard).join("");
+    }
+
+
+    // ==============================
+    // CARTE
+    // ==============================
+
+    function createTaskCard(task) {
+
+        const project = getProjects().find(
+            p => String(p.id) === String(task.project)
+        );
+
+        const member = getMembers().find(
+            m => String(m.id) === String(task.assignedTo)
         );
 
 
-    const member =
-        members.find(
-            item =>
-                String(item.id) ===
-                String(task.assignedTo)
-        );
+        const status = {
+            todo: ["À faire", "bg-orange-100 text-orange-700"],
+            "in-progress": ["En cours", "bg-blue-100 text-blue-700"],
+            paused: ["En pause", "bg-yellow-100 text-yellow-700"],
+            completed: ["Terminée", "bg-green-100 text-green-700"]
+        }[task.status] || ["Inconnu", "bg-slate-100 text-slate-600"];
 
 
-    const statusInfo =
-        getStatusInfo(
-            task.status
-        );
+        const priority = {
+            low: ["Low", "bg-slate-100 text-slate-600"],
+            medium: ["Medium", "bg-yellow-100 text-yellow-700"],
+            high: ["High", "bg-orange-100 text-orange-700"],
+            urgent: ["Urgent", "bg-red-100 text-red-700"]
+        }[task.priority] || ["", ""];
 
 
-    const priorityInfo =
-        getPriorityInfo(
-            task.priority
-        );
+        const late =
+            task.deadline &&
+            new Date(task.deadline) < new Date() &&
+            task.status !== "completed";
 
 
-    // ------------------------------------------
-    // RETARD
-    // ------------------------------------------
+        return `
+            <div class="p-6 border-b border-slate-200">
 
-    const isLate =
-        task.deadline &&
-        new Date(
-            task.deadline
-        ) < new Date() &&
-        task.status !== "completed";
+                <div class="flex justify-between gap-4">
 
+                    <div>
 
-    return `
+                        <div class="flex items-center gap-2 flex-wrap">
 
-        <div
-            class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition"
-        >
+                            <h3 class="text-lg font-bold
+                                ${task.status === "completed"
+                                    ? "line-through text-slate-400"
+                                    : "text-slate-900"}">
 
+                                ${escapeHTML(task.title)}
 
-            <!-- TOP -->
+                            </h3>
 
-            <div
-                class="flex justify-between gap-5"
-            >
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${priority[1]}">
+                                ${priority[0]}
+                            </span>
 
+                        </div>
 
-                <div
-                    class="flex-1 min-w-0"
-                >
+                        <p class="text-sm text-slate-500 mt-2">
+                            ${escapeHTML(task.description || "Aucune description")}
+                        </p>
 
-                    <div
-                        class="flex items-center gap-3 flex-wrap"
-                    >
+                    </div>
 
-                        <h3
-                            class="
-                                font-bold
-                                text-lg
-                                text-slate-900
-                                ${
-                                    task.status === "completed"
-                                        ? "line-through text-slate-400"
-                                        : ""
-                                }
-                            "
-                        >
+                    <span class="h-fit px-3 py-1 rounded-full text-xs ${status[1]}">
+                        ${status[0]}
+                    </span>
 
-                            ${escapeHtml(
-                                task.title
-                            )}
-
-                        </h3>
+                </div>
 
 
-                        <span
-                            class="
-                                px-3
-                                py-1
-                                rounded-full
-                                text-xs
-                                font-semibold
-                                ${priorityInfo.class}
-                            "
-                        >
+                <div class="grid md:grid-cols-2 gap-4 mt-5">
 
-                            ${priorityInfo.label}
+                    <div class="bg-slate-50 rounded-xl p-4">
 
-                        </span>
+                        <p class="text-xs text-slate-400">
+                            Projet
+                        </p>
+
+                        <p class="font-semibold">
+                            ${project ? escapeHTML(project.name) : "Aucun projet"}
+                        </p>
 
                     </div>
 
 
-                    <p
-                        class="text-sm text-slate-500 mt-2"
-                    >
+                    <div class="bg-slate-50 rounded-xl p-4">
 
-                        ${escapeHtml(
-                            task.description ||
-                            "Aucune description"
-                        )}
+                        <p class="text-xs text-slate-400">
+                            Assigné à
+                        </p>
 
-                    </p>
+                        <p class="font-semibold">
+                            ${member
+                                ? escapeHTML(member.firstName + " " + member.lastName)
+                                : "Non assigné"}
+                        </p>
 
-                </div>
-
-
-                <!-- STATUT -->
-
-                <span
-                    class="
-                        h-fit
-                        px-3
-                        py-1
-                        rounded-full
-                        text-xs
-                        font-medium
-                        whitespace-nowrap
-                        ${statusInfo.class}
-                    "
-                >
-
-                    ${statusInfo.label}
-
-                </span>
-
-            </div>
-
-
-
-            <!-- PROJET / MEMBRE -->
-
-            <div
-                class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5"
-            >
-
-
-                <div
-                    class="bg-slate-50 rounded-xl p-4"
-                >
-
-                    <p
-                        class="text-xs text-slate-400"
-                    >
-                        Projet
-                    </p>
-
-                    <p
-                        class="text-sm font-semibold mt-1"
-                    >
-
-                        ${
-                            project
-                                ? escapeHtml(
-                                    project.name
-                                )
-                                : "Aucun projet"
-                        }
-
-                    </p>
+                    </div>
 
                 </div>
 
 
-                <div
-                    class="bg-slate-50 rounded-xl p-4"
-                >
+                ${task.tags?.length ? `
+                    <div class="flex flex-wrap gap-2 mt-4">
+                        ${task.tags.map(tag => `
+                            <span class="px-2 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs">
+                                #${escapeHTML(tag)}
+                            </span>
+                        `).join("")}
+                    </div>
+                ` : ""}
 
-                    <p
-                        class="text-xs text-slate-400"
-                    >
-                        Assigné à
-                    </p>
 
-                    <p
-                        class="text-sm font-semibold mt-1"
-                    >
+                <div class="flex justify-between mt-5 text-sm
+                    ${late ? "text-red-600" : "text-slate-500"}">
 
-                        ${
-                            member
-                                ? escapeHtml(
-                                    `${member.firstName} ${member.lastName}`
-                                )
-                                : "Non assigné"
-                        }
+                    <span>
+                        ${late ? "⚠️ En retard" : "📅 Deadline"}
+                    </span>
 
-                    </p>
+                    <strong>
+                        ${formatDate(task.deadline)}
+                    </strong>
 
                 </div>
 
-            </div>
 
-
-
-            <!-- TAGS -->
-
-            ${
-                task.tags &&
-                task.tags.length
-                    ? `
-
-                        <div
-                            class="flex flex-wrap gap-2 mt-4"
-                        >
-
-                            ${task.tags
-                                .map(
-                                    tag => `
-
-                                        <span
-                                            class="px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs"
-                                        >
-
-                                            #${escapeHtml(tag)}
-
-                                        </span>
-
-                                    `
-                                )
-                                .join("")
-                            }
-
-                        </div>
-
-                    `
-                    : ""
-            }
-
-
-
-            <!-- DEADLINE -->
-
-            <div
-                class="
-                    mt-5
-                    flex
-                    justify-between
-                    items-center
-                    text-sm
-                    ${
-                        isLate
-                            ? "text-red-600"
-                            : "text-slate-500"
-                    }
-                "
-            >
-
-                <span>
+                <div class="flex flex-wrap gap-2 mt-5 pt-5 border-t">
 
                     ${
-                        isLate
-                            ? "⚠️ En retard"
-                            : "📅 Deadline"
-                    }
-
-                </span>
-
-
-                <span
-                    class="font-semibold"
-                >
-
-                    ${formatDate(
-                        task.deadline
-                    )}
-
-                </span>
-
-            </div>
-
-
-
-            <!-- ACTIONS -->
-
-            <div
-                class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-5 pt-5 border-t"
-            >
-
-
-                ${
-                    task.status === "completed"
-
+                        task.status === "completed"
                         ? `
-
-                            <button
-                                type="button"
-                                onclick="reopenTask(${task.id})"
-                                class="px-3 py-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 text-sm font-medium"
-                            >
-
+                            <button onclick="reopenTask(${task.id})"
+                                class="px-3 py-2 rounded-lg bg-blue-50 text-blue-600 text-sm">
                                 ↩ Réouvrir
-
                             </button>
-
                         `
-
                         : `
-
-                            <button
-                                type="button"
-                                onclick="completeTask(${task.id})"
-                                class="px-3 py-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 text-sm font-medium"
-                            >
-
+                            <button onclick="completeTask(${task.id})"
+                                class="px-3 py-2 rounded-lg bg-green-50 text-green-600 text-sm">
                                 ✓ Terminer
-
                             </button>
-
                         `
-                }
+                    }
 
+                    <button onclick="editTask(${task.id})"
+                        class="px-3 py-2 rounded-lg bg-indigo-50 text-indigo-600 text-sm">
+                        ✏ Modifier
+                    </button>
 
-                <button
-                    type="button"
-                    onclick="editTask(${task.id})"
-                    class="px-3 py-2 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm font-medium"
-                >
+                    <button onclick="deleteTask(${task.id})"
+                        class="px-3 py-2 rounded-lg bg-red-50 text-red-600 text-sm">
+                        🗑 Supprimer
+                    </button>
 
-                    ✏ Modifier
-
-                </button>
-
-
-                <button
-                    type="button"
-                    onclick="deleteTask(${task.id})"
-                    class="px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-sm font-medium"
-                >
-
-                    🗑 Supprimer
-
-                </button>
-
-
-                <button
-                    type="button"
-                    onclick="duplicateTask(${task.id})"
-                    class="px-3 py-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 text-sm font-medium"
-                >
-
-                    ⧉ Dupliquer
-
-                </button>
+                </div>
 
             </div>
-
-        </div>
-
-    `;
-
-}
-
-
-// ======================================================
-// TERMINER
-// ======================================================
-
-function completeTask(
-    id
-) {
-
-    const tasks =
-        getTasks();
-
-
-    const task =
-        tasks.find(
-            item =>
-                String(item.id) ===
-                String(id)
-        );
-
-
-    if (!task) {
-
-        return;
-
+        `;
     }
 
 
-    task.status =
-        "completed";
+    // ==============================
+    // ACTIONS
+    // ==============================
 
+    window.completeTask = id => {
 
-    saveTasks(
-        tasks
-    );
+        const tasks = getTasks();
 
+        const task = tasks.find(t => t.id === id);
 
-    renderTasks();
-
-}
-
-
-// ======================================================
-// RÉOUVRIR
-// ======================================================
-
-function reopenTask(
-    id
-) {
-
-    const tasks =
-        getTasks();
-
-
-    const task =
-        tasks.find(
-            item =>
-                String(item.id) ===
-                String(id)
-        );
-
-
-    if (!task) {
-
-        return;
-
-    }
-
-
-    task.status =
-        "todo";
-
-
-    saveTasks(
-        tasks
-    );
-
-
-    renderTasks();
-
-}
-
-
-// ======================================================
-// SUPPRIMER
-// ======================================================
-
-function deleteTask(
-    id
-) {
-
-    const tasks =
-        getTasks();
-
-
-    const task =
-        tasks.find(
-            item =>
-                String(item.id) ===
-                String(id)
-        );
-
-
-    if (!task) {
-
-        return;
-
-    }
-
-
-    const confirmed =
-        confirm(
-            `Voulez-vous vraiment supprimer "${task.title}" ?`
-        );
-
-
-    if (!confirmed) {
-
-        return;
-
-    }
-
-
-    const newTasks =
-        tasks.filter(
-            item =>
-                String(item.id) !==
-                String(id)
-        );
-
-
-    saveTasks(
-        newTasks
-    );
-
-
-    renderTasks();
-
-}
-
-
-// ======================================================
-// MODIFIER
-// ======================================================
-
-function editTask(
-    id
-) {
-
-    const task =
-        getTasks().find(
-            item =>
-                String(item.id) ===
-                String(id)
-        );
-
-
-    if (!task) {
-
-        return;
-
-    }
-
-
-    document.getElementById(
-        "taskId"
-    ).value =
-        task.id;
-
-
-    document.getElementById(
-        "taskTitle"
-    ).value =
-        task.title;
-
-
-    document.getElementById(
-        "taskDescription"
-    ).value =
-        task.description || "";
-
-
-    document.getElementById(
-        "taskStatus"
-    ).value =
-        task.status;
-
-
-    document.getElementById(
-        "taskPriority"
-    ).value =
-        task.priority;
-
-
-    document.getElementById(
-        "taskTags"
-    ).value =
-        (task.tags || []).join(
-            ", "
-        );
-
-
-    document.getElementById(
-        "taskDeadline"
-    ).value =
-        task.deadline || "";
-
-
-    populateProjects(
-        task.project
-    );
-
-
-    populateMembers(
-        task.assignedTo
-    );
-
-
-    document.getElementById(
-        "taskModalTitle"
-    ).textContent =
-        "Modifier la tâche";
-
-
-    modal.classList.remove(
-        "hidden"
-    );
-
-    modal.classList.add(
-        "flex"
-    );
-
-}
-
-
-// ======================================================
-// DUPLIQUER
-// ======================================================
-
-function duplicateTask(
-    id
-) {
-
-    const tasks =
-        getTasks();
-
-
-    const task =
-        tasks.find(
-            item =>
-                String(item.id) ===
-                String(id)
-        );
-
-
-    if (!task) {
-
-        return;
-
-    }
-
-
-    const copy = {
-
-        ...task,
-
-        id:
-            Date.now(),
-
-        title:
-            `${task.title} - Copie`,
-
-        status:
-            "todo",
-
-        createdAt:
-            new Date()
-                .toISOString()
-                .split("T")[0]
-
+        if (task) {
+            task.status = "completed";
+            saveTasks(tasks);
+            renderTasks();
+        }
     };
 
 
-    tasks.unshift(
-        copy
-    );
+    window.reopenTask = id => {
 
+        const tasks = getTasks();
 
-    saveTasks(
-        tasks
-    );
+        const task = tasks.find(t => t.id === id);
 
-
-    renderTasks();
-
-}
-
-
-// ======================================================
-// STATISTIQUES
-// ======================================================
-
-function updateTaskStats() {
-
-    const tasks =
-        getTasks();
-
-
-    document.getElementById(
-        "taskTotal"
-    ).textContent =
-        tasks.length;
-
-
-    document.getElementById(
-        "taskTodo"
-    ).textContent =
-        tasks.filter(
-            task =>
-                task.status === "todo"
-        ).length;
-
-
-    document.getElementById(
-        "taskProgress"
-    ).textContent =
-        tasks.filter(
-            task =>
-                task.status === "in-progress"
-        ).length;
-
-
-    document.getElementById(
-        "taskCompleted"
-    ).textContent =
-        tasks.filter(
-            task =>
-                task.status === "completed"
-        ).length;
-
-}
-
-
-// ======================================================
-// STATUT
-// ======================================================
-
-function getStatusInfo(
-    status
-) {
-
-    const statuses = {
-
-        todo: {
-
-            label:
-                "À faire",
-
-            class:
-                "bg-orange-100 text-orange-700"
-
-        },
-
-        "in-progress": {
-
-            label:
-                "En cours",
-
-            class:
-                "bg-blue-100 text-blue-700"
-
-        },
-
-        paused: {
-
-            label:
-                "En pause",
-
-            class:
-                "bg-yellow-100 text-yellow-700"
-
-        },
-
-        completed: {
-
-            label:
-                "Terminée",
-
-            class:
-                "bg-green-100 text-green-700"
-
+        if (task) {
+            task.status = "todo";
+            saveTasks(tasks);
+            renderTasks();
         }
-
     };
 
 
-    return (
-        statuses[status] ||
-        {
+    window.deleteTask = id => {
 
-            label:
-                status || "Inconnu",
+        const tasks = getTasks();
 
-            class:
-                "bg-slate-100 text-slate-600"
+        const task = tasks.find(t => t.id === id);
 
+        if (!task) return;
+
+        if (confirm(`Supprimer "${task.title}" ?`)) {
+
+            saveTasks(
+                tasks.filter(t => t.id !== id)
+            );
+
+            renderTasks();
         }
-    );
-
-}
-
-
-// ======================================================
-// PRIORITÉ
-// ======================================================
-
-function getPriorityInfo(
-    priority
-) {
-
-    const priorities = {
-
-        low: {
-
-            label:
-                "Low",
-
-            class:
-                "bg-slate-100 text-slate-600"
-
-        },
-
-        medium: {
-
-            label:
-                "Medium",
-
-            class:
-                "bg-yellow-100 text-yellow-700"
-
-        },
-
-        high: {
-
-            label:
-                "High",
-
-            class:
-                "bg-orange-100 text-orange-700"
-
-        },
-
-        urgent: {
-
-            label:
-                "Urgent",
-
-            class:
-                "bg-red-100 text-red-700"
-
-        }
-
     };
 
 
-    return (
-        priorities[priority] ||
-        {
+    window.editTask = id => {
 
-            label:
-                priority || "Inconnue",
+        const task = getTasks().find(t => t.id === id);
 
-            class:
-                "bg-slate-100 text-slate-600"
-
+        if (task) {
+            openModal(task);
         }
-    );
-
-}
+    };
 
 
-// ======================================================
-// DATE
-// ======================================================
+    // ==============================
+    // STATISTIQUES
+    // ==============================
 
-function formatDate(
-    date
-) {
+    function updateStats() {
 
-    if (!date) {
+        const tasks = getTasks();
 
-        return "-";
+        document.getElementById("totalTasks").textContent =
+            tasks.length;
 
+        document.getElementById("todoTasks").textContent =
+            tasks.filter(t => t.status === "todo").length;
+
+        document.getElementById("progressTasks").textContent =
+            tasks.filter(t => t.status === "in-progress").length;
+
+        document.getElementById("completedTasks").textContent =
+            tasks.filter(t => t.status === "completed").length;
     }
 
 
-    const dateObject =
-        new Date(date);
+    // ==============================
+    // FILTRES
+    // ==============================
+
+    search.addEventListener("input", renderTasks);
+
+    statusFilter.addEventListener("change", renderTasks);
+
+    priorityFilter.addEventListener("change", renderTasks);
+
+    projectFilter.addEventListener("change", renderTasks);
 
 
-    if (
-        Number.isNaN(
-            dateObject.getTime()
-        )
-    ) {
+    // ==============================
+    // UTILITAIRES
+    // ==============================
 
-        return "-";
+    function formatDate(date) {
 
+        if (!date) return "-";
+
+        return new Date(date).toLocaleDateString("fr-FR");
     }
 
 
-    return dateObject.toLocaleDateString(
-        "fr-FR",
-        {
+    function escapeHTML(value) {
 
-            day:
-                "2-digit",
-
-            month:
-                "2-digit",
-
-            year:
-                "numeric"
-
-        }
-    );
-
-}
-
-
-// ======================================================
-// SÉCURITÉ HTML
-// ======================================================
-
-function escapeHtml(
-    value
-) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-
-        return "";
-
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
 
-    return String(value)
+    // ==============================
+    // LANCEMENT
+    // ==============================
 
-        .replace(
-            /&/g,
-            "&amp;"
-        )
+    loadProjects();
 
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-// ======================================================
-// ÉVÉNEMENTS DES FILTRES
-// ======================================================
-
-document.getElementById(
-    "taskSearch"
-).addEventListener(
-    "input",
-    renderTasks
-);
-
-
-document.getElementById(
-    "filterStatus"
-).addEventListener(
-    "change",
-    renderTasks
-);
-
-
-document.getElementById(
-    "filterPriority"
-).addEventListener(
-    "change",
-    renderTasks
-);
-
-
-document.getElementById(
-    "filterProject"
-).addEventListener(
-    "change",
-    renderTasks
-);
-
-
-document.getElementById(
-    "sortTasks"
-).addEventListener(
-    "change",
-    renderTasks
-);
-
-
-// ======================================================
-// ESC POUR FERMER
-// ======================================================
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (
-            event.key === "Escape" &&
-            !modal.classList.contains(
-                "hidden"
-            )
-        ) {
-
-            closeModal();
-
-        }
-
-    }
-);
-
-
-// ======================================================
-// INITIALISATION
-// ======================================================
-
-function init() {
-
-    initializeData();
-
-    populateProjects();
-
-    populateMembers();
-
-    populateProjectFilter();
+    loadMembers();
 
     renderTasks();
 
-}
-
-
-init();
+});
