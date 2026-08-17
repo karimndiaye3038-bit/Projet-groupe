@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const path = require("path");
 
 const connectDB = require("./src/config/db");
 
@@ -37,17 +38,25 @@ app.use(express.json());
 connectDB();
 
 // ==============================
+// FRONTEND
+// ==============================
+
+const frontendPath = path.join(__dirname, "../Frontend");
+
+console.log("Frontend :", frontendPath);
+
+app.use(express.static(frontendPath));
+
+// ==============================
 // ROUTE ACCUEIL
 // ==============================
 
 app.get("/", (req, res) => {
-  res.json({
-    message: "API Gestion des tâches",
-  });
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 // ==============================
-// ROUTES
+// ROUTES API
 // ==============================
 
 // Demo Data
@@ -121,4 +130,6 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur http://localhost:${PORT}`);
+  console.log(`Frontend disponible sur http://localhost:${PORT}/`);
+  console.log(`Archive disponible sur http://localhost:${PORT}/archive.html`);
 });
