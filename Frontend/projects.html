@@ -662,21 +662,17 @@
                     >
                         Statut
                     </label>
+<select id="projectStatus">
 
-                    <select
-                        id="projectStatus"
-                        class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
-                    >
+    <option value="Actif">
+        Actif
+    </option>
 
-                        <option value="active">
-                            Actif
-                        </option>
+    <option value="Archivé">
+        Archivé
+    </option>
 
-                        <option value="completed">
-                            Terminé
-                        </option>
-
-                    </select>
+</select>
 
                 </div>
 
@@ -692,11 +688,11 @@
                         Deadline
                     </label>
 
-                    <input
-                        type="date"
-                        id="projectDeadline"
-                        class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
-                    >
+                  <input
+    type="date"
+    id="projectDeadline"
+    required
+>
 
                 </div>
 
@@ -748,7 +744,12 @@
 
             </div>
 
-
+<input
+    type="date"
+    id="projectStartDate"
+    name="startDate"
+    required
+>
 
             <!-- ================================================= -->
             <!-- ARCHIVE -->
@@ -829,8 +830,8 @@
 <!-- JAVASCRIPT -->
 <!-- ========================================================= -->
 
+<script src="js/api.js"></script>
 <script src="js/projects.js"></script>
-
 </body>
 
 </html>
