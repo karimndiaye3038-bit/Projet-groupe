@@ -20,20 +20,17 @@
 <body class="bg-slate-100 text-slate-800">
 
 
-<!-- ================================================= -->
+<!-- ========================================================= -->
 <!-- SIDEBAR -->
-<!-- ================================================= -->
+<!-- ========================================================= -->
 
 <aside
     class="fixed top-0 left-0 z-50 w-64 h-screen bg-slate-900 text-white flex flex-col"
 >
 
-
     <!-- LOGO -->
 
-    <div
-        class="h-20 px-6 flex items-center border-b border-slate-800"
-    >
+    <div class="h-20 px-6 flex items-center border-b border-slate-800">
 
         <div class="flex items-center gap-3">
 
@@ -62,7 +59,7 @@
 
     <!-- MENU -->
 
-    <nav class="flex-1 px-4 py-6">
+    <nav class="flex-1 px-4 py-6 overflow-y-auto">
 
         <p
             class="px-3 mb-3 text-xs uppercase tracking-wider text-slate-500"
@@ -71,21 +68,39 @@
         </p>
 
 
+        <!-- DASHBOARD -->
+
         <a
             href="index.html"
             class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
         >
-            <span class="w-6">▣</span>
-            Dashboard
+
+            <span class="w-6 text-center">
+                ▣
+            </span>
+
+            <span>
+                Dashboard
+            </span>
+
         </a>
 
+
+        <!-- TACHES -->
 
         <a
             href="tasks.html"
             class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
         >
-            <span class="w-6">✓</span>
-            Tâches
+
+            <span class="w-6 text-center">
+                ✓
+            </span>
+
+            <span>
+                Tâches
+            </span>
+
         </a>
 
 
@@ -95,29 +110,54 @@
             href="projects.html"
             class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl bg-indigo-600 text-white"
         >
-            <span class="w-6">□</span>
-            Projets
+
+            <span class="w-6 text-center">
+                □
+            </span>
+
+            <span>
+                Projets
+            </span>
+
         </a>
 
+
+        <!-- MEMBRES -->
 
         <a
             href="members.html"
             class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
         >
-            <span class="w-6">◎</span>
-            Membres
+
+            <span class="w-6 text-center">
+                ◎
+            </span>
+
+            <span>
+                Membres
+            </span>
+
         </a>
 
 
         <div class="border-t border-slate-800 my-6"></div>
 
 
+        <!-- PARAMETRES -->
+
         <a
-            href="settings.html"
+            href="#"
             class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
         >
-            <span class="w-6">⚙</span>
-            Paramètres
+
+            <span class="w-6 text-center">
+                ⚙
+            </span>
+
+            <span>
+                Paramètres
+            </span>
+
         </a>
 
     </nav>
@@ -127,7 +167,9 @@
 
     <div class="p-4 border-t border-slate-800">
 
-        <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800">
+        <div
+            class="flex items-center gap-3 p-3 rounded-xl bg-slate-800"
+        >
 
             <div
                 class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center font-bold"
@@ -149,7 +191,8 @@
 
             <button
                 id="logoutBtn"
-                class="text-slate-400 hover:text-white"
+                type="button"
+                class="text-slate-400 hover:text-white text-xl"
             >
                 ⇥
             </button>
@@ -161,9 +204,10 @@
 </aside>
 
 
-<!-- ================================================= -->
-<!-- CONTENU -->
-<!-- ================================================= -->
+
+<!-- ========================================================= -->
+<!-- CONTENU PRINCIPAL -->
+<!-- ========================================================= -->
 
 <div class="ml-64 min-h-screen">
 
@@ -171,7 +215,7 @@
     <!-- HEADER -->
 
     <header
-        class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8"
+        class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-40"
     >
 
         <div>
@@ -181,7 +225,7 @@
             </h2>
 
             <p class="text-sm text-slate-500">
-                Organisez et suivez vos projets.
+                Organisez et suivez vos projets
             </p>
 
         </div>
@@ -212,16 +256,21 @@
     </header>
 
 
+
+    <!-- ===================================================== -->
     <!-- MAIN -->
+    <!-- ===================================================== -->
 
     <main class="p-8">
 
 
-        <div class="flex justify-between items-center mb-8">
+        <!-- TITRE + BOUTON -->
+
+        <div class="flex items-center justify-between mb-8">
 
             <div>
 
-                <h1 class="text-3xl font-bold">
+                <h1 class="text-3xl font-bold text-slate-900">
                     Projets
                 </h1>
 
@@ -233,105 +282,302 @@
 
 
             <button
-                id="addProjectBtn"
-                class="bg-indigo-600 text-white px-5 py-3 rounded-xl font-semibold hover:bg-indigo-700"
+                id="openProjectModal"
+                type="button"
+                class="bg-indigo-600 text-white px-5 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition shadow-sm"
             >
+
                 + Nouveau projet
+
             </button>
 
         </div>
 
 
-        <!-- RECHERCHE -->
 
-        <div
-            class="bg-white border border-slate-200 rounded-2xl p-5 mb-6"
-        >
+        <!-- ================================================= -->
+        <!-- STATISTIQUES -->
+        <!-- ================================================= -->
 
-            <input
-                id="projectSearch"
-                type="text"
-                placeholder="Rechercher un projet..."
-                class="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none"
+        <div class="grid grid-cols-4 gap-5 mb-6">
+
+
+            <!-- TOTAL -->
+
+            <div
+                class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"
             >
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Total projets
+                        </p>
+
+                        <p
+                            id="totalProjects"
+                            class="text-3xl font-bold mt-2"
+                        >
+                            0
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl"
+                    >
+                        □
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIFS -->
+
+            <div
+                class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Projets actifs
+                        </p>
+
+                        <p
+                            id="activeProjects"
+                            class="text-3xl font-bold mt-2"
+                        >
+                            0
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl"
+                    >
+                        ●
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TERMINÉS -->
+
+            <div
+                class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Projets terminés
+                        </p>
+
+                        <p
+                            id="completedProjects"
+                            class="text-3xl font-bold mt-2"
+                        >
+                            0
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center text-xl"
+                    >
+                        ✓
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROGRESSION -->
+
+            <div
+                class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Progression moyenne
+                        </p>
+
+                        <p
+                            id="averageProgress"
+                            class="text-3xl font-bold mt-2"
+                        >
+                            0%
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl"
+                    >
+                        %
+                    </div>
+
+                </div>
+
+            </div>
 
         </div>
 
 
-        <!-- PROJETS -->
+
+        <!-- ================================================= -->
+        <!-- RECHERCHE + FILTRE -->
+        <!-- ================================================= -->
+
+        <div
+            class="bg-white rounded-2xl border border-slate-200 p-5 mb-6"
+        >
+
+            <div class="flex gap-4">
+
+
+                <!-- RECHERCHE -->
+
+                <div class="relative flex-1">
+
+                    <span
+                        class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                    >
+                        🔍
+                    </span>
+
+                    <input
+                        id="projectSearch"
+                        type="text"
+                        placeholder="Rechercher un projet..."
+                        class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+
+                </div>
+
+
+                <!-- FILTRE -->
+
+                <select
+                    id="statusFilter"
+                    class="w-48 px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+
+                    <option value="all">
+                        Tous les statuts
+                    </option>
+
+                    <option value="active">
+                        Actifs
+                    </option>
+
+                    <option value="completed">
+                        Terminés
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- LISTE DES PROJETS -->
+        <!-- ================================================= -->
 
         <div
             id="projectsContainer"
             class="grid grid-cols-3 gap-6"
         >
-
-            <!-- Projets générés par projects.js -->
-
         </div>
 
+
+        <!-- EMPTY STATE -->
+
+        <div
+            id="emptyState"
+            class="hidden bg-white border border-slate-200 rounded-2xl p-12 text-center"
+        >
+
+            <div class="text-5xl mb-4">
+                📁
+            </div>
+
+            <h3 class="text-xl font-bold">
+                Aucun projet trouvé
+            </h3>
+
+            <p class="text-slate-500 mt-2">
+                Créez votre premier projet.
+            </p>
+
+        </div>
 
     </main>
 
 </div>
 
 
-<script src="js/projects.js"></script>
 
-
-<script>
-
-    document
-        .getElementById("logoutBtn")
-        .addEventListener(
-            "click",
-            () => {
-
-                if (
-                    confirm(
-                        "Voulez-vous vraiment vous déconnecter ?"
-                    )
-                ) {
-
-                    localStorage.removeItem(
-                        "isLoggedIn"
-                    );
-
-                    window.location.href =
-                        "login.html";
-
-                }
-
-            }
-        );
-
-</script>
-
+<!-- ========================================================= -->
 <!-- MODALE NOUVEAU PROJET -->
+<!-- ========================================================= -->
 
 <div
     id="projectModal"
-    class="hidden fixed inset-0 z-[100] bg-black/50 items-center justify-center p-4"
+    class="hidden fixed inset-0 z-[999] bg-black/50 items-center justify-center p-4"
 >
 
-    <div class="bg-white w-full max-w-xl rounded-2xl shadow-xl">
 
-        <div class="flex justify-between items-center p-6 border-b">
+    <div
+        class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
+    >
+
+
+        <!-- HEADER MODALE -->
+
+        <div
+            class="flex items-center justify-between px-6 py-5 border-b border-slate-200"
+        >
 
             <div>
 
-                <h2 class="text-xl font-bold">
+                <h2
+                    id="modalTitle"
+                    class="text-xl font-bold"
+                >
                     Nouveau projet
                 </h2>
 
-                <p class="text-sm text-slate-500">
+                <p class="text-sm text-slate-500 mt-1">
                     Créer un nouveau projet
                 </p>
 
             </div>
 
+
             <button
                 id="closeProjectModal"
-                class="text-2xl text-slate-400"
+                type="button"
+                class="w-9 h-9 rounded-lg hover:bg-slate-100 text-slate-400 text-2xl"
             >
                 ×
             </button>
@@ -339,31 +585,54 @@
         </div>
 
 
+
+        <!-- FORMULAIRE -->
+
         <form
             id="projectForm"
             class="p-6 space-y-5"
         >
 
+
+            <!-- ID CACHÉ -->
+
+            <input
+                type="hidden"
+                id="projectId"
+            >
+
+
+            <!-- NOM -->
+
             <div>
 
-                <label class="block font-semibold text-sm mb-2">
+                <label
+                    for="projectName"
+                    class="block text-sm font-semibold text-slate-700 mb-2"
+                >
                     Nom du projet
                 </label>
 
                 <input
-                    id="projectName"
                     type="text"
+                    id="projectName"
                     required
                     placeholder="Ex : Site e-commerce"
-                    class="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                    class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
                 >
 
             </div>
 
 
+
+            <!-- DESCRIPTION -->
+
             <div>
 
-                <label class="block font-semibold text-sm mb-2">
+                <label
+                    for="projectDescription"
+                    class="block text-sm font-semibold text-slate-700 mb-2"
+                >
                     Description
                 </label>
 
@@ -371,23 +640,32 @@
                     id="projectDescription"
                     rows="4"
                     placeholder="Description du projet..."
-                    class="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                    class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none resize-none focus:ring-2 focus:ring-indigo-500"
                 ></textarea>
 
             </div>
 
 
+
+            <!-- STATUT + DEADLINE -->
+
             <div class="grid grid-cols-2 gap-4">
+
+
+                <!-- STATUT -->
 
                 <div>
 
-                    <label class="block font-semibold text-sm mb-2">
+                    <label
+                        for="projectStatus"
+                        class="block text-sm font-semibold text-slate-700 mb-2"
+                    >
                         Statut
                     </label>
 
                     <select
                         id="projectStatus"
-                        class="w-full border rounded-xl px-4 py-3"
+                        class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
                     >
 
                         <option value="active">
@@ -398,25 +676,26 @@
                             Terminé
                         </option>
 
-                        <option value="paused">
-                            En pause
-                        </option>
-
                     </select>
 
                 </div>
 
 
+                <!-- DEADLINE -->
+
                 <div>
 
-                    <label class="block font-semibold text-sm mb-2">
+                    <label
+                        for="projectDeadline"
+                        class="block text-sm font-semibold text-slate-700 mb-2"
+                    >
                         Deadline
                     </label>
 
                     <input
-                        id="projectDeadline"
                         type="date"
-                        class="w-full border rounded-xl px-4 py-3"
+                        id="projectDeadline"
+                        class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500"
                     >
 
                 </div>
@@ -424,19 +703,114 @@
             </div>
 
 
-            <div class="flex justify-end gap-3">
+
+            <!-- ================================================= -->
+            <!-- COULEUR -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label
+                    for="projectColor"
+                    class="block text-sm font-semibold text-slate-700 mb-2"
+                >
+                    Couleur du projet
+                </label>
+
+
+                <div class="flex items-center gap-4">
+
+                    <input
+                        type="color"
+                        id="projectColor"
+                        name="color"
+                        value="#4F46E5"
+                        class="w-16 h-12 p-1 bg-white border border-slate-200 rounded-xl cursor-pointer"
+                    >
+
+
+                    <div>
+
+                        <p
+                            id="colorValue"
+                            class="font-semibold text-slate-700"
+                        >
+                            #4F46E5
+                        </p>
+
+                        <p class="text-xs text-slate-500">
+                            Choisissez une couleur pour identifier votre projet.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- ARCHIVE -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <label
+                    for="projectArchive"
+                    class="flex items-center gap-3 cursor-pointer"
+                >
+
+                    <input
+                        type="checkbox"
+                        id="projectArchive"
+                        name="archive"
+                        class="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    >
+
+
+                    <div>
+
+                        <span
+                            class="block text-sm font-semibold text-slate-700"
+                        >
+                            Archive
+                        </span>
+
+                        <span
+                            class="block text-xs text-slate-500 mt-1"
+                        >
+                            Marquer ce projet comme archivé.
+                        </span>
+
+                    </div>
+
+                </label>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- BOUTONS -->
+            <!-- ================================================= -->
+
+            <div
+                class="flex justify-end gap-3 pt-3"
+            >
 
                 <button
                     type="button"
-                    id="cancelProjectBtn"
-                    class="px-5 py-3 rounded-xl border"
+                    id="cancelProject"
+                    class="px-5 py-3 border border-slate-200 rounded-xl text-slate-700 hover:bg-slate-50 transition"
                 >
                     Annuler
                 </button>
 
+
                 <button
                     type="submit"
-                    class="px-5 py-3 rounded-xl bg-indigo-600 text-white font-semibold"
+                    class="px-5 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition"
                 >
                     Créer le projet
                 </button>
@@ -450,134 +824,13 @@
 </div>
 
 
-<script>
 
-const projectModal =
-    document.getElementById("projectModal");
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
 
-const addProjectBtn =
-    document.getElementById("addProjectBtn");
+<script src="js/projects.js"></script>
 
-const closeProjectModal =
-    document.getElementById("closeProjectModal");
-
-const cancelProjectBtn =
-    document.getElementById("cancelProjectBtn");
-
-const projectForm =
-    document.getElementById("projectForm");
-
-
-addProjectBtn.addEventListener("click", () => {
-
-    projectModal.classList.remove("hidden");
-
-    projectModal.classList.add("flex");
-
-});
-
-
-function closeProject() {
-
-    projectModal.classList.add("hidden");
-
-    projectModal.classList.remove("flex");
-
-    projectForm.reset();
-
-}
-
-
-closeProjectModal.addEventListener(
-    "click",
-    closeProject
-);
-
-
-cancelProjectBtn.addEventListener(
-    "click",
-    closeProject
-);
-
-
-projectModal.addEventListener("click", (event) => {
-
-    if (event.target === projectModal) {
-
-        closeProject();
-
-    }
-
-});
-
-
-projectForm.addEventListener("submit", (event) => {
-
-    event.preventDefault();
-
-
-    const project = {
-
-        id:
-            "project_" +
-            Date.now(),
-
-        name:
-            document.getElementById(
-                "projectName"
-            ).value,
-
-        description:
-            document.getElementById(
-                "projectDescription"
-            ).value,
-
-        status:
-            document.getElementById(
-                "projectStatus"
-            ).value,
-
-        deadline:
-            document.getElementById(
-                "projectDeadline"
-            ).value,
-
-        createdAt:
-            new Date().toISOString()
-
-    };
-
-
-    const projects =
-        JSON.parse(
-            localStorage.getItem("projects")
-        ) || [];
-
-
-    projects.unshift(project);
-
-
-    localStorage.setItem(
-        "projects",
-        JSON.stringify(projects)
-    );
-
-
-    alert("Projet créé avec succès !");
-
-
-    closeProject();
-
-
-    if (typeof renderProjects === "function") {
-
-        renderProjects();
-
-    }
-
-});
-
-</script>
 </body>
 
 </html>
