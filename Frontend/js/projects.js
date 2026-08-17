@@ -4,14 +4,19 @@
 // ======================================================
 
 
-// ================= DONNÉES PAR DÉFAUT =================
+// ======================================================
+// PROJETS PAR DÉFAUT
+// ======================================================
 
 const defaultProjects = [
+
     {
         id: 1,
         name: "TaskFlow Pro",
         description: "Application de gestion de projets et de tâches.",
         status: "active",
+        color: "#4F46E5",
+        archive: false,
         createdAt: "2026-08-10",
         deadline: "2026-08-30"
     },
@@ -21,6 +26,8 @@ const defaultProjects = [
         name: "Site E-commerce",
         description: "Création d'une plateforme e-commerce.",
         status: "active",
+        color: "#0EA5E9",
+        archive: false,
         createdAt: "2026-08-08",
         deadline: "2026-09-05"
     },
@@ -30,13 +37,18 @@ const defaultProjects = [
         name: "Application Mobile",
         description: "Développement d'une application mobile.",
         status: "completed",
+        color: "#22C55E",
+        archive: false,
         createdAt: "2026-08-05",
         deadline: "2026-08-12"
     }
+
 ];
 
 
-// ================= INITIALISATION =================
+// ======================================================
+// INITIALISATION
+// ======================================================
 
 function initializeProjects() {
 
@@ -61,7 +73,9 @@ function initializeProjects() {
 }
 
 
-// ================= RÉCUPÉRATION =================
+// ======================================================
+// RÉCUPÉRER LES PROJETS
+// ======================================================
 
 function getProjects() {
 
@@ -72,6 +86,10 @@ function getProjects() {
 }
 
 
+// ======================================================
+// RÉCUPÉRER LES TÂCHES
+// ======================================================
+
 function getTasks() {
 
     return JSON.parse(
@@ -81,7 +99,9 @@ function getTasks() {
 }
 
 
-// ================= SAUVEGARDE =================
+// ======================================================
+// SAUVEGARDER
+// ======================================================
 
 function saveProjects(projects) {
 
@@ -93,7 +113,9 @@ function saveProjects(projects) {
 }
 
 
-// ================= ÉLÉMENTS =================
+// ======================================================
+// ÉLÉMENTS HTML
+// ======================================================
 
 const modal =
     document.getElementById("projectModal");
@@ -107,109 +129,294 @@ const container =
 const emptyState =
     document.getElementById("emptyState");
 
+const openProjectModal =
+    document.getElementById("openProjectModal");
 
-// ================= OUVRIR =================
+const closeProjectModal =
+    document.getElementById("closeProjectModal");
 
-document
-    .getElementById("openProjectModal")
-    .addEventListener(
-        "click",
-        openCreateModal
-    );
-
-
-// ================= FERMER =================
-
-document
-    .getElementById("closeProjectModal")
-    .addEventListener(
-        "click",
-        closeModal
-    );
+const cancelProject =
+    document.getElementById("cancelProject");
 
 
-document
-    .getElementById("cancelProject")
-    .addEventListener(
-        "click",
-        closeModal
-    );
+// ======================================================
+// OUVRIR MODALE
+// ======================================================
 
+openProjectModal.addEventListener(
+    "click",
+    function () {
+
+        openCreateModal();
+
+    }
+);
+
+
+// ======================================================
+// FERMER MODALE
+// ======================================================
+
+closeProjectModal.addEventListener(
+    "click",
+    closeModal
+);
+
+
+cancelProject.addEventListener(
+    "click",
+    closeModal
+);
+
+
+// ======================================================
+// FERMER EN CLIQUANT À L'EXTÉRIEUR
+// ======================================================
+
+modal.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            event.target === modal
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+// ======================================================
+// FERMER AVEC ESC
+// ======================================================
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape" &&
+            !modal.classList.contains("hidden")
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+// ======================================================
+// FERMER MODALE
+// ======================================================
 
 function closeModal() {
 
-    modal.classList.add("hidden");
+    modal.classList.add(
+        "hidden"
+    );
+
+    modal.classList.remove(
+        "flex"
+    );
 
     form.reset();
 
-    document.getElementById("projectId").value = "";
+    document.getElementById(
+        "projectId"
+    ).value = "";
 
-    document.getElementById("modalTitle").textContent =
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
         "Nouveau projet";
+
+    const color =
+        document.getElementById(
+            "projectColor"
+        );
+
+    if (color) {
+
+        color.value =
+            "#4F46E5";
+
+        updateColorText();
+
+    }
 
 }
 
 
-// ================= CRÉATION =================
+// ======================================================
+// OUVRIR CRÉATION
+// ======================================================
 
 function openCreateModal() {
 
     form.reset();
 
-    document.getElementById("projectId").value = "";
+    document.getElementById(
+        "projectId"
+    ).value = "";
 
-    document.getElementById("modalTitle").textContent =
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
         "Nouveau projet";
 
-    modal.classList.remove("hidden");
+    const color =
+        document.getElementById(
+            "projectColor"
+        );
+
+    if (color) {
+
+        color.value =
+            "#4F46E5";
+
+        updateColorText();
+
+    }
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+    modal.classList.add(
+        "flex"
+    );
 
 }
 
 
-// ================= SUBMIT =================
+// ======================================================
+// COULEUR
+// ======================================================
+
+const projectColor =
+    document.getElementById(
+        "projectColor"
+    );
+
+const colorValue =
+    document.getElementById(
+        "colorValue"
+    );
+
+
+if (projectColor) {
+
+    projectColor.addEventListener(
+        "input",
+        updateColorText
+    );
+
+}
+
+
+function updateColorText() {
+
+    if (
+        projectColor &&
+        colorValue
+    ) {
+
+        colorValue.textContent =
+            projectColor.value.toUpperCase();
+
+    }
+
+}
+
+
+// ======================================================
+// CRÉATION / MODIFICATION
+// ======================================================
 
 form.addEventListener(
     "submit",
-    function(event) {
+    function (event) {
 
         event.preventDefault();
 
 
+        // ------------------------------------------
+        // RÉCUPÉRATION
+        // ------------------------------------------
+
         const id =
-            document.getElementById("projectId").value;
+            document.getElementById(
+                "projectId"
+            ).value;
 
 
         const name =
-            document
-                .getElementById("projectName")
-                .value
-                .trim();
+            document.getElementById(
+                "projectName"
+            ).value.trim();
 
 
         const description =
-            document
-                .getElementById("projectDescription")
-                .value
-                .trim();
+            document.getElementById(
+                "projectDescription"
+            ).value.trim();
 
 
         const status =
-            document
-                .getElementById("projectStatus")
-                .value;
+            document.getElementById(
+                "projectStatus"
+            ).value;
 
 
         const deadline =
-            document
-                .getElementById("projectDeadline")
-                .value;
+            document.getElementById(
+                "projectDeadline"
+            ).value;
 
+
+        const color =
+            document.getElementById(
+                "projectColor"
+            ).value;
+
+
+        const archive =
+            document.getElementById(
+                "projectArchive"
+            ).checked;
+
+
+        // ------------------------------------------
+        // VALIDATION
+        // ------------------------------------------
+
+        if (!name) {
+
+            alert(
+                "Veuillez saisir le nom du projet."
+            );
+
+            return;
+
+        }
+
+
+        // ------------------------------------------
+        // PROJETS
+        // ------------------------------------------
 
         const projects =
             getProjects();
 
 
-        // ================= MODIFICATION =================
+        // ------------------------------------------
+        // MODIFICATION
+        // ------------------------------------------
 
         if (id) {
 
@@ -227,10 +434,23 @@ form.addEventListener(
 
                     ...projects[index],
 
-                    name,
-                    description,
-                    status,
-                    deadline
+                    name:
+                        name,
+
+                    description:
+                        description,
+
+                    status:
+                        status,
+
+                    deadline:
+                        deadline,
+
+                    color:
+                        color,
+
+                    archive:
+                        archive
 
                 };
 
@@ -239,38 +459,69 @@ form.addEventListener(
         }
 
 
-        // ================= CRÉATION =================
+        // ------------------------------------------
+        // CRÉATION
+        // ------------------------------------------
 
         else {
 
             const newProject = {
 
-                id: Date.now(),
+                id:
+                    Date.now(),
 
-                name,
+                name:
+                    name,
 
-                description,
+                description:
+                    description,
 
-                status,
+                status:
+                    status,
+
+                color:
+                    color,
+
+                archive:
+                    archive,
 
                 createdAt:
                     new Date()
                         .toISOString()
                         .split("T")[0],
 
-                deadline
+                deadline:
+                    deadline
 
             };
 
 
-            projects.unshift(newProject);
+            projects.unshift(
+                newProject
+            );
 
         }
 
 
-        saveProjects(projects);
+        // ------------------------------------------
+        // SAUVEGARDE
+        // ------------------------------------------
+
+        saveProjects(
+            projects
+        );
+
+
+        // ------------------------------------------
+        // FERMER
+        // ------------------------------------------
 
         closeModal();
+
+
+        // ------------------------------------------
+        // ACTUALISER
+        // ------------------------------------------
 
         renderProjects();
 
@@ -278,9 +529,13 @@ form.addEventListener(
 );
 
 
-// ================= PROGRESSION =================
+// ======================================================
+// PROGRESSION
+// ======================================================
 
-function getProjectProgress(projectId) {
+function getProjectProgress(
+    projectId
+) {
 
     const tasks =
         getTasks().filter(
@@ -290,7 +545,9 @@ function getProjectProgress(projectId) {
         );
 
 
-    if (tasks.length === 0) {
+    if (
+        tasks.length === 0
+    ) {
 
         return 0;
 
@@ -300,18 +557,24 @@ function getProjectProgress(projectId) {
     const completed =
         tasks.filter(
             task =>
-                task.status === "completed"
+                task.status ===
+                "completed"
         ).length;
 
 
     return Math.round(
-        (completed / tasks.length) * 100
+        (
+            completed /
+            tasks.length
+        ) * 100
     );
 
 }
 
 
-// ================= AFFICHAGE =================
+// ======================================================
+// AFFICHER LES PROJETS
+// ======================================================
 
 function renderProjects() {
 
@@ -320,53 +583,65 @@ function renderProjects() {
 
 
     const search =
-        document
-            .getElementById("projectSearch")
-            .value
-            .trim()
-            .toLowerCase();
+        document.getElementById(
+            "projectSearch"
+        ).value
+        .trim()
+        .toLowerCase();
 
 
     const status =
-        document
-            .getElementById("statusFilter")
-            .value;
+        document.getElementById(
+            "statusFilter"
+        ).value;
 
 
-    // Recherche
+    // ------------------------------------------
+    // RECHERCHE
+    // ------------------------------------------
 
     if (search) {
 
         projects =
-            projects.filter(project => {
+            projects.filter(
+                project => {
 
-                return (
+                    return (
 
-                    project.name
-                        .toLowerCase()
-                        .includes(search)
+                        project.name
+                            .toLowerCase()
+                            .includes(search)
 
-                    ||
+                        ||
 
-                    project.description
-                        .toLowerCase()
-                        .includes(search)
+                        (
+                            project.description ||
+                            ""
+                        )
+                            .toLowerCase()
+                            .includes(search)
 
-                );
+                    );
 
-            });
+                }
+            );
 
     }
 
 
-    // Statut
+    // ------------------------------------------
+    // FILTRE
+    // ------------------------------------------
 
-    if (status !== "all") {
+    if (
+        status !== "all"
+    ) {
 
         projects =
             projects.filter(
                 project =>
-                    project.status === status
+                    project.status ===
+                    status
             );
 
     }
@@ -375,39 +650,62 @@ function renderProjects() {
     updateStatistics();
 
 
-    if (projects.length === 0) {
+    // ------------------------------------------
+    // AUCUN PROJET
+    // ------------------------------------------
+
+    if (
+        projects.length === 0
+    ) {
 
         container.innerHTML = "";
 
-        emptyState.classList.remove("hidden");
+        emptyState.classList.remove(
+            "hidden"
+        );
 
         return;
 
     }
 
 
-    emptyState.classList.add("hidden");
+    emptyState.classList.add(
+        "hidden"
+    );
 
+
+    // ------------------------------------------
+    // CARTES
+    // ------------------------------------------
 
     container.innerHTML =
         projects
-            .map(project =>
-                createProjectCard(project)
+            .map(
+                project =>
+                    createProjectCard(
+                        project
+                    )
             )
             .join("");
 
 }
 
 
-// ================= CARTE =================
+// ======================================================
+// CARTE PROJET
+// ======================================================
 
-function createProjectCard(project) {
+function createProjectCard(
+    project
+) {
 
     const progress =
-        getProjectProgress(project.id);
+        getProjectProgress(
+            project.id
+        );
 
 
-    const projectTasks =
+    const tasks =
         getTasks().filter(
             task =>
                 String(task.project) ===
@@ -416,163 +714,279 @@ function createProjectCard(project) {
 
 
     const completedTasks =
-        projectTasks.filter(
+        tasks.filter(
             task =>
-                task.status === "completed"
+                task.status ===
+                "completed"
         ).length;
 
 
+    const color =
+        project.color ||
+        "#4F46E5";
+
+
     const isLate =
+        project.deadline &&
         new Date(project.deadline) <
-            new Date() &&
+        new Date() &&
         project.status !== "completed";
-
-
-    const statusClass =
-        project.status === "completed"
-
-            ? "bg-green-100 text-green-700"
-
-            : "bg-blue-100 text-blue-700";
 
 
     const statusLabel =
         project.status === "completed"
-
             ? "Terminé"
-
             : "Actif";
+
+
+    const statusClass =
+        project.status === "completed"
+            ? "bg-green-100 text-green-700"
+            : "bg-blue-100 text-blue-700";
 
 
     return `
 
         <div
-            class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition"
+            class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition overflow-hidden"
         >
 
-            <!-- HEADER -->
+            <!-- COULEUR -->
 
-            <div class="flex justify-between gap-4">
+            <div
+                class="h-2"
+                style="background-color:${color}"
+            ></div>
 
-                <div>
 
-                    <h3 class="text-xl font-bold text-slate-900">
-                        ${escapeHtml(project.name)}
-                    </h3>
+            <div class="p-6">
 
-                    <p class="text-sm text-slate-500 mt-2">
-                        ${escapeHtml(
-                            project.description ||
-                            "Aucune description"
-                        )}
+
+                <!-- TITRE -->
+
+                <div
+                    class="flex justify-between gap-4"
+                >
+
+                    <div class="min-w-0">
+
+                        <div
+                            class="flex items-center gap-2"
+                        >
+
+                            <span
+                                class="w-3 h-3 rounded-full flex-shrink-0"
+                                style="background-color:${color}"
+                            ></span>
+
+                            <h3
+                                class="font-bold text-xl truncate"
+                            >
+                                ${escapeHtml(project.name)}
+                            </h3>
+
+                        </div>
+
+
+                        <p
+                            class="text-sm text-slate-500 mt-2 line-clamp-2"
+                        >
+                            ${
+                                escapeHtml(
+                                    project.description ||
+                                    "Aucune description"
+                                )
+                            }
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="flex flex-col items-end gap-2"
+                    >
+
+                        <span
+                            class="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${statusClass}"
+                        >
+                            ${statusLabel}
+                        </span>
+
+
+                        ${
+                            project.archive
+                                ? `
+                                    <span
+                                        class="px-3 py-1 rounded-full bg-slate-200 text-slate-600 text-xs font-semibold whitespace-nowrap"
+                                    >
+                                        📦 Archivé
+                                    </span>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PROGRESSION -->
+
+                <div class="mt-6">
+
+                    <div
+                        class="flex justify-between mb-2"
+                    >
+
+                        <span
+                            class="text-sm text-slate-500"
+                        >
+                            Progression
+                        </span>
+
+                        <span
+                            class="text-sm font-bold"
+                        >
+                            ${progress}%
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        class="w-full h-3 bg-slate-100 rounded-full overflow-hidden"
+                    >
+
+                        <div
+                            class="h-full rounded-full transition-all"
+                            style="
+                                width:${progress}%;
+                                background-color:${color};
+                            "
+                        ></div>
+
+                    </div>
+
+
+                    <p
+                        class="text-xs text-slate-400 mt-2"
+                    >
+                        ${completedTasks}
+                        tâche(s) terminée(s) sur
+                        ${tasks.length}
                     </p>
 
                 </div>
 
 
-                <span
-                    class="h-fit px-3 py-1 rounded-full text-xs font-semibold ${statusClass}"
-                >
-                    ${statusLabel}
-                </span>
 
-            </div>
+                <!-- INFORMATIONS -->
+
+                <div class="mt-6 space-y-3">
 
 
-            <!-- PROGRESSION -->
-
-            <div class="mt-6">
-
-                <div class="flex justify-between mb-2">
-
-                    <span class="text-sm text-slate-500">
-                        Progression
-                    </span>
-
-                    <span class="text-sm font-bold">
-                        ${progress}%
-                    </span>
-
-                </div>
-
-
-                <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                    <!-- CRÉATION -->
 
                     <div
-                        class="h-full bg-indigo-600 rounded-full transition-all"
-                        style="width:${progress}%"
-                    ></div>
-
-                </div>
-
-
-                <p class="text-xs text-slate-400 mt-2">
-                    ${completedTasks} tâche(s) terminée(s) sur ${projectTasks.length}
-                </p>
-
-            </div>
-
-
-            <!-- INFORMATIONS -->
-
-            <div class="mt-6 space-y-3">
-
-                <div class="flex justify-between text-sm">
-
-                    <span class="text-slate-500">
-                        📅 Création
-                    </span>
-
-                    <span class="font-medium">
-                        ${formatDate(project.createdAt)}
-                    </span>
-
-                </div>
-
-
-                <div class="flex justify-between text-sm">
-
-                    <span class="text-slate-500">
-                        ${
-                            isLate
-                                ? "⚠️ Deadline"
-                                : "📅 Deadline"
-                        }
-                    </span>
-
-                    <span
-                        class="${
-                            isLate
-                                ? "text-red-600 font-bold"
-                                : "font-medium"
-                        }"
+                        class="flex justify-between text-sm"
                     >
-                        ${formatDate(project.deadline)}
-                    </span>
+
+                        <span class="text-slate-500">
+                            📅 Création
+                        </span>
+
+                        <span class="font-medium">
+                            ${formatDate(project.createdAt)}
+                        </span>
+
+                    </div>
+
+
+                    <!-- DEADLINE -->
+
+                    <div
+                        class="flex justify-between text-sm"
+                    >
+
+                        <span class="text-slate-500">
+                            ${
+                                isLate
+                                    ? "⚠️ Deadline"
+                                    : "📅 Deadline"
+                            }
+                        </span>
+
+                        <span
+                            class="${
+                                isLate
+                                    ? "text-red-600 font-bold"
+                                    : "font-medium"
+                            }"
+                        >
+                            ${formatDate(project.deadline)}
+                        </span>
+
+                    </div>
+
+
+                    <!-- COULEUR -->
+
+                    <div
+                        class="flex justify-between items-center text-sm"
+                    >
+
+                        <span class="text-slate-500">
+                            🎨 Couleur
+                        </span>
+
+                        <div
+                            class="flex items-center gap-2"
+                        >
+
+                            <span
+                                class="w-5 h-5 rounded-full border border-slate-200"
+                                style="background-color:${color}"
+                            ></span>
+
+                            <span
+                                class="font-medium uppercase"
+                            >
+                                ${color}
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-            </div>
 
 
-            <!-- ACTIONS -->
+                <!-- ACTIONS -->
 
-            <div class="flex gap-2 mt-6 pt-5 border-t">
-
-                <button
-                    onclick="editProject(${project.id})"
-                    class="flex-1 px-3 py-2 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm font-medium"
+                <div
+                    class="flex gap-2 mt-6 pt-5 border-t border-slate-200"
                 >
-                    ✏ Modifier
-                </button>
+
+                    <button
+                        type="button"
+                        onclick="editProject(${project.id})"
+                        class="flex-1 px-3 py-2 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm font-semibold"
+                    >
+                        ✏ Modifier
+                    </button>
 
 
-                <button
-                    onclick="deleteProject(${project.id})"
-                    class="flex-1 px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-sm font-medium"
-                >
-                    🗑 Supprimer
-                </button>
+                    <button
+                        type="button"
+                        onclick="deleteProject(${project.id})"
+                        class="flex-1 px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-sm font-semibold"
+                    >
+                        🗑 Supprimer
+                    </button>
+
+                </div>
 
             </div>
 
@@ -583,9 +997,13 @@ function createProjectCard(project) {
 }
 
 
-// ================= MODIFIER =================
+// ======================================================
+// MODIFIER UN PROJET
+// ======================================================
 
-function editProject(id) {
+function editProject(
+    id
+) {
 
     const project =
         getProjects().find(
@@ -595,41 +1013,82 @@ function editProject(id) {
         );
 
 
-    if (!project) return;
+    if (!project) {
+
+        return;
+
+    }
 
 
-    document.getElementById("projectId").value =
+    document.getElementById(
+        "projectId"
+    ).value =
         project.id;
 
 
-    document.getElementById("projectName").value =
+    document.getElementById(
+        "projectName"
+    ).value =
         project.name;
 
 
-    document.getElementById("projectDescription").value =
+    document.getElementById(
+        "projectDescription"
+    ).value =
         project.description || "";
 
 
-    document.getElementById("projectStatus").value =
+    document.getElementById(
+        "projectStatus"
+    ).value =
         project.status;
 
 
-    document.getElementById("projectDeadline").value =
-        project.deadline;
+    document.getElementById(
+        "projectDeadline"
+    ).value =
+        project.deadline || "";
 
 
-    document.getElementById("modalTitle").textContent =
+    document.getElementById(
+        "projectColor"
+    ).value =
+        project.color || "#4F46E5";
+
+
+    document.getElementById(
+        "projectArchive"
+    ).checked =
+        Boolean(project.archive);
+
+
+    updateColorText();
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
         "Modifier le projet";
 
 
-    modal.classList.remove("hidden");
+    modal.classList.remove(
+        "hidden"
+    );
+
+    modal.classList.add(
+        "flex"
+    );
 
 }
 
 
-// ================= SUPPRIMER =================
+// ======================================================
+// SUPPRIMER
+// ======================================================
 
-function deleteProject(id) {
+function deleteProject(
+    id
+) {
 
     const projects =
         getProjects();
@@ -643,30 +1102,20 @@ function deleteProject(id) {
         );
 
 
-    if (!project) return;
+    if (!project) {
 
-
-    const associatedTasks =
-        getTasks().filter(
-            task =>
-                String(task.project) ===
-                String(id)
-        );
-
-
-    let message =
-        `Voulez-vous supprimer le projet "${project.name}" ?`;
-
-
-    if (associatedTasks.length > 0) {
-
-        message +=
-            `\n\nAttention : ${associatedTasks.length} tâche(s) sont associées à ce projet.`;
+        return;
 
     }
 
 
-    if (!confirm(message)) {
+    const confirmation =
+        confirm(
+            `Voulez-vous supprimer le projet "${project.name}" ?`
+        );
+
+
+    if (!confirmation) {
 
         return;
 
@@ -681,7 +1130,9 @@ function deleteProject(id) {
         );
 
 
-    saveProjects(updatedProjects);
+    saveProjects(
+        updatedProjects
+    );
 
 
     renderProjects();
@@ -689,7 +1140,9 @@ function deleteProject(id) {
 }
 
 
-// ================= STATISTIQUES =================
+// ======================================================
+// STATISTIQUES
+// ======================================================
 
 function updateStatistics() {
 
@@ -704,34 +1157,50 @@ function updateStatistics() {
     const active =
         projects.filter(
             project =>
-                project.status === "active"
+                project.status ===
+                "active"
         ).length;
 
 
     const completed =
         projects.filter(
             project =>
-                project.status === "completed"
+                project.status ===
+                "completed"
         ).length;
 
 
-    let average = 0;
+    let average =
+        0;
 
 
-    if (total > 0) {
+    if (
+        total > 0
+    ) {
 
         const totalProgress =
             projects.reduce(
-                (sum, project) =>
-                    sum +
-                    getProjectProgress(project.id),
+                function (
+                    sum,
+                    project
+                ) {
+
+                    return (
+                        sum +
+                        getProjectProgress(
+                            project.id
+                        )
+                    );
+
+                },
                 0
             );
 
 
         average =
             Math.round(
-                totalProgress / total
+                totalProgress /
+                total
             );
 
     }
@@ -739,29 +1208,65 @@ function updateStatistics() {
 
     document.getElementById(
         "totalProjects"
-    ).textContent = total;
+    ).textContent =
+        total;
 
 
     document.getElementById(
         "activeProjects"
-    ).textContent = active;
+    ).textContent =
+        active;
 
 
     document.getElementById(
         "completedProjects"
-    ).textContent = completed;
+    ).textContent =
+        completed;
 
 
     document.getElementById(
         "averageProgress"
-    ).textContent = `${average}%`;
+    ).textContent =
+        `${average}%`;
 
 }
 
 
-// ================= DATE =================
+// ======================================================
+// RECHERCHE
+// ======================================================
 
-function formatDate(date) {
+document
+    .getElementById(
+        "projectSearch"
+    )
+    .addEventListener(
+        "input",
+        renderProjects
+    );
+
+
+// ======================================================
+// FILTRE
+// ======================================================
+
+document
+    .getElementById(
+        "statusFilter"
+    )
+    .addEventListener(
+        "change",
+        renderProjects
+    );
+
+
+// ======================================================
+// DATE
+// ======================================================
+
+function formatDate(
+    date
+) {
 
     if (!date) {
 
@@ -770,7 +1275,22 @@ function formatDate(date) {
     }
 
 
-    return new Date(date).toLocaleDateString(
+    const dateObject =
+        new Date(date);
+
+
+    if (
+        Number.isNaN(
+            dateObject.getTime()
+        )
+    ) {
+
+        return "-";
+
+    }
+
+
+    return dateObject.toLocaleDateString(
         "fr-FR",
         {
             day: "2-digit",
@@ -782,9 +1302,13 @@ function formatDate(date) {
 }
 
 
-// ================= SÉCURITÉ =================
+// ======================================================
+// SÉCURISER LE HTML
+// ======================================================
 
-function escapeHtml(value) {
+function escapeHtml(
+    value
+) {
 
     if (
         value === null ||
@@ -798,83 +1322,79 @@ function escapeHtml(value) {
 
     return String(value)
 
-        .replace(/&/g, "&amp;")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-        .replace(/</g, "&lt;")
+        .replace(
+            /</g,
+            "&lt;"
+        )
 
-        .replace(/>/g, "&gt;")
+        .replace(
+            />/g,
+            "&gt;"
+        )
 
-        .replace(/"/g, "&quot;")
+        .replace(
+            /"/g,
+            "&quot;"
+        )
 
-        .replace(/'/g, "&#039;");
-
-}
-
-
-// ================= RECHERCHE =================
-
-document
-    .getElementById("projectSearch")
-    .addEventListener(
-        "input",
-        renderProjects
-    );
-
-
-document
-    .getElementById("searchInput")
-    .addEventListener(
-        "input",
-        function() {
-
-            document.getElementById(
-                "projectSearch"
-            ).value = this.value;
-
-            renderProjects();
-
-        }
-    );
-
-
-// ================= FILTRE =================
-
-document
-    .getElementById("statusFilter")
-    .addEventListener(
-        "change",
-        renderProjects
-    );
-
-
-// ================= ESC =================
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape" &&
-            !modal.classList.contains("hidden")
-        ) {
-
-            closeModal();
-
-        }
-
-    }
-);
-
-
-// ================= INITIALISATION =================
-
-function init() {
-
-    initializeProjects();
-
-    renderProjects();
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
-init();
+// ======================================================
+// DÉCONNEXION
+// ======================================================
+
+const logoutBtn =
+    document.getElementById(
+        "logoutBtn"
+    );
+
+
+if (logoutBtn) {
+
+    logoutBtn.addEventListener(
+        "click",
+        function () {
+
+            const confirmation =
+                confirm(
+                    "Voulez-vous vraiment vous déconnecter ?"
+                );
+
+
+            if (confirmation) {
+
+                localStorage.removeItem(
+                    "isLoggedIn"
+                );
+
+                window.location.href =
+                    "login.html";
+
+            }
+
+        }
+    );
+
+}
+
+
+// ======================================================
+// INITIALISATION
+// ======================================================
+
+initializeProjects();
+
+renderProjects();
+
+updateColorText();
