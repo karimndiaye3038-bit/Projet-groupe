@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TaskFlow Pro - Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+
+<body class="bg-slate-100 text-slate-800">
+
+
+<!-- ===================================================== -->
+<!-- SIDEBAR -->
+<!-- ===================================================== -->
+
+<aside
+    class="fixed top-0 left-0 z-50 w-64 h-screen bg-slate-900 text-white flex flex-col"
+>
+
+
+    <!-- LOGO -->
+
+    <div class="h-20 px-6 flex items-center border-b border-slate-800">
+
+        <div class="flex items-center gap-3">
+
+            <div
+                class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold"
+            >
+                TF
+            </div>
+
+            <div>
+
+                <h1 class="font-bold text-lg">
+                    TaskFlow Pro
+                </h1>
+
+                <p class="text-xs text-slate-400">
+                    Gestion de projets
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MENU -->
+
+    <nav class="flex-1 px-4 py-6">
+
+        <p class="px-3 mb-3 text-xs uppercase tracking-wider text-slate-500">
+            Menu principal
+        </p>
+
+
+        <!-- DASHBOARD ACTIF -->
+
+        <a
+            href="index.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl bg-indigo-600 text-white"
+        >
+
+            <span class="w-6 text-center">
+                ▣
+            </span>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <!-- TACHES -->
+
+        <a
+            href="tasks.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+
+            <span class="w-6 text-center">
+                ✓
+            </span>
+
+            <span>
+                Tâches
+            </span>
+
+        </a>
+
+
+        <!-- PROJETS -->
+
+        <a
+            href="projects.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+
+            <span class="w-6 text-center">
+                □
+            </span>
+
+            <span>
+                Projets
+            </span>
+
+        </a>
+
+
+        <!-- MEMBRES -->
+
+        <a
+            href="members.html"
+            class="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+
+            <span class="w-6 text-center">
+                ◎
+            </span>
+
+            <span>
+                Membres
+            </span>
+
+        </a>
+
+
+        <!-- SEPARATION -->
+
+        <div class="border-t border-slate-800 my-6"></div>
+
+
+        <!-- PARAMETRES -->
+
+        <a
+            href="settings.html"
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-300 hover:bg-slate-800 hover:text-white transition"
+        >
+
+            <span class="w-6 text-center">
+                ⚙
+            </span>
+
+            <span>
+                Paramètres
+            </span>
+
+        </a>
+
+    </nav>
+
+
+    <!-- UTILISATEUR -->
+
+    <div class="p-4 border-t border-slate-800">
+
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800">
+
+            <div
+                class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center font-bold"
+            >
+                F
+            </div>
+
+            <div class="flex-1">
+
+                <p class="text-sm font-semibold">
+                    Fatou
+                </p>
+
+                <p class="text-xs text-slate-400">
+                    Administrateur
+                </p>
+
+            </div>
+
+            <button
+                id="logoutBtn"
+                type="button"
+                class="text-slate-400 hover:text-white text-xl"
+                title="Déconnexion"
+            >
+                ⇥
+            </button>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+
+<!-- ===================================================== -->
+<!-- CONTENU PRINCIPAL -->
+<!-- ===================================================== -->
+
+<div class="ml-64 min-h-screen">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <header
+        class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-40"
+    >
+
+
+        <!-- TITRE -->
+
+        <div>
+
+            <h2 class="text-xl font-bold">
+                Dashboard
+            </h2>
+
+            <p class="text-sm text-slate-500">
+                Vue générale de votre activité
+            </p>
+
+        </div>
+
+
+        <!-- RECHERCHE -->
+
+        <div
+            class="flex items-center w-80 bg-slate-100 rounded-xl px-4"
+        >
+
+            <span class="text-slate-400">
+                🔍
+            </span>
+
+            <input
+                id="globalSearch"
+                type="text"
+                placeholder="Rechercher..."
+                class="w-full bg-transparent outline-none px-3 py-3 text-sm"
+            >
+
+        </div>
+
+
+        <!-- PROFIL -->
+
+        <div class="flex items-center gap-3">
+
+            <div
+                class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold"
+            >
+                F
+            </div>
+
+            <div>
+
+                <p class="text-sm font-semibold">
+                    Fatou
+                </p>
+
+                <p class="text-xs text-slate-500">
+                    Administrateur
+                </p>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ================================================= -->
+    <!-- MAIN -->
+    <!-- ================================================= -->
+
+    <main class="p-8">
+
+
+        <!-- BIENVENUE -->
+
+        <div class="mb-8">
+
+            <h1 class="text-3xl font-bold">
+                Bonjour 👋
+            </h1>
+
+            <p class="text-slate-500 mt-1">
+                Voici un aperçu de votre activité.
+            </p>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- STATISTIQUES PROJETS -->
+        <!-- ================================================= -->
+
+        <div class="grid grid-cols-3 gap-5 mb-5">
+
+
+            <!-- TOTAL PROJETS -->
+
+            <div
+                class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Total projets
+                        </p>
+
+                        <p
+                            id="totalProjects"
+                            class="text-3xl font-bold mt-2"
+                        >
+                            0
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl"
+                    >
+                        □
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROJETS ACTIFS -->
+
+            <div
+                class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Projets actifs
+                        </p>
+
+                        <p
+                            id="activeProjects"
+                            class="text-3xl font-bold text-blue-600 mt-2"
+                        >
+                            0
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl"
+                    >
+                        ●
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROJETS TERMINES -->
+
+            <div
+                class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+            >
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <p class="text-sm text-slate-500">
+                            Projets terminés
+                        </p>
+
+                        <p
+                            id="completedProjects"
+                            class="text-3xl font-bold text-green-600 mt-2"
+                        >
+                            0
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center text-xl"
+                    >
+                        ✓
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- STATISTIQUES TACHES -->
+        <!-- ================================================= -->
+
+        <div class="grid grid-cols-5 gap-5 mb-8">
+
+
+            <!-- TOTAL TACHES -->
+
+            <div
+                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+            >
+
+                <p class="text-sm text-slate-500">
+                    Total tâches
+                </p>
+
+                <p
+                    id="totalTasks"
+                    class="text-3xl font-bold mt-2"
+                >
+                    0
+                </p>
+
+            </div>
+
+
+            <!-- TODO -->
+
+            <div
+                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+            >
+
+                <p class="text-sm text-slate-500">
+                    À faire
+                </p>
+
+                <p
+                    id="todoTasks"
+                    class="text-3xl font-bold text-orange-500 mt-2"
+                >
+                    0
+                </p>
+
+            </div>
+
+
+            <!-- EN COURS -->
+
+            <div
+                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+            >
+
+                <p class="text-sm text-slate-500">
+                    En cours
+                </p>
+
+                <p
+                    id="progressTasks"
+                    class="text-3xl font-bold text-blue-500 mt-2"
+                >
+                    0
+                </p>
+
+            </div>
+
+
+            <!-- TERMINEES -->
+
+            <div
+                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+            >
+
+                <p class="text-sm text-slate-500">
+                    Terminées
+                </p>
+
+                <p
+                    id="completedTasks"
+                    class="text-3xl font-bold text-green-500 mt-2"
+                >
+                    0
+                </p>
+
+            </div>
+
+
+            <!-- EN RETARD -->
+
+            <div
+                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+            >
+
+                <p class="text-sm text-slate-500">
+                    En retard
+                </p>
+
+                <p
+                    id="lateTasks"
+                    class="text-3xl font-bold text-red-500 mt-2"
+                >
+                    0
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- MEMBRES -->
+        <!-- ================================================= -->
+
+        <div
+            class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mb-8"
+        >
+
+            <div class="flex items-center justify-between">
+
+                <div>
+
+                    <p class="text-sm text-slate-500">
+                        Nombre de membres
+                    </p>
+
+                    <p
+                        id="totalMembers"
+                        class="text-3xl font-bold text-purple-600 mt-2"
+                    >
+                        0
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl"
+                >
+                    ◎
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- PROGRESSION GLOBALE -->
+        <!-- ================================================= -->
+
+        <div
+            class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mb-8"
+        >
+
+
+            <div class="flex justify-between items-center">
+
+
+                <div>
+
+                    <h3 class="text-xl font-bold">
+                        Progression globale
+                    </h3>
+
+                    <p
+                        id="globalProgressText"
+                        class="text-sm text-slate-500 mt-1"
+                    >
+                        0 tâche terminée sur 0
+                    </p>
+
+                </div>
+
+
+                <span
+                    id="globalProgressPercent"
+                    class="text-3xl font-bold text-indigo-600"
+                >
+                    0%
+                </span>
+
+            </div>
+
+
+            <!-- BARRE -->
+
+            <div
+                class="mt-6 h-4 bg-slate-100 rounded-full overflow-hidden"
+            >
+
+                <div
+                    id="globalProgressBar"
+                    class="h-full bg-indigo-600 rounded-full transition-all duration-500"
+                    style="width: 0%"
+                ></div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- PROJETS RECENTS + TACHES URGENTES -->
+        <!-- ================================================= -->
+
+        <div class="grid grid-cols-2 gap-6">
+
+
+            <!-- ============================================= -->
+            <!-- PROJETS RECENTS -->
+            <!-- ============================================= -->
+
+            <div
+                class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+            >
+
+                <div class="flex justify-between items-center mb-5">
+
+                    <div>
+
+                        <h3 class="text-xl font-bold">
+                            Projets récents
+                        </h3>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Derniers projets créés
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="projects.html"
+                        class="text-sm text-indigo-600 font-semibold hover:text-indigo-800"
+                    >
+                        Voir tout
+                    </a>
+
+                </div>
+
+
+                <!-- IMPORTANT -->
+
+                <div id="recentProjects">
+
+                    <div class="text-center py-8">
+
+                        <p class="text-slate-400">
+                            Aucun projet pour le moment.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ============================================= -->
+            <!-- TACHES URGENTES -->
+            <!-- ============================================= -->
+
+            <div
+                class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm"
+            >
+
+                <div class="flex justify-between items-center mb-5">
+
+                    <div>
+
+                        <h3 class="text-xl font-bold">
+                            Tâches urgentes
+                        </h3>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Tâches nécessitant votre attention
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="tasks.html"
+                        class="text-sm text-indigo-600 font-semibold hover:text-indigo-800"
+                    >
+                        Voir tout
+                    </a>
+
+                </div>
+
+
+                <!-- IMPORTANT -->
+
+                <div id="urgentTasks">
+
+                    <div class="text-center py-8">
+
+                        <p class="text-slate-400">
+                            Aucune tâche urgente 🎉
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- ===================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ===================================================== -->
+
+<script src="js/dashboard.js"></script>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        // ===============================
+        // DECONNEXION
+        // ===============================
+
+        const logoutBtn =
+            document.getElementById(
+                "logoutBtn"
+            );
+
+
+        if (logoutBtn) {
+
+            logoutBtn.addEventListener(
+                "click",
+                function () {
+
+                    const confirmation =
+                        confirm(
+                            "Voulez-vous vraiment vous déconnecter ?"
+                        );
+
+
+                    if (confirmation) {
+
+                        localStorage.removeItem(
+                            "isLoggedIn"
+                        );
+
+
+                        window.location.href =
+                            "login.html";
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        // ===============================
+        // RECHERCHE
+        // ===============================
+
+        const search =
+            document.getElementById(
+                "globalSearch"
+            );
+
+
+        if (search) {
+
+            search.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        const value =
+                            search.value
+                                .trim()
+                                .toLowerCase();
+
+
+                        if (!value) {
+
+                            return;
+
+                        }
+
+
+                        const tasks =
+                            JSON.parse(
+                                localStorage.getItem(
+                                    "tasks"
+                                )
+                            ) || [];
+
+
+                        const projects =
+                            JSON.parse(
+                                localStorage.getItem(
+                                    "projects"
+                                )
+                            ) || [];
+
+
+                        const members =
+                            JSON.parse(
+                                localStorage.getItem(
+                                    "members"
+                                )
+                            ) || [];
+
+
+                        const taskFound =
+                            tasks.find(
+                                task =>
+                                    String(
+                                        task.title || ""
+                                    )
+                                    .toLowerCase()
+                                    .includes(value)
+                            );
+
+
+                        const projectFound =
+                            projects.find(
+                                project =>
+                                    String(
+                                        project.name || ""
+                                    )
+                                    .toLowerCase()
+                                    .includes(value)
+                            );
+
+
+                        const memberFound =
+                            members.find(
+                                member =>
+                                    `${member.firstName || ""} ${member.lastName || ""}`
+                                    .toLowerCase()
+                                    .includes(value)
+                            );
+
+
+                        if (taskFound) {
+
+                            window.location.href =
+                                "tasks.html";
+
+                        }
+                        else if (projectFound) {
+
+                            window.location.href =
+                                "projects.html";
+
+                        }
+                        else if (memberFound) {
+
+                            window.location.href =
+                                "members.html";
+
+                        }
+                        else {
+
+                            alert(
+                                "Aucun résultat trouvé."
+                            );
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+
+);
+
+</script>
+
+<script src="js/dashboard.js"></script>
+
+</body>
+
+</html>

@@ -7,12 +7,13 @@ const {
   updateTask,
   deleteTask,
 } = require("../controllers/taskController");
-
+const {
+  validateTask
+} = require("../middlewares/validation");
 const router = express.Router();
 
 // Créer une tâche
-router.post("/", createTask);
-
+router.post("/", validateTask, createTask);
 // Afficher toutes les tâches
 router.get("/", getTasks);
 

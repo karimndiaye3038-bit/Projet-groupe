@@ -7,11 +7,13 @@ const {
   updateMember,
   deleteMember,
 } = require("../controllers/memberController");
-
+const {
+  validateMember
+} = require("../middlewares/validation");
 const router = express.Router();
 
 // Créer un membre
-router.post("/", createMember);
+router.post("/", validateMember, createMember);
 
 // Consulter tous les membres
 router.get("/", getMembers);
