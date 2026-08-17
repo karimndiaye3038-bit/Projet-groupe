@@ -4,7 +4,9 @@
 // ======================================================
 
 
-// ================= DONNÉES PAR DÉFAUT =================
+// ======================================================
+// DONNÉES PAR DÉFAUT
+// ======================================================
 
 const defaultTasks = [
     {
@@ -16,7 +18,7 @@ const defaultTasks = [
         project: 1,
         assignedTo: 1,
         tags: ["frontend", "ui"],
-        deadline: "2026-08-15",
+        deadline: "2026-08-20",
         createdAt: "2026-08-10"
     },
 
@@ -29,7 +31,7 @@ const defaultTasks = [
         project: 1,
         assignedTo: 1,
         tags: ["dashboard"],
-        deadline: "2026-08-14",
+        deadline: "2026-08-25",
         createdAt: "2026-08-11"
     },
 
@@ -42,11 +44,15 @@ const defaultTasks = [
         project: 2,
         assignedTo: 2,
         tags: ["bug"],
-        deadline: "2026-08-13",
+        deadline: "2026-08-28",
         createdAt: "2026-08-12"
     }
 ];
 
+
+// ======================================================
+// PROJETS PAR DÉFAUT
+// ======================================================
 
 const defaultProjects = [
     {
@@ -65,6 +71,10 @@ const defaultProjects = [
     }
 ];
 
+
+// ======================================================
+// MEMBRES PAR DÉFAUT
+// ======================================================
 
 const defaultMembers = [
     {
@@ -90,7 +100,9 @@ const defaultMembers = [
 ];
 
 
-// ================= INITIALISATION =================
+// ======================================================
+// INITIALISATION
+// ======================================================
 
 function initializeData() {
 
@@ -103,6 +115,7 @@ function initializeData() {
 
     }
 
+
     if (!localStorage.getItem("projects")) {
 
         localStorage.setItem(
@@ -111,6 +124,7 @@ function initializeData() {
         );
 
     }
+
 
     if (!localStorage.getItem("members")) {
 
@@ -124,36 +138,35 @@ function initializeData() {
 }
 
 
-// ================= RÉCUPÉRATION =================
+// ======================================================
+// RÉCUPÉRER LES TÂCHES
+// ======================================================
 
 function getTasks() {
 
-    return JSON.parse(
-        localStorage.getItem("tasks")
-    ) || [];
+    try {
+
+        return JSON.parse(
+            localStorage.getItem("tasks")
+        ) || [];
+
+    } catch (error) {
+
+        console.error(
+            "Erreur lecture tâches :",
+            error
+        );
+
+        return [];
+
+    }
 
 }
 
 
-function getProjects() {
-
-    return JSON.parse(
-        localStorage.getItem("projects")
-    ) || [];
-
-}
-
-
-function getMembers() {
-
-    return JSON.parse(
-        localStorage.getItem("members")
-    ) || [];
-
-}
-
-
-// ================= SAUVEGARDE =================
+// ======================================================
+// SAUVEGARDER LES TÂCHES
+// ======================================================
 
 function saveTasks(tasks) {
 
@@ -165,7 +178,51 @@ function saveTasks(tasks) {
 }
 
 
-// ================= ÉLÉMENTS =================
+// ======================================================
+// RÉCUPÉRER PROJETS
+// ======================================================
+
+function getProjects() {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem("projects")
+        ) || [];
+
+    } catch {
+
+        return [];
+
+    }
+
+}
+
+
+// ======================================================
+// RÉCUPÉRER MEMBRES
+// ======================================================
+
+function getMembers() {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem("members")
+        ) || [];
+
+    } catch {
+
+        return [];
+
+    }
+
+}
+
+
+// ======================================================
+// ÉLÉMENTS HTML
+// ======================================================
 
 const modal =
     document.getElementById("taskModal");
@@ -179,72 +236,157 @@ const tasksContainer =
 const emptyState =
     document.getElementById("emptyState");
 
+const openTaskModal =
+    document.getElementById("openTaskModal");
 
-// ================= OUVRIR MODAL =================
+const closeTaskModal =
+    document.getElementById("closeTaskModal");
 
-document
-    .getElementById("openTaskModal")
-    .addEventListener("click", () => {
+const cancelTask =
+    document.getElementById("cancelTask");
+
+
+// ======================================================
+// OUVRIR MODALE
+// ======================================================
+
+openTaskModal.addEventListener(
+    "click",
+    function () {
 
         openCreateModal();
 
-    });
+    }
+);
 
 
-// ================= FERMER MODAL =================
+// ======================================================
+// FERMER MODALE
+// ======================================================
 
-document
-    .getElementById("closeTaskModal")
-    .addEventListener("click", closeModal);
+closeTaskModal.addEventListener(
+    "click",
+    closeModal
+);
 
 
-document
-    .getElementById("cancelTask")
-    .addEventListener("click", closeModal);
+cancelTask.addEventListener(
+    "click",
+    closeModal
+);
 
+
+// ======================================================
+// FERMER EN CLIQUANT EN DEHORS
+// ======================================================
+
+modal.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            event.target === modal
+        ) {
+
+            closeModal();
+
+        }
+
+    }
+);
+
+
+// ======================================================
+// FERMER MODALE
+// ======================================================
 
 function closeModal() {
 
-    modal.classList.add("hidden");
+    modal.classList.add(
+        "hidden"
+    );
+
+    modal.classList.remove(
+        "flex"
+    );
 
     form.reset();
 
-    document.getElementById("taskId").value = "";
+    document.getElementById(
+        "taskId"
+    ).value = "";
 
-    document.getElementById("modalTitle").textContent =
+    document.getElementById(
+        "taskModalTitle"
+    ).textContent =
         "Nouvelle tâche";
 
 }
 
 
-// ================= MODAL CRÉATION =================
+// ======================================================
+// OUVRIR MODALE CRÉATION
+// ======================================================
 
 function openCreateModal() {
 
     form.reset();
 
-    document.getElementById("taskId").value = "";
+    document.getElementById(
+        "taskId"
+    ).value = "";
 
-    document.getElementById("modalTitle").textContent =
+    document.getElementById(
+        "taskModalTitle"
+    ).textContent =
         "Nouvelle tâche";
+
+
+    document.getElementById(
+        "taskStatus"
+    ).value =
+        "todo";
+
+
+    document.getElementById(
+        "taskPriority"
+    ).value =
+        "medium";
+
 
     populateProjects();
 
     populateMembers();
 
-    modal.classList.remove("hidden");
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+    modal.classList.add(
+        "flex"
+    );
 
 }
 
 
-// ================= PROJETS =================
+// ======================================================
+// REMPLIR PROJETS
+// ======================================================
 
-function populateProjects(selectedId = "") {
+function populateProjects(
+    selectedId = ""
+) {
 
     const select =
-        document.getElementById("taskProject");
+        document.getElementById(
+            "taskProject"
+        );
 
-    const projects = getProjects();
+
+    const projects =
+        getProjects();
+
 
     select.innerHTML = `
         <option value="">
@@ -253,141 +395,324 @@ function populateProjects(selectedId = "") {
     `;
 
 
-    projects.forEach(project => {
+    projects.forEach(
+        function (project) {
 
-        const option =
-            document.createElement("option");
+            const option =
+                document.createElement(
+                    "option"
+                );
 
-        option.value = project.id;
 
-        option.textContent = project.name;
+            option.value =
+                project.id;
 
-        if (
-            String(project.id) ===
-            String(selectedId)
-        ) {
 
-            option.selected = true;
+            option.textContent =
+                project.name;
+
+
+            if (
+                String(project.id) ===
+                String(selectedId)
+            ) {
+
+                option.selected =
+                    true;
+
+            }
+
+
+            select.appendChild(
+                option
+            );
 
         }
+    );
 
-        select.appendChild(option);
 
-    });
+    populateProjectFilter();
 
 }
 
 
-// ================= MEMBRES =================
+// ======================================================
+// REMPLIR MEMBRES
+// ======================================================
 
-function populateMembers(selectedId = "") {
+function populateMembers(
+    selectedId = ""
+) {
 
     const select =
-        document.getElementById("taskMember");
+        document.getElementById(
+            "taskMember"
+        );
 
-    const members = getMembers();
+
+    const members =
+        getMembers();
 
 
     select.innerHTML = `
         <option value="">
-            Aucun membre
+            Non assignée
         </option>
     `;
 
 
-    members.forEach(member => {
+    members.forEach(
+        function (member) {
 
-        const option =
-            document.createElement("option");
+            const option =
+                document.createElement(
+                    "option"
+                );
 
-        option.value = member.id;
 
-        option.textContent =
-            `${member.firstName} ${member.lastName}`;
+            option.value =
+                member.id;
 
-        if (
-            String(member.id) ===
-            String(selectedId)
-        ) {
 
-            option.selected = true;
+            option.textContent =
+                `${member.firstName} ${member.lastName}`;
+
+
+            if (
+                String(member.id) ===
+                String(selectedId)
+            ) {
+
+                option.selected =
+                    true;
+
+            }
+
+
+            select.appendChild(
+                option
+            );
 
         }
-
-        select.appendChild(option);
-
-    });
+    );
 
 }
 
 
-// ================= SUBMIT =================
+// ======================================================
+// FILTRE PROJETS
+// ======================================================
+
+function populateProjectFilter() {
+
+    const select =
+        document.getElementById(
+            "filterProject"
+        );
+
+
+    const currentValue =
+        select.value;
+
+
+    const projects =
+        getProjects();
+
+
+    select.innerHTML = `
+        <option value="all">
+            Tous les projets
+        </option>
+    `;
+
+
+    projects.forEach(
+        function (project) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                project.id;
+
+
+            option.textContent =
+                project.name;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    if (
+        projects.some(
+            project =>
+                String(project.id) ===
+                String(currentValue)
+        )
+    ) {
+
+        select.value =
+            currentValue;
+
+    }
+
+}
+
+
+// ======================================================
+// ENREGISTREMENT
+// ======================================================
 
 form.addEventListener(
     "submit",
-    function(event) {
+    function (event) {
 
         event.preventDefault();
 
-        const taskId =
-            document.getElementById("taskId").value;
 
+        // ------------------------------------------
+        // RÉCUPÉRATION
+        // ------------------------------------------
+
+        const taskId =
+            document.getElementById(
+                "taskId"
+            ).value;
+
+
+        const title =
+            document.getElementById(
+                "taskTitle"
+            ).value.trim();
+
+
+        const description =
+            document.getElementById(
+                "taskDescription"
+            ).value.trim();
+
+
+        const status =
+            document.getElementById(
+                "taskStatus"
+            ).value;
+
+
+        const priority =
+            document.getElementById(
+                "taskPriority"
+            ).value;
+
+
+        const project =
+            document.getElementById(
+                "taskProject"
+            ).value;
+
+
+        const assignedTo =
+            document.getElementById(
+                "taskMember"
+            ).value;
+
+
+        const tags =
+            document.getElementById(
+                "taskTags"
+            ).value
+                .split(",")
+                .map(
+                    tag =>
+                        tag.trim()
+                )
+                .filter(
+                    tag =>
+                        tag !== ""
+                );
+
+
+        const deadline =
+            document.getElementById(
+                "taskDeadline"
+            ).value;
+
+
+        // ------------------------------------------
+        // VALIDATION
+        // ------------------------------------------
+
+        if (!title) {
+
+            alert(
+                "Veuillez saisir le titre de la tâche."
+            );
+
+            return;
+
+        }
+
+
+        if (!project) {
+
+            alert(
+                "Veuillez sélectionner un projet."
+            );
+
+            return;
+
+        }
+
+
+        // ------------------------------------------
+        // DONNÉES
+        // ------------------------------------------
 
         const taskData = {
 
             title:
-                document
-                    .getElementById("taskTitle")
-                    .value
-                    .trim(),
+                title,
 
             description:
-                document
-                    .getElementById("taskDescription")
-                    .value
-                    .trim(),
+                description,
 
             status:
-                document
-                    .getElementById("taskStatus")
-                    .value,
+                status,
 
             priority:
-                document
-                    .getElementById("taskPriority")
-                    .value,
+                priority,
 
             project:
-                document
-                    .getElementById("taskProject")
-                    .value,
+                project,
 
             assignedTo:
-                document
-                    .getElementById("taskMember")
-                    .value,
+                assignedTo,
 
             tags:
-                document
-                    .getElementById("taskTags")
-                    .value
-                    .split(",")
-                    .map(tag => tag.trim())
-                    .filter(tag => tag !== ""),
+                tags,
 
             deadline:
-                document
-                    .getElementById("taskDeadline")
-                    .value
+                deadline
 
         };
 
 
-        // ================= MODIFICATION =================
+        const tasks =
+            getTasks();
+
+
+        // ==================================================
+        // MODIFICATION
+        // ==================================================
 
         if (taskId) {
-
-            const tasks = getTasks();
 
             const index =
                 tasks.findIndex(
@@ -397,222 +722,421 @@ form.addEventListener(
                 );
 
 
-            if (index !== -1) {
+            if (
+                index === -1
+            ) {
 
-                tasks[index] = {
+                alert(
+                    "Tâche introuvable."
+                );
 
-                    ...tasks[index],
-
-                    ...taskData
-
-                };
-
-                saveTasks(tasks);
+                return;
 
             }
 
-        }
 
-        // ================= CRÉATION =================
+            tasks[index] = {
 
-        else {
+                ...tasks[index],
 
-            const tasks = getTasks();
-
-            const newTask = {
-
-                id: Date.now(),
-
-                ...taskData,
-
-                createdAt:
-                    new Date()
-                        .toISOString()
-                        .split("T")[0]
+                ...taskData
 
             };
 
 
-            tasks.unshift(newTask);
+            saveTasks(
+                tasks
+            );
 
-            saveTasks(tasks);
+
+            closeModal();
+
+
+            renderTasks();
+
+
+            alert(
+                "Tâche modifiée avec succès !"
+            );
+
+
+            return;
 
         }
 
 
+        // ==================================================
+        // CRÉATION
+        // ==================================================
+
+        const newTask = {
+
+            id:
+                Date.now(),
+
+            ...taskData,
+
+            createdAt:
+                new Date()
+                    .toISOString()
+                    .split("T")[0]
+
+        };
+
+
+        // AJOUT EN PREMIÈRE POSITION
+
+        tasks.unshift(
+            newTask
+        );
+
+
+        // SAUVEGARDE
+
+        saveTasks(
+            tasks
+        );
+
+
+        // VÉRIFICATION
+
+        console.log(
+            "Tâche enregistrée :",
+            newTask
+        );
+
+        console.log(
+            "Toutes les tâches :",
+            getTasks()
+        );
+
+
+        // FERMER
+
         closeModal();
 
+
+        // ACTUALISER
+
         renderTasks();
+
+
+        // MESSAGE
+
+        alert(
+            "Tâche ajoutée avec succès !"
+        );
 
     }
 );
 
 
-// ================= AFFICHAGE =================
+// ======================================================
+// AFFICHER LES TÂCHES
+// ======================================================
 
 function renderTasks() {
 
-    let tasks = getTasks();
+    let tasks =
+        getTasks();
 
+
+    // ------------------------------------------
+    // RECHERCHE
+    // ------------------------------------------
 
     const search =
-        document
-            .getElementById("searchInput")
-            .value
+        document.getElementById(
+            "taskSearch"
+        ).value
             .trim()
             .toLowerCase();
 
 
-    const status =
-        document
-            .getElementById("statusFilter")
-            .value;
+    // ------------------------------------------
+    // FILTRE STATUT
+    // ------------------------------------------
 
+    const status =
+        document.getElementById(
+            "filterStatus"
+        ).value;
+
+
+    // ------------------------------------------
+    // FILTRE PRIORITÉ
+    // ------------------------------------------
 
     const priority =
-        document
-            .getElementById("priorityFilter")
-            .value;
+        document.getElementById(
+            "filterPriority"
+        ).value;
 
+
+    // ------------------------------------------
+    // FILTRE PROJET
+    // ------------------------------------------
+
+    const project =
+        document.getElementById(
+            "filterProject"
+        ).value;
+
+
+    // ------------------------------------------
+    // TRI
+    // ------------------------------------------
 
     const sort =
-        document
-            .getElementById("sortFilter")
-            .value;
+        document.getElementById(
+            "sortTasks"
+        ).value;
 
 
-    // Recherche
+    // ==================================================
+    // RECHERCHE
+    // ==================================================
 
     if (search) {
 
-        tasks = tasks.filter(task => {
+        tasks =
+            tasks.filter(
+                function (task) {
 
-            const text = `
+                    const text = `
 
-                ${task.title}
-                ${task.description}
-                ${task.priority}
-                ${task.status}
-                ${(task.tags || []).join(" ")}
+                        ${task.title}
 
-            `.toLowerCase();
+                        ${task.description}
 
+                        ${task.priority}
 
-            return text.includes(search);
+                        ${task.status}
 
-        });
+                        ${(task.tags || []).join(" ")}
 
-    }
+                    `.toLowerCase();
 
 
-    // Statut
+                    return text.includes(
+                        search
+                    );
 
-    if (status !== "all") {
-
-        tasks = tasks.filter(
-            task =>
-                task.status === status
-        );
+                }
+            );
 
     }
 
 
-    // Priorité
+    // ==================================================
+    // STATUT
+    // ==================================================
 
-    if (priority !== "all") {
+    if (
+        status !== "all"
+    ) {
 
-        tasks = tasks.filter(
-            task =>
-                task.priority === priority
-        );
+        tasks =
+            tasks.filter(
+                task =>
+                    task.status ===
+                    status
+            );
 
     }
 
 
-    // Tri
+    // ==================================================
+    // PRIORITÉ
+    // ==================================================
 
-    if (sort === "newest") {
+    if (
+        priority !== "all"
+    ) {
+
+        tasks =
+            tasks.filter(
+                task =>
+                    task.priority ===
+                    priority
+            );
+
+    }
+
+
+    // ==================================================
+    // PROJET
+    // ==================================================
+
+    if (
+        project !== "all"
+    ) {
+
+        tasks =
+            tasks.filter(
+                task =>
+                    String(task.project) ===
+                    String(project)
+            );
+
+    }
+
+
+    // ==================================================
+    // TRI
+    // ==================================================
+
+    if (
+        sort === "newest"
+    ) {
 
         tasks.sort(
-            (a, b) =>
-                new Date(b.createdAt) -
-                new Date(a.createdAt)
+            function (a, b) {
+
+                return (
+                    new Date(b.createdAt) -
+                    new Date(a.createdAt)
+                );
+
+            }
         );
 
     }
 
 
-    if (sort === "oldest") {
+    if (
+        sort === "oldest"
+    ) {
 
         tasks.sort(
-            (a, b) =>
-                new Date(a.createdAt) -
-                new Date(b.createdAt)
+            function (a, b) {
+
+                return (
+                    new Date(a.createdAt) -
+                    new Date(b.createdAt)
+                );
+
+            }
         );
 
     }
 
 
-    if (sort === "deadline") {
+    if (
+        sort === "deadline"
+    ) {
 
         tasks.sort(
-            (a, b) =>
-                new Date(a.deadline) -
-                new Date(b.deadline)
+            function (a, b) {
+
+                if (!a.deadline)
+                    return 1;
+
+                if (!b.deadline)
+                    return -1;
+
+                return (
+                    new Date(a.deadline) -
+                    new Date(b.deadline)
+                );
+
+            }
         );
 
     }
 
 
-    if (sort === "priority") {
+    if (
+        sort === "priority"
+    ) {
 
         const order = {
+
             urgent: 1,
+
             high: 2,
+
             medium: 3,
+
             low: 4
+
         };
 
+
         tasks.sort(
-            (a, b) =>
-                order[a.priority] -
-                order[b.priority]
+            function (a, b) {
+
+                return (
+                    (order[a.priority] || 99) -
+                    (order[b.priority] || 99)
+                );
+
+            }
         );
 
     }
 
 
-    updateTaskStats(tasks);
+    // ==================================================
+    // STATISTIQUES
+    // ==================================================
+
+    updateTaskStats();
 
 
-    if (tasks.length === 0) {
+    // ==================================================
+    // AUCUNE TÂCHE
+    // ==================================================
 
-        tasksContainer.innerHTML = "";
+    if (
+        tasks.length === 0
+    ) {
 
-        emptyState.classList.remove("hidden");
+        tasksContainer.innerHTML =
+            "";
+
+        emptyState.classList.remove(
+            "hidden"
+        );
 
         return;
 
     }
 
 
-    emptyState.classList.add("hidden");
+    emptyState.classList.add(
+        "hidden"
+    );
 
+
+    // ==================================================
+    // AFFICHAGE
+    // ==================================================
 
     tasksContainer.innerHTML =
         tasks
-            .map(task => createTaskCard(task))
+            .map(
+                task =>
+                    createTaskCard(
+                        task
+                    )
+            )
             .join("");
 
 }
 
 
-// ================= CARTE TÂCHE =================
+// ======================================================
+// CARTE TÂCHE
+// ======================================================
 
-function createTaskCard(task) {
+function createTaskCard(
+    task
+) {
 
     const projects =
         getProjects();
+
 
     const members =
         getMembers();
@@ -620,64 +1144,119 @@ function createTaskCard(task) {
 
     const project =
         projects.find(
-            project =>
-                String(project.id) ===
+            item =>
+                String(item.id) ===
                 String(task.project)
         );
 
 
     const member =
         members.find(
-            member =>
-                String(member.id) ===
+            item =>
+                String(item.id) ===
                 String(task.assignedTo)
         );
 
 
     const statusInfo =
-        getStatusInfo(task.status);
+        getStatusInfo(
+            task.status
+        );
+
 
     const priorityInfo =
-        getPriorityInfo(task.priority);
+        getPriorityInfo(
+            task.priority
+        );
 
+
+    // ------------------------------------------
+    // RETARD
+    // ------------------------------------------
 
     const isLate =
-        new Date(task.deadline) <
-            new Date() &&
+        task.deadline &&
+        new Date(
+            task.deadline
+        ) < new Date() &&
         task.status !== "completed";
 
 
     return `
 
         <div
-            class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 hover:shadow-md transition"
+            class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition"
         >
+
 
             <!-- TOP -->
 
-            <div class="flex justify-between gap-4">
+            <div
+                class="flex justify-between gap-5"
+            >
 
-                <div class="min-w-0">
 
-                    <h3 class="
-                        font-bold
-                        text-lg
-                        text-slate-900
-                        ${task.status === "completed"
-                            ? "line-through text-slate-400"
-                            : ""}
-                    ">
-                        ${escapeHtml(task.title)}
-                    </h3>
+                <div
+                    class="flex-1 min-w-0"
+                >
 
-                    <p class="text-sm text-slate-500 mt-2">
-                        ${escapeHtml(task.description || "Aucune description")}
+                    <div
+                        class="flex items-center gap-3 flex-wrap"
+                    >
+
+                        <h3
+                            class="
+                                font-bold
+                                text-lg
+                                text-slate-900
+                                ${
+                                    task.status === "completed"
+                                        ? "line-through text-slate-400"
+                                        : ""
+                                }
+                            "
+                        >
+
+                            ${escapeHtml(
+                                task.title
+                            )}
+
+                        </h3>
+
+
+                        <span
+                            class="
+                                px-3
+                                py-1
+                                rounded-full
+                                text-xs
+                                font-semibold
+                                ${priorityInfo.class}
+                            "
+                        >
+
+                            ${priorityInfo.label}
+
+                        </span>
+
+                    </div>
+
+
+                    <p
+                        class="text-sm text-slate-500 mt-2"
+                    >
+
+                        ${escapeHtml(
+                            task.description ||
+                            "Aucune description"
+                        )}
+
                     </p>
 
                 </div>
 
 
-                <!-- PRIORITÉ -->
+                <!-- STATUT -->
 
                 <span
                     class="
@@ -686,69 +1265,73 @@ function createTaskCard(task) {
                         py-1
                         rounded-full
                         text-xs
-                        font-semibold
-                        ${priorityInfo.class}
-                    "
-                >
-                    ${priorityInfo.label}
-                </span>
-
-            </div>
-
-
-            <!-- STATUT -->
-
-            <div class="mt-4">
-
-                <span
-                    class="
-                        inline-flex
-                        px-3
-                        py-1
-                        rounded-full
-                        text-xs
                         font-medium
+                        whitespace-nowrap
                         ${statusInfo.class}
                     "
                 >
+
                     ${statusInfo.label}
+
                 </span>
 
             </div>
+
 
 
             <!-- PROJET / MEMBRE -->
 
-            <div class="grid grid-cols-2 gap-3 mt-5">
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5"
+            >
 
-                <div class="bg-slate-50 rounded-xl p-3">
 
-                    <p class="text-xs text-slate-400">
+                <div
+                    class="bg-slate-50 rounded-xl p-4"
+                >
+
+                    <p
+                        class="text-xs text-slate-400"
+                    >
                         Projet
                     </p>
 
-                    <p class="text-sm font-semibold mt-1">
-                        ${project
-                            ? escapeHtml(project.name)
-                            : "Aucun projet"}
+                    <p
+                        class="text-sm font-semibold mt-1"
+                    >
+
+                        ${
+                            project
+                                ? escapeHtml(
+                                    project.name
+                                )
+                                : "Aucun projet"
+                        }
+
                     </p>
 
                 </div>
 
 
-                <div class="bg-slate-50 rounded-xl p-3">
+                <div
+                    class="bg-slate-50 rounded-xl p-4"
+                >
 
-                    <p class="text-xs text-slate-400">
+                    <p
+                        class="text-xs text-slate-400"
+                    >
                         Assigné à
                     </p>
 
-                    <p class="text-sm font-semibold mt-1">
+                    <p
+                        class="text-sm font-semibold mt-1"
+                    >
 
                         ${
                             member
                                 ? escapeHtml(
                                     `${member.firstName} ${member.lastName}`
-                                  )
+                                )
                                 : "Non assigné"
                         }
 
@@ -759,31 +1342,41 @@ function createTaskCard(task) {
             </div>
 
 
+
             <!-- TAGS -->
 
             ${
-                task.tags && task.tags.length
+                task.tags &&
+                task.tags.length
                     ? `
 
-                        <div class="flex flex-wrap gap-2 mt-4">
+                        <div
+                            class="flex flex-wrap gap-2 mt-4"
+                        >
 
                             ${task.tags
                                 .map(
                                     tag => `
+
                                         <span
                                             class="px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs"
                                         >
+
                                             #${escapeHtml(tag)}
+
                                         </span>
+
                                     `
                                 )
-                                .join("")}
+                                .join("")
+                            }
 
                         </div>
 
                     `
                     : ""
             }
+
 
 
             <!-- DEADLINE -->
@@ -813,16 +1406,27 @@ function createTaskCard(task) {
 
                 </span>
 
-                <span class="font-semibold">
-                    ${formatDate(task.deadline)}
+
+                <span
+                    class="font-semibold"
+                >
+
+                    ${formatDate(
+                        task.deadline
+                    )}
+
                 </span>
 
             </div>
 
 
+
             <!-- ACTIONS -->
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-5 pt-5 border-t">
+            <div
+                class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-5 pt-5 border-t"
+            >
+
 
                 ${
                     task.status === "completed"
@@ -830,10 +1434,13 @@ function createTaskCard(task) {
                         ? `
 
                             <button
+                                type="button"
                                 onclick="reopenTask(${task.id})"
                                 class="px-3 py-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 text-sm font-medium"
                             >
+
                                 ↩ Réouvrir
+
                             </button>
 
                         `
@@ -841,10 +1448,13 @@ function createTaskCard(task) {
                         : `
 
                             <button
+                                type="button"
                                 onclick="completeTask(${task.id})"
                                 class="px-3 py-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 text-sm font-medium"
                             >
+
                                 ✓ Terminer
+
                             </button>
 
                         `
@@ -852,26 +1462,35 @@ function createTaskCard(task) {
 
 
                 <button
+                    type="button"
                     onclick="editTask(${task.id})"
                     class="px-3 py-2 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm font-medium"
                 >
+
                     ✏ Modifier
+
                 </button>
 
 
                 <button
+                    type="button"
                     onclick="deleteTask(${task.id})"
                     class="px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-sm font-medium"
                 >
+
                     🗑 Supprimer
+
                 </button>
 
 
                 <button
+                    type="button"
                     onclick="duplicateTask(${task.id})"
                     class="px-3 py-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 text-sm font-medium"
                 >
+
                     ⧉ Dupliquer
+
                 </button>
 
             </div>
@@ -883,75 +1502,113 @@ function createTaskCard(task) {
 }
 
 
-// ================= TERMINER =================
+// ======================================================
+// TERMINER
+// ======================================================
 
-function completeTask(id) {
+function completeTask(
+    id
+) {
 
-    const tasks = getTasks();
+    const tasks =
+        getTasks();
 
 
     const task =
         tasks.find(
-            task =>
-                String(task.id) ===
+            item =>
+                String(item.id) ===
                 String(id)
         );
 
 
-    if (!task) return;
+    if (!task) {
+
+        return;
+
+    }
 
 
-    task.status = "completed";
+    task.status =
+        "completed";
 
 
-    saveTasks(tasks);
+    saveTasks(
+        tasks
+    );
+
 
     renderTasks();
 
 }
 
 
-// ================= RÉOUVRIR =================
+// ======================================================
+// RÉOUVRIR
+// ======================================================
 
-function reopenTask(id) {
+function reopenTask(
+    id
+) {
 
-    const tasks = getTasks();
+    const tasks =
+        getTasks();
 
 
     const task =
         tasks.find(
-            task =>
-                String(task.id) ===
+            item =>
+                String(item.id) ===
                 String(id)
         );
 
 
-    if (!task) return;
+    if (!task) {
+
+        return;
+
+    }
 
 
-    task.status = "todo";
+    task.status =
+        "todo";
 
 
-    saveTasks(tasks);
+    saveTasks(
+        tasks
+    );
+
 
     renderTasks();
 
 }
 
 
-// ================= SUPPRIMER =================
+// ======================================================
+// SUPPRIMER
+// ======================================================
 
-function deleteTask(id) {
+function deleteTask(
+    id
+) {
+
+    const tasks =
+        getTasks();
+
 
     const task =
-        getTasks().find(
-            task =>
-                String(task.id) ===
+        tasks.find(
+            item =>
+                String(item.id) ===
                 String(id)
         );
 
 
-    if (!task) return;
+    if (!task) {
+
+        return;
+
+    }
 
 
     const confirmed =
@@ -960,103 +1617,164 @@ function deleteTask(id) {
         );
 
 
-    if (!confirmed) return;
+    if (!confirmed) {
+
+        return;
+
+    }
 
 
-    const tasks =
-        getTasks().filter(
-            task =>
-                String(task.id) !==
+    const newTasks =
+        tasks.filter(
+            item =>
+                String(item.id) !==
                 String(id)
         );
 
 
-    saveTasks(tasks);
+    saveTasks(
+        newTasks
+    );
+
 
     renderTasks();
 
 }
 
 
-// ================= MODIFIER =================
+// ======================================================
+// MODIFIER
+// ======================================================
 
-function editTask(id) {
+function editTask(
+    id
+) {
 
     const task =
         getTasks().find(
-            task =>
-                String(task.id) ===
+            item =>
+                String(item.id) ===
                 String(id)
         );
 
 
-    if (!task) return;
+    if (!task) {
+
+        return;
+
+    }
 
 
-    document.getElementById("taskId").value =
+    document.getElementById(
+        "taskId"
+    ).value =
         task.id;
 
-    document.getElementById("taskTitle").value =
+
+    document.getElementById(
+        "taskTitle"
+    ).value =
         task.title;
 
-    document.getElementById("taskDescription").value =
+
+    document.getElementById(
+        "taskDescription"
+    ).value =
         task.description || "";
 
-    document.getElementById("taskStatus").value =
+
+    document.getElementById(
+        "taskStatus"
+    ).value =
         task.status;
 
-    document.getElementById("taskPriority").value =
+
+    document.getElementById(
+        "taskPriority"
+    ).value =
         task.priority;
 
-    document.getElementById("taskTags").value =
-        (task.tags || []).join(", ");
 
-    document.getElementById("taskDeadline").value =
-        task.deadline;
-
-
-    populateProjects(task.project);
-
-    populateMembers(task.assignedTo);
+    document.getElementById(
+        "taskTags"
+    ).value =
+        (task.tags || []).join(
+            ", "
+        );
 
 
-    document.getElementById("modalTitle").textContent =
+    document.getElementById(
+        "taskDeadline"
+    ).value =
+        task.deadline || "";
+
+
+    populateProjects(
+        task.project
+    );
+
+
+    populateMembers(
+        task.assignedTo
+    );
+
+
+    document.getElementById(
+        "taskModalTitle"
+    ).textContent =
         "Modifier la tâche";
 
 
-    modal.classList.remove("hidden");
+    modal.classList.remove(
+        "hidden"
+    );
+
+    modal.classList.add(
+        "flex"
+    );
 
 }
 
 
-// ================= DUPLIQUER =================
+// ======================================================
+// DUPLIQUER
+// ======================================================
 
-function duplicateTask(id) {
+function duplicateTask(
+    id
+) {
 
-    const tasks = getTasks();
+    const tasks =
+        getTasks();
 
 
     const task =
         tasks.find(
-            task =>
-                String(task.id) ===
+            item =>
+                String(item.id) ===
                 String(id)
         );
 
 
-    if (!task) return;
+    if (!task) {
+
+        return;
+
+    }
 
 
     const copy = {
 
         ...task,
 
-        id: Date.now(),
+        id:
+            Date.now(),
 
         title:
             `${task.title} - Copie`,
 
-        status: "todo",
+        status:
+            "todo",
 
         createdAt:
             new Date()
@@ -1066,77 +1784,114 @@ function duplicateTask(id) {
     };
 
 
-    tasks.unshift(copy);
+    tasks.unshift(
+        copy
+    );
 
-    saveTasks(tasks);
+
+    saveTasks(
+        tasks
+    );
+
 
     renderTasks();
 
 }
 
 
-// ================= STATISTIQUES =================
+// ======================================================
+// STATISTIQUES
+// ======================================================
 
-function updateTaskStats(tasks) {
+function updateTaskStats() {
 
-    /*
-        Attention :
-        Ici on calcule les statistiques
-        sur toutes les tâches et non uniquement
-        les tâches filtrées.
-    */
-
-    const allTasks = getTasks();
+    const tasks =
+        getTasks();
 
 
-    document.getElementById("taskTotal").textContent =
-        allTasks.length;
+    document.getElementById(
+        "taskTotal"
+    ).textContent =
+        tasks.length;
 
 
-    document.getElementById("taskTodo").textContent =
-        allTasks.filter(
-            task => task.status === "todo"
+    document.getElementById(
+        "taskTodo"
+    ).textContent =
+        tasks.filter(
+            task =>
+                task.status === "todo"
         ).length;
 
 
-    document.getElementById("taskProgress").textContent =
-        allTasks.filter(
-            task => task.status === "in-progress"
+    document.getElementById(
+        "taskProgress"
+    ).textContent =
+        tasks.filter(
+            task =>
+                task.status === "in-progress"
         ).length;
 
 
-    document.getElementById("taskCompleted").textContent =
-        allTasks.filter(
-            task => task.status === "completed"
+    document.getElementById(
+        "taskCompleted"
+    ).textContent =
+        tasks.filter(
+            task =>
+                task.status === "completed"
         ).length;
 
 }
 
 
-// ================= STATUT =================
+// ======================================================
+// STATUT
+// ======================================================
 
-function getStatusInfo(status) {
+function getStatusInfo(
+    status
+) {
 
     const statuses = {
 
         todo: {
-            label: "À faire",
-            class: "bg-orange-100 text-orange-700"
+
+            label:
+                "À faire",
+
+            class:
+                "bg-orange-100 text-orange-700"
+
         },
 
         "in-progress": {
-            label: "En cours",
-            class: "bg-blue-100 text-blue-700"
+
+            label:
+                "En cours",
+
+            class:
+                "bg-blue-100 text-blue-700"
+
         },
 
         paused: {
-            label: "En pause",
-            class: "bg-yellow-100 text-yellow-700"
+
+            label:
+                "En pause",
+
+            class:
+                "bg-yellow-100 text-yellow-700"
+
         },
 
         completed: {
-            label: "Terminée",
-            class: "bg-green-100 text-green-700"
+
+            label:
+                "Terminée",
+
+            class:
+                "bg-green-100 text-green-700"
+
         }
 
     };
@@ -1145,38 +1900,67 @@ function getStatusInfo(status) {
     return (
         statuses[status] ||
         {
-            label: status,
-            class: "bg-slate-100 text-slate-600"
+
+            label:
+                status || "Inconnu",
+
+            class:
+                "bg-slate-100 text-slate-600"
+
         }
     );
 
 }
 
 
-// ================= PRIORITÉ =================
+// ======================================================
+// PRIORITÉ
+// ======================================================
 
-function getPriorityInfo(priority) {
+function getPriorityInfo(
+    priority
+) {
 
     const priorities = {
 
         low: {
-            label: "Low",
-            class: "bg-slate-100 text-slate-600"
+
+            label:
+                "Low",
+
+            class:
+                "bg-slate-100 text-slate-600"
+
         },
 
         medium: {
-            label: "Medium",
-            class: "bg-yellow-100 text-yellow-700"
+
+            label:
+                "Medium",
+
+            class:
+                "bg-yellow-100 text-yellow-700"
+
         },
 
         high: {
-            label: "High",
-            class: "bg-orange-100 text-orange-700"
+
+            label:
+                "High",
+
+            class:
+                "bg-orange-100 text-orange-700"
+
         },
 
         urgent: {
-            label: "Urgent",
-            class: "bg-red-100 text-red-700"
+
+            label:
+                "Urgent",
+
+            class:
+                "bg-red-100 text-red-700"
+
         }
 
     };
@@ -1185,97 +1969,173 @@ function getPriorityInfo(priority) {
     return (
         priorities[priority] ||
         {
-            label: priority,
-            class: "bg-slate-100 text-slate-600"
+
+            label:
+                priority || "Inconnue",
+
+            class:
+                "bg-slate-100 text-slate-600"
+
         }
     );
 
 }
 
 
-// ================= DATE =================
+// ======================================================
+// DATE
+// ======================================================
 
-function formatDate(date) {
+function formatDate(
+    date
+) {
 
     if (!date) {
+
         return "-";
+
     }
 
 
-    return new Date(date).toLocaleDateString(
+    const dateObject =
+        new Date(date);
+
+
+    if (
+        Number.isNaN(
+            dateObject.getTime()
+        )
+    ) {
+
+        return "-";
+
+    }
+
+
+    return dateObject.toLocaleDateString(
         "fr-FR",
         {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
+
+            day:
+                "2-digit",
+
+            month:
+                "2-digit",
+
+            year:
+                "numeric"
+
         }
     );
 
 }
 
 
-// ================= SÉCURITÉ =================
+// ======================================================
+// SÉCURITÉ HTML
+// ======================================================
 
-function escapeHtml(value) {
+function escapeHtml(
+    value
+) {
 
-    if (value === null || value === undefined) {
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
         return "";
+
     }
 
 
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
 
-// ================= FILTRES =================
+// ======================================================
+// ÉVÉNEMENTS DES FILTRES
+// ======================================================
 
-document
-    .getElementById("searchInput")
-    .addEventListener(
-        "input",
-        renderTasks
-    );
-
-
-document
-    .getElementById("statusFilter")
-    .addEventListener(
-        "change",
-        renderTasks
-    );
+document.getElementById(
+    "taskSearch"
+).addEventListener(
+    "input",
+    renderTasks
+);
 
 
-document
-    .getElementById("priorityFilter")
-    .addEventListener(
-        "change",
-        renderTasks
-    );
+document.getElementById(
+    "filterStatus"
+).addEventListener(
+    "change",
+    renderTasks
+);
 
 
-document
-    .getElementById("sortFilter")
-    .addEventListener(
-        "change",
-        renderTasks
-    );
+document.getElementById(
+    "filterPriority"
+).addEventListener(
+    "change",
+    renderTasks
+);
 
 
-// ================= FERMER AVEC ESC =================
+document.getElementById(
+    "filterProject"
+).addEventListener(
+    "change",
+    renderTasks
+);
+
+
+document.getElementById(
+    "sortTasks"
+).addEventListener(
+    "change",
+    renderTasks
+);
+
+
+// ======================================================
+// ESC POUR FERMER
+// ======================================================
 
 document.addEventListener(
     "keydown",
-    event => {
+    function (event) {
 
         if (
             event.key === "Escape" &&
-            !modal.classList.contains("hidden")
+            !modal.classList.contains(
+                "hidden"
+            )
         ) {
 
             closeModal();
@@ -1286,7 +2146,9 @@ document.addEventListener(
 );
 
 
-// ================= DÉMARRAGE =================
+// ======================================================
+// INITIALISATION
+// ======================================================
 
 function init() {
 
@@ -1295,6 +2157,8 @@ function init() {
     populateProjects();
 
     populateMembers();
+
+    populateProjectFilter();
 
     renderTasks();
 
