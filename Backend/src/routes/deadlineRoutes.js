@@ -1,11 +1,14 @@
+
 const express = require("express");
 
-const {
-  analyzeDeadline
-} = require("../controllers/DeadlineController");
+const deadlineController =
+  require("../controllers/DeadlineController");
 
 const router = express.Router();
 
-router.get("/:id", analyzeDeadline);
+// Analyser une deadline
+router.post("/analyze", (req, res) => {
+  deadlineController.analyzeDeadline(req, res);
+});
 
 module.exports = router;
