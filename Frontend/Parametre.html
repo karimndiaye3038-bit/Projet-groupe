@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - TaskFlow Pro</title>
+
+   <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+    tailwind.config = {
+        darkMode: "class"
+    };
+    </script>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body class="min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-white">
+
+<header class="border-b bg-white dark:border-gray-800 dark:bg-gray-900">
+    <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
+        <div>
+            <h1 class="text-2xl font-bold"> Paramètres</h1>
+            <p class="text-sm text-gray-500">Configurez TaskFlow Pro</p>
+        </div>
+
+        <a href="./index.html"
+           class="rounded-lg bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">
+            ← Retour
+        </a>
+    </div>
+</header>
+
+<main class="mx-auto max-w-5xl space-y-6 px-4 py-8">
+
+    <!-- Thème -->
+    <section class="settings-card">
+        <h2 class="settings-title"> Thème</h2>
+        <p class="settings-description">Choisissez l'apparence de l'application.</p>
+
+        <div class="mt-5 grid gap-3 sm:grid-cols-3">
+
+            <label class="theme-option">
+                <input type="radio" name="theme" id="themeLight" value="light">
+                <div>☀️ <b>Clair</b></div>
+            </label>
+
+            <label class="theme-option">
+                <input type="radio" name="theme" id="themeDark" value="dark">
+                <div>🌙 <b>Sombre</b></div>
+            </label>
+
+            <label class="theme-option">
+                <input type="radio" name="theme" id="themeSystem" value="system">
+                <div> <b>Système</b></div>
+            </label>
+
+        </div>
+    </section>
+
+    <!-- Affichage -->
+    <section class="settings-card">
+        <h2 class="settings-title"> Affichage</h2>
+        <p class="settings-description">Choisissez les éléments visibles.</p>
+
+        <div class="mt-5">
+
+            <div class="setting-row">
+                <div>
+                    <b>Tâches terminées</b>
+                    <p>Afficher les tâches terminées.</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="showCompleted">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row">
+                <div>
+                    <b>Descriptions</b>
+                    <p>Afficher les descriptions des tâches.</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="showDescription">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row">
+                <div>
+                    <b>Priorités</b>
+                    <p>Afficher les priorités des tâches.</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="showPriority">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Suppression -->
+    <section class="settings-card">
+        <h2 class="settings-title"> Suppression</h2>
+        <p class="settings-description">Gérez les confirmations de suppression.</p>
+
+        <div class="setting-row mt-5">
+            <div>
+                <b>Confirmation avant suppression</b>
+                <p>Demander une confirmation avant de supprimer.</p>
+            </div>
+
+            <label class="switch">
+                <input type="checkbox" id="confirmDelete">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </section>
+
+    <!-- Données -->
+    <section class="settings-card">
+        <h2 class="settings-title"> Gestion des données</h2>
+        <p class="settings-description">Sauvegardez ou restaurez vos données.</p>
+
+        <div class="mt-5 grid gap-4 md:grid-cols-2">
+
+            <div class="data-card">
+                <div class="text-3xl"></div>
+                <h3 class="font-semibold">Exporter</h3>
+                <p>Enregistrer vos tâches et paramètres.</p>
+
+                <button id="exportBtn"
+                    class="mt-4 w-full rounded-lg bg-blue-600 px-4 py-3 text-white hover:bg-blue-700">
+                     Exporter
+                </button>
+            </div>
+
+            <div class="data-card">
+                <div class="text-3xl"></div>
+                <h3 class="font-semibold">Importer</h3>
+                <p>Restaurer vos données depuis un fichier JSON.</p>
+
+                <label for="importFile"
+                    class="mt-4 block cursor-pointer rounded-lg bg-green-600 px-4 py-3 text-center text-white hover:bg-green-700">
+                     Choisir un fichier
+                </label>
+
+                <input type="file" id="importFile" accept=".json,application/json" hidden>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Réinitialisation -->
+    <section class="rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-900 dark:bg-red-950/20">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+
+            <div>
+                <h2 class="text-lg font-bold text-red-700 dark:text-red-400">
+                    ⚠️ Réinitialiser les données
+                </h2>
+                <p class="mt-1 text-sm text-red-600">
+                    Supprime toutes les tâches, projets, membres et paramètres.
+                </p>
+            </div>
+
+            <button id="resetBtn"
+                class="rounded-lg bg-red-600 px-5 py-3 text-white hover:bg-red-700">
+                 Réinitialiser
+            </button>
+
+        </div>
+    </section>
+
+</main>
+
+<!-- Notification -->
+<div id="toast" class="toast">
+    <span id="toastIcon">✓</span>
+    <span id="toastMessage">Modification enregistrée</span>
+</div>
+
+<script src="./Parametre.js"></script>
+
+</body>
+</html>
