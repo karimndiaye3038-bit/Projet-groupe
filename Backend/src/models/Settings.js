@@ -1,27 +1,11 @@
 const mongoose = require("mongoose");
 
-const settingsSchema = new mongoose.Schema(
-  {
-    theme: {
-      type: String,
-      enum: ["light", "dark"],
-      default: "light",
-    },
-
-    display: {
-      type: String,
-      enum: ["normal", "compact"],
-      default: "normal",
-    },
-
-    confirmDelete: {
-      type: Boolean,
-      default: true,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+const settingsSchema = new mongoose.Schema({
+  theme: { type: String, default: "light" },
+  showCompleted: { type: Boolean, default: true },
+  showDescription: { type: Boolean, default: true },
+  showPriority: { type: Boolean, default: true },
+  confirmDelete: { type: Boolean, default: true }
+});
 
 module.exports = mongoose.model("Settings", settingsSchema);

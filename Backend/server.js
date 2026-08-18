@@ -121,6 +121,16 @@ app.patch("/api/projects/:id/archive", (req, res) => {
 app.post("/api/deadlines/analyze", (req, res) => {
   deadlineController.analyzeDeadline(req, res);
 });
+// Récupérer uniquement les projets archivés
+app.get("/api/projects/archived", async (req, res) => {
+  try {
+    const projects = await Project.find({ archived: true });
+    res.json({ projects });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error });
+  }
+});
+
 
 // ==============================
 // SERVEUR
@@ -130,6 +140,5 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Serveur démarré sur http://localhost:${PORT}`);
-  console.log(`Frontend disponible sur http://localhost:${PORT}/`);
-  console.log(`Archive disponible sur http://localhost:${PORT}/archive.html`);
+ 
 });

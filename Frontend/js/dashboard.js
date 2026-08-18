@@ -3,7 +3,140 @@
 // ==========================================
 
 
-// Récupérer les données
+// ==========================================
+// API
+// ==========================================
+
+
+
+
+// ==========================================
+// PARAMÈTRES PAR DÉFAUT
+// ==========================================
+
+let dashboardSettings = {
+    theme: "light",
+    showCompleted: true,
+    showDescription: true,
+    showPriority: true,
+    confirmDelete: true
+};
+
+
+// ==========================================
+// RÉCUPÉRER LES PARAMÈTRES DU BACKEND
+// ==========================================
+
+async function loadDashboardSettings() {
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/settings`
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Erreur HTTP : ${response.status}`
+            );
+
+        }
+
+
+        const settings =
+            await response.json();
+
+
+        console.log(
+            "Paramètres récupérés :",
+            settings
+        );
+
+
+        dashboardSettings = {
+            theme: settings.theme || "light",
+
+            showCompleted:
+                settings.showCompleted !== undefined
+                    ? settings.showCompleted
+                    : true,
+
+            showDescription:
+                settings.showDescription !== undefined
+                    ? settings.showDescription
+                    : true,
+
+            showPriority:
+                settings.showPriority !== undefined
+                    ? settings.showPriority
+                    : true,
+
+            confirmDelete:
+                settings.confirmDelete !== undefined
+                    ? settings.confirmDelete
+                    : true
+        };
+
+
+        // Appliquer les paramètres
+        applyTheme();
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur lors du chargement des paramètres :",
+            error
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// APPLIQUER LE THÈME
+// ==========================================
+
+function applyTheme() {
+
+    if (dashboardSettings.theme === "dark") {
+
+        document.body.classList.remove(
+            "bg-slate-100",
+            "text-slate-800"
+        );
+
+
+        document.body.classList.add(
+            "bg-slate-900",
+            "text-white"
+        );
+
+    } else {
+
+        document.body.classList.remove(
+            "bg-slate-900",
+            "text-white"
+        );
+
+
+        document.body.classList.add(
+            "bg-slate-100",
+            "text-slate-800"
+        );
+
+    }
+
+}
+
+
+// ==========================================
+// RÉCUPÉRER LES DONNÉES
+// ==========================================
+
 function getData(key) {
 
     try {
@@ -33,11 +166,16 @@ function getData(key) {
 
 function updateDashboard() {
 
-    const projects = getData("projects");
+    const projects =
+        getData("projects");
 
-    const tasks = getData("tasks");
 
-    const members = getData("members");
+    const tasks =
+        getData("tasks");
+
+
+    const members =
+        getData("members");
 
 
     // ==========================================
@@ -61,7 +199,7 @@ function updateDashboard() {
 
 
     // ==========================================
-    // TACHES
+    // TÂCHES
     // ==========================================
 
     const totalTasks =
@@ -87,11 +225,12 @@ function updateDashboard() {
 
 
     // ==========================================
-    // TACHES EN RETARD
+    // TÂCHES EN RETARD
     // ==========================================
 
     const today =
         new Date();
+
 
     today.setHours(
         0,
@@ -117,6 +256,7 @@ function updateDashboard() {
             const deadline =
                 new Date(task.deadline);
 
+
             deadline.setHours(
                 0,
                 0,
@@ -137,9 +277,32 @@ function updateDashboard() {
     const totalMembers =
         members.length;
 
+async function testMembers() {
 
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/api/members"
+        );
+
+        const data = await response.json();
+
+        console.log("MEMBRES DU BACKEND :", data);
+
+    } catch (error) {
+
+        console.error(
+            "Erreur membres :",
+            error
+        );
+
+    }
+
+}
+
+testMembers();
     // ==========================================
-    // PROGRESSION GLOBALE
+    // PROGRESSION
     // ==========================================
 
     let progress = 0;
@@ -214,7 +377,7 @@ function updateDashboard() {
 
 
     // ==========================================
-    // PROGRESSION
+    // PROGRESSION GLOBALE
     // ==========================================
 
     setText(
@@ -244,7 +407,7 @@ function updateDashboard() {
 
 
     // ==========================================
-    // PROJETS RECENTS
+    // PROJETS RÉCENTS
     // ==========================================
 
     displayRecentProjects(
@@ -253,7 +416,7 @@ function updateDashboard() {
 
 
     // ==========================================
-    // TACHES URGENTES
+    // TÂCHES URGENTES
     // ==========================================
 
     displayUrgentTasks(
@@ -287,7 +450,7 @@ function setText(
 
 
 // ==========================================
-// PROJETS RECENTS
+// PROJETS RÉCENTS
 // ==========================================
 
 function displayRecentProjects(
@@ -367,6 +530,27 @@ function displayRecentProjects(
         };
 
 
+        // ======================================
+        // DESCRIPTION
+        // ======================================
+
+        const descriptionHTML =
+            dashboardSettings.showDescription
+                ? `
+                    <p class="text-sm text-slate-500 mt-1">
+                        ${escapeHTML(
+                            project.description ||
+                            "Aucune description"
+                        )}
+                    </p>
+                `
+                : "";
+
+
+        // ======================================
+        // CARTE
+        // ======================================
+
         card.innerHTML = `
 
             <div class="flex justify-between items-start">
@@ -374,22 +558,29 @@ function displayRecentProjects(
                 <div>
 
                     <h4 class="font-semibold">
-                        ${escapeHTML(project.name || "Projet sans nom")}
+                        ${escapeHTML(
+                            project.name ||
+                            "Projet sans nom"
+                        )}
                     </h4>
 
-                    <p class="text-sm text-slate-500 mt-1">
-                        ${escapeHTML(project.description || "Aucune description")}
-                    </p>
+                    ${descriptionHTML}
 
                 </div>
+
 
                 <span
                     class="px-3 py-1 rounded-full text-xs bg-indigo-100 text-indigo-700"
                 >
-                    ${statusText[project.status] || project.status || "Actif"}
+                    ${
+                        statusText[project.status] ||
+                        project.status ||
+                        "Actif"
+                    }
                 </span>
 
             </div>
+
 
             <div class="mt-4">
 
@@ -404,6 +595,7 @@ function displayRecentProjects(
                     </span>
 
                 </div>
+
 
                 <div class="h-2 bg-slate-100 rounded-full">
 
@@ -427,7 +619,7 @@ function displayRecentProjects(
 
 
 // ==========================================
-// TACHES URGENTES
+// TÂCHES URGENTES
 // ==========================================
 
 function displayUrgentTasks(
@@ -465,6 +657,18 @@ function displayUrgentTasks(
     const urgent =
         tasks.filter(task => {
 
+            // Si les tâches terminées
+            // sont masquées dans les paramètres
+            if (
+                !dashboardSettings.showCompleted &&
+                task.status === "completed"
+            ) {
+
+                return false;
+
+            }
+
+
             if (
                 task.status === "completed"
             ) {
@@ -485,6 +689,7 @@ function displayUrgentTasks(
 
                 const deadline =
                     new Date(task.deadline);
+
 
                 deadline.setHours(
                     0,
@@ -536,6 +741,24 @@ function displayUrgentTasks(
                 "border border-red-100 bg-red-50 rounded-xl p-4 mb-3";
 
 
+            // ======================================
+            // PRIORITÉ
+            // ======================================
+
+            const priorityHTML =
+                dashboardSettings.showPriority
+                    ? `
+                        <p class="text-xs text-slate-500 mt-1">
+                            Priorité :
+                            ${escapeHTML(
+                                task.priority ||
+                                "non définie"
+                            )}
+                        </p>
+                    `
+                    : "";
+
+
             element.innerHTML = `
 
                 <div class="flex justify-between">
@@ -543,21 +766,23 @@ function displayUrgentTasks(
                     <div>
 
                         <h4 class="font-semibold">
-                            ${escapeHTML(task.title || "Tâche")}
+                            ${escapeHTML(
+                                task.title ||
+                                "Tâche"
+                            )}
                         </h4>
 
-                        <p class="text-xs text-slate-500 mt-1">
-                            Priorité :
-                            ${task.priority || "non définie"}
-                        </p>
+                        ${priorityHTML}
 
                     </div>
+
 
                     <span class="text-red-500">
                         !
                     </span>
 
                 </div>
+
 
                 ${
                     task.deadline
@@ -609,7 +834,7 @@ function formatDate(
 
 
 // ==========================================
-// SECURITE AFFICHAGE
+// SÉCURITÉ AFFICHAGE
 // ==========================================
 
 function escapeHTML(
@@ -635,8 +860,12 @@ function escapeHTML(
 
 document.addEventListener(
     "DOMContentLoaded",
-    () => {
+    async () => {
 
+        // 1. Charger les paramètres
+        await loadDashboardSettings();
+
+        // 2. Charger le Dashboard
         updateDashboard();
 
     }

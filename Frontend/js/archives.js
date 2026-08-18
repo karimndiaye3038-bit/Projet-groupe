@@ -1,6 +1,15 @@
+
 // ======================================================
 // TASKFLOW PRO
-// PROJETS ARCHIVÉS
+// GESTION DES PROJETS ARCHIVÉS
+// ======================================================
+
+// Vérification
+console.log("archive.js chargé");
+
+
+// ======================================================
+// ÉLÉMENTS HTML
 // ======================================================
 
 const archiveContainer =
@@ -13,368 +22,163 @@ const archiveSearch =
     document.getElementById("archiveSearch");
 
 
+// ======================================================
+// STOCKAGE LOCAL DES ARCHIVES
+// ======================================================
+
+// Cette variable contient les projets récupérés
+// depuis le backend.
 let archivedProjects = [];
 
 
 // ======================================================
-// VÉRIFIER ARCHIVAGE
-// ======================================================
-
-function isArchived(project) {
-
-    return project.archived === true;
-
-}
-
-
-// ======================================================
-// CHARGER LES PROJETS ARCHIVÉS
+// RÉCUPÉRER LES PROJETS ARCHIVÉS
 // ======================================================
 
 async function loadArchivedProjects() {
 
     try {
 
-        const projects =
-            await getProjectsFromAPI();
+        const projects = await getProjectsFromAPI();
 
+        console.log("TOUS LES PROJETS :", projects);
 
-        archivedProjects =
-            projects.filter(
-                project =>
-                    isArchived(project)
-            );
+        archivedProjects = projects;
 
-
-        renderArchivedProjects();
-
+        displayArchivedProjects(archivedProjects);
 
     } catch (error) {
 
-        console.error(
-            "Erreur chargement archives :",
-            error
-        );
+        console.error("Erreur :", error);
 
-        archiveContainer.innerHTML = "";
+    }
+}
+
+
+// ======================================================
+// AFFICHER LES PROJETS ARCHIVÉS
+// ======================================================
+
+function displayArchivedProjects(projects) {
+
+    archiveContainer.innerHTML = "";
+
+
+    // Aucun projet
+    if (!projects || projects.length === 0) {
 
         archiveEmpty.classList.remove("hidden");
 
-    }
-
-}
-
-
-// ======================================================
-// AFFICHER LES ARCHIVES
-// ======================================================
-
-function renderArchivedProjects() {
-
-    if (!archiveContainer) {
-
         return;
-
     }
 
 
-    let projects =
-        [...archivedProjects];
+    // Il existe des projets
+    archiveEmpty.classList.add("hidden");
 
 
-    // ==================================================
-    // RECHERCHE
-    // ==================================================
+    projects.forEach(project => {
 
-    const search =
-        archiveSearch
-            ? archiveSearch.value
-                .trim()
-                .toLowerCase()
-            : "";
+        const card = document.createElement("div");
 
-
-    if (search) {
-
-        projects =
-            projects.filter(
-                project => {
-
-                    const name =
-                        (
-                            project.name ||
-                            ""
-                        ).toLowerCase();
+        card.className = `
+            bg-white
+            rounded-2xl
+            border
+            border-slate-200
+            p-6
+            shadow-sm
+            hover:shadow-md
+            transition
+        `;
 
 
-                    const description =
-                        (
-                            project.description ||
-                            ""
-                        ).toLowerCase();
+        // --------------------------------------------------
+        // DONNÉES DU PROJET
+        // --------------------------------------------------
+
+        const name =
+            project.name ||
+            project.title ||
+            "Projet sans nom";
+
+        const description =
+            project.description ||
+            "Aucune description disponible.";
+
+        const createdAt =
+            project.createdAt
+                ? new Date(project.createdAt).toLocaleDateString("fr-FR")
+                : "Date inconnue";
 
 
-                    return (
-                        name.includes(search) ||
-                        description.includes(search)
-                    );
+        // --------------------------------------------------
+        // CARTE
+        // --------------------------------------------------
 
-                }
-            );
+        card.innerHTML = `
 
-    }
+            <div class="flex items-start justify-between mb-4">
 
-
-    // ==================================================
-    // AUCUN PROJET
-    // ==================================================
-
-    if (projects.length === 0) {
-
-        archiveContainer.innerHTML = "";
-
-        archiveEmpty.classList.remove(
-            "hidden"
-        );
-
-        return;
-
-    }
-
-
-    archiveEmpty.classList.add(
-        "hidden"
-    );
-
-
-    // ==================================================
-    // CARTES
-    // ==================================================
-
-    archiveContainer.innerHTML =
-        projects
-            .map(
-                project =>
-                    createArchivedCard(project)
-            )
-            .join("");
-
-}
-
-
-// ======================================================
-// CARTE ARCHIVÉE
-// ======================================================
-
-function createArchivedCard(project) {
-
-    const projectId =
-        project._id ||
-        project.id;
-
-
-    const color =
-        project.color ||
-        "#4F46E5";
-
-
-    return `
-
-        <div
-            class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
-        >
-
-            <!-- COULEUR -->
-
-            <div
-                class="h-2"
-                style="background-color:${color}"
-            ></div>
-
-
-            <div class="p-6">
-
-                <!-- TITRE -->
-
-                <div class="flex justify-between gap-3">
-
-                    <div>
-
-                        <h3 class="text-xl font-bold">
-                            ${escapeHtml(project.name)}
-                        </h3>
-
-                        <p class="text-sm text-slate-500 mt-2">
-                            ${
-                                escapeHtml(
-                                    project.description ||
-                                    "Aucune description"
-                                )
-                            }
-                        </p>
-
-                    </div>
-
-
-                    <span
-                        class="h-fit px-3 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold"
-                    >
-                        📦 Archivé
-                    </span>
-
+                <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl">
+                    📦
                 </div>
 
-
-                <!-- INFORMATIONS -->
-
-                <div class="mt-6 space-y-3">
-
-                    <div class="flex justify-between text-sm">
-
-                        <span class="text-slate-500">
-                            📅 Création
-                        </span>
-
-                        <span class="font-medium">
-                            ${formatDate(project.createdAt)}
-                        </span>
-
-                    </div>
-
-
-                    <div class="flex justify-between text-sm">
-
-                        <span class="text-slate-500">
-                            🚀 Début
-                        </span>
-
-                        <span class="font-medium">
-                            ${formatDate(project.startDate)}
-                        </span>
-
-                    </div>
-
-
-                    <div class="flex justify-between text-sm">
-
-                        <span class="text-slate-500">
-                            📅 Deadline
-                        </span>
-
-                        <span class="font-medium">
-                            ${formatDate(project.deadline)}
-                        </span>
-
-                    </div>
-
-
-                    <div class="flex justify-between items-center text-sm">
-
-                        <span class="text-slate-500">
-                            🎨 Couleur
-                        </span>
-
-                        <div class="flex items-center gap-2">
-
-                            <span
-                                class="w-5 h-5 rounded-full border"
-                                style="background-color:${color}"
-                            ></span>
-
-                            <span class="font-medium">
-                                ${color}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ACTIONS -->
-
-                <div class="mt-6 pt-5 border-t border-slate-200">
-
-                    <button
-                        type="button"
-                        onclick="deleteArchivedProject('${projectId}')"
-                        class="w-full px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-sm font-semibold"
-                    >
-                        🗑 Supprimer définitivement
-                    </button>
-
-                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">
+                    Archivé
+                </span>
 
             </div>
 
-        </div>
 
-    `;
-
-}
-
-
-// ======================================================
-// SUPPRIMER UNE ARCHIVE
-// ======================================================
-
-async function deleteArchivedProject(id) {
-
-    const project =
-        archivedProjects.find(
-            project =>
-                String(
-                    project._id ||
-                    project.id
-                ) === String(id)
-        );
+            <h3 class="text-lg font-bold text-slate-900 mb-2">
+                ${escapeHTML(name)}
+            </h3>
 
 
-    if (!project) {
-
-        return;
-
-    }
+            <p class="text-sm text-slate-500 mb-4">
+                ${escapeHTML(description)}
+            </p>
 
 
-    const confirmation =
-        confirm(
-            `Voulez-vous supprimer définitivement "${project.name}" ?`
-        );
+            <div class="border-t border-slate-100 pt-4">
+
+                <p class="text-xs text-slate-400">
+                    Projet créé le
+                </p>
+
+                <p class="text-sm font-medium text-slate-700">
+                    ${createdAt}
+                </p>
+
+            </div>
 
 
-    if (!confirmation) {
+            <div class="flex gap-2 mt-5">
 
-        return;
-
-    }
-
-
-    try {
-
-        await deleteProjectAPI(id);
+                <button
+                    onclick="restoreProject('${project._id}')"
+                    class="flex-1 px-4 py-2 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition"
+                >
+                    Restaurer
+                </button>
 
 
-        alert(
-            "Projet supprimé définitivement ✅"
-        );
+                <button
+                    onclick="deleteArchivedProject('${project._id}')"
+                    class="px-4 py-2 rounded-xl bg-red-50 text-red-600 text-sm font-medium hover:bg-red-100 transition"
+                >
+                    Supprimer
+                </button>
+
+            </div>
+
+        `;
 
 
-        await loadArchivedProjects();
+        archiveContainer.appendChild(card);
 
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            error.message ||
-            "Erreur lors de la suppression."
-        );
-
-    }
-
+    });
 }
 
 
@@ -382,92 +186,177 @@ async function deleteArchivedProject(id) {
 // RECHERCHE
 // ======================================================
 
-if (archiveSearch) {
+archiveSearch.addEventListener("input", function () {
 
-    archiveSearch.addEventListener(
-        "input",
-        renderArchivedProjects
-    );
+    const search =
+        this.value.toLowerCase().trim();
 
-}
+
+    const filteredProjects =
+        archivedProjects.filter(project => {
+
+            const name =
+                (
+                    project.name ||
+                    project.title ||
+                    ""
+                ).toLowerCase();
+
+
+            const description =
+                (
+                    project.description ||
+                    ""
+                ).toLowerCase();
+
+
+            return (
+                name.includes(search) ||
+                description.includes(search)
+            );
+
+        });
+
+
+    displayArchivedProjects(filteredProjects);
+
+});
 
 
 // ======================================================
-// FORMAT DATE
+// RESTAURER UN PROJET
 // ======================================================
 
-function formatDate(date) {
+async function restoreProject(projectId) {
 
-    if (!date) {
+    const confirmation =
+        confirm(
+            "Voulez-vous restaurer ce projet ?"
+        );
 
-        return "-";
 
+    if (!confirmation) {
+        return;
     }
 
 
-    const dateObject =
-        new Date(date);
+    try {
+
+        /*
+         * Adapte cette URL si ton backend utilise
+         * une autre route.
+         */
+
+        const response = await fetch(
+            `${API_URL}/projects/${projectId}/archive`,
+            {
+                method: "PUT",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    archived: false
+                })
+            }
+        );
 
 
-    if (
-        Number.isNaN(
-            dateObject.getTime()
-        )
-    ) {
+        if (!response.ok) {
 
-        return "-";
-
-    }
-
-
-    return dateObject.toLocaleDateString(
-        "fr-FR",
-        {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
+            throw new Error(
+                "Impossible de restaurer le projet."
+            );
         }
-    );
-
-}
 
 
-// ======================================================
-// SÉCURITÉ HTML
-// ======================================================
-
-function escapeHtml(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-
-        return "";
-
-    }
+        alert("Projet restauré avec succès.");
 
 
-    return String(value)
-
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-}
-
-
-// ======================================================
-// INITIALISATION
-// ======================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
+        // Recharger les archives
         loadArchivedProjects();
 
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Erreur lors de la restauration du projet."
+        );
     }
-);
+}
+
+
+// ======================================================
+// SUPPRIMER UN PROJET ARCHIVÉ
+// ======================================================
+
+async function deleteArchivedProject(projectId) {
+
+    const confirmation =
+        confirm(
+            "Voulez-vous supprimer définitivement ce projet ?"
+        );
+
+
+    if (!confirmation) {
+        return;
+    }
+
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/projects/${projectId}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Impossible de supprimer le projet."
+            );
+        }
+
+
+        alert("Projet supprimé avec succès.");
+
+
+        // Recharger
+        loadArchivedProjects();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Erreur lors de la suppression du projet."
+        );
+    }
+}
+
+
+// ======================================================
+// PROTECTION CONTRE L'INJECTION HTML
+// ======================================================
+
+function escapeHTML(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent = value;
+
+    return div.innerHTML;
+}
+
+
+// ======================================================
+// LANCEMENT
+// ======================================================
+
+loadArchivedProjects();

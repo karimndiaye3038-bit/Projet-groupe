@@ -1,48 +1,34 @@
 const Settings = require("../models/Settings");
 
 class SettingsService {
-
-  // Récupérer les paramètres
   async getSettings() {
-
     let settings = await Settings.findOne();
-
-    // Si aucun paramètre n'existe
     if (!settings) {
       settings = await Settings.create({
         theme: "light",
-        display: "normal",
-        confirmDelete: true,
+        showCompleted: true,
+        showDescription: true,
+        showPriority: true,
+        confirmDelete: true
       });
     }
-
     return settings;
   }
 
-  // Modifier les paramètres
   async updateSettings(data) {
-
     let settings = await Settings.findOne();
-
     if (!settings) {
       settings = await Settings.create(data);
       return settings;
     }
 
-    if (data.theme !== undefined) {
-      settings.theme = data.theme;
-    }
-
-    if (data.display !== undefined) {
-      settings.display = data.display;
-    }
-
-    if (data.confirmDelete !== undefined) {
-      settings.confirmDelete = data.confirmDelete;
-    }
+    if (data.theme !== undefined) settings.theme = data.theme;
+    if (data.showCompleted !== undefined) settings.showCompleted = data.showCompleted;
+    if (data.showDescription !== undefined) settings.showDescription = data.showDescription;
+    if (data.showPriority !== undefined) settings.showPriority = data.showPriority;
+    if (data.confirmDelete !== undefined) settings.confirmDelete = data.confirmDelete;
 
     await settings.save();
-
     return settings;
   }
 }
