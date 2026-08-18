@@ -1,37 +1,17 @@
 // ======================================================
 // TASKFLOW PRO
-// GESTION DES PROJETS - FRONTEND
+// GESTION DES PROJETS
 // ======================================================
-
-
-// ======================================================
-// TÂCHES
-// ======================================================
-
-function getTasks() {
-
-    return JSON.parse(
-        localStorage.getItem("tasks")
-    ) || [];
-
-}
 
 
 // ======================================================
 // ÉLÉMENTS HTML
 // ======================================================
 
-const modal =
-    document.getElementById("projectModal");
-
-const form =
-    document.getElementById("projectForm");
-
-const container =
-    document.getElementById("projectsContainer");
-
-const emptyState =
-    document.getElementById("emptyState");
+const modal = document.getElementById("projectModal");
+const form = document.getElementById("projectForm");
+const container = document.getElementById("projectsContainer");
+const emptyState = document.getElementById("emptyState");
 
 const openProjectModal =
     document.getElementById("openProjectModal");
@@ -48,26 +28,72 @@ const projectColor =
 const colorValue =
     document.getElementById("colorValue");
 
+const projectSearch =
+    document.getElementById("projectSearch");
+
+const statusFilter =
+    document.getElementById("statusFilter");
+
 
 // ======================================================
 // PROJETS
 // ======================================================
 
-// Les projets viennent maintenant de MongoDB
-
 let projects = [];
 
 
 // ======================================================
-// CHARGER LES PROJETS DEPUIS LE BACKEND
+// TÂCHES
+// ======================================================
+
+function getTasks() {
+
+    try {
+
+        return JSON.parse(
+            localStorage.getItem("tasks")
+        ) || [];
+
+    } catch (error) {
+
+        console.error(
+            "Erreur lecture tâches :",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+// ======================================================
+// VÉRIFIER SI UN PROJET EST ARCHIVÉ
+// ======================================================
+
+function isProjectArchived(project) {
+
+    return project.archived === true;
+
+}
+
+
+// ======================================================
+// CHARGER LES PROJETS
 // ======================================================
 
 async function loadProjects() {
 
     try {
 
-        projects =
+        const result =
             await getProjectsFromAPI();
+
+        projects =
+            Array.isArray(result)
+                ? result
+                : [];
 
         renderProjects();
 
@@ -84,31 +110,31 @@ async function loadProjects() {
 
         renderProjects();
 
+        alert(
+            "Impossible de charger les projets."
+        );
+
     }
 
 }
 
 
 // ======================================================
-// OUVRIR MODALE
+// OUVRIR LA MODALE
 // ======================================================
 
 if (openProjectModal) {
 
     openProjectModal.addEventListener(
         "click",
-        function () {
-
-            openCreateModal();
-
-        }
+        openCreateModal
     );
 
 }
 
 
 // ======================================================
-// FERMER MODALE
+// FERMER LA MODALE
 // ======================================================
 
 if (closeProjectModal) {
@@ -141,9 +167,7 @@ if (modal) {
         "click",
         function (event) {
 
-            if (
-                event.target === modal
-            ) {
+            if (event.target === modal) {
 
                 closeModal();
 
@@ -156,7 +180,7 @@ if (modal) {
 
 
 // ======================================================
-// FERMER AVEC ESC
+// ESC
 // ======================================================
 
 document.addEventListener(
@@ -189,20 +213,13 @@ function closeModal() {
 
     }
 
-    modal.classList.add(
-        "hidden"
-    );
-
-    modal.classList.remove(
-        "flex"
-    );
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
 
     form.reset();
 
     const projectId =
-        document.getElementById(
-            "projectId"
-        );
+        document.getElementById("projectId");
 
     if (projectId) {
 
@@ -211,9 +228,7 @@ function closeModal() {
     }
 
     const modalTitle =
-        document.getElementById(
-            "modalTitle"
-        );
+        document.getElementById("modalTitle");
 
     if (modalTitle) {
 
@@ -249,9 +264,7 @@ function openCreateModal() {
     form.reset();
 
     const projectId =
-        document.getElementById(
-            "projectId"
-        );
+        document.getElementById("projectId");
 
     if (projectId) {
 
@@ -260,9 +273,7 @@ function openCreateModal() {
     }
 
     const modalTitle =
-        document.getElementById(
-            "modalTitle"
-        );
+        document.getElementById("modalTitle");
 
     if (modalTitle) {
 
@@ -280,13 +291,8 @@ function openCreateModal() {
 
     }
 
-    modal.classList.remove(
-        "hidden"
-    );
-
-    modal.classList.add(
-        "flex"
-    );
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
 
 }
 
@@ -332,38 +338,52 @@ if (form) {
 
             event.preventDefault();
 
-
-            // ==========================================
-            // RÉCUPÉRATION
-            // ==========================================
-
             const id =
                 document.getElementById(
                     "projectId"
                 ).value;
 
-        const name =
-    document.getElementById("projectName").value.trim();
+            const name =
+                document.getElementById(
+                    "projectName"
+                ).value.trim();
 
-const description =
-    document.getElementById("projectDescription").value.trim();
+            const description =
+                document.getElementById(
+                    "projectDescription"
+                ).value.trim();
 
-const color =
-    document.getElementById("projectColor").value;
+            const status =
+                document.getElementById(
+                    "projectStatus"
+                ).value;
 
-const status =
-    document.getElementById("projectStatus").value;
+            const deadline =
+                document.getElementById(
+                    "projectDeadline"
+                ).value;
 
-const startDate =
-    document.getElementById("projectStartDate").value;
+            const startDate =
+                document.getElementById(
+                    "projectStartDate"
+                ).value;
 
-const deadline =
-    document.getElementById("projectDeadline").value;
+            const color =
+                document.getElementById(
+                    "projectColor"
+                ).value;
 
-const archived =
-    document.getElementById(
-        "projectArchive"
-    ).checked;
+            const archiveCheckbox =
+                document.getElementById(
+                    "projectArchive"
+                );
+
+            const archived =
+                archiveCheckbox
+                    ? archiveCheckbox.checked
+                    : false;
+
+
             // ==========================================
             // VALIDATION
             // ==========================================
@@ -380,25 +400,26 @@ const archived =
 
 
             // ==========================================
-            // DONNÉES À ENVOYER AU BACKEND
+            // DONNÉES
             // ==========================================
-const projectData = {
 
-    name: name,
+            const projectData = {
 
-    description: description,
+                name: name,
 
-    color: color,
+                description: description,
 
-    status: status,
+                status: status,
 
-    startDate: startDate,
+                color: color,
 
-    deadline: deadline,
+                startDate: startDate,
 
-    archived: archived
+                deadline: deadline,
 
-};
+                archived: archived
+
+            };
 
 
             try {
@@ -420,7 +441,6 @@ const projectData = {
 
                 }
 
-
                 // ======================================
                 // CRÉATION
                 // ======================================
@@ -438,18 +458,10 @@ const projectData = {
                 }
 
 
-                // ======================================
-                // FERMER
-                // ======================================
-
                 closeModal();
 
-
-                // ======================================
-                // RECHARGER DEPUIS MONGODB
-                // ======================================
-
                 await loadProjects();
+
 
             } catch (error) {
 
@@ -475,9 +487,7 @@ const projectData = {
 // PROGRESSION
 // ======================================================
 
-function getProjectProgress(
-    projectId
-) {
+function getProjectProgress(projectId) {
 
     const tasks =
         getTasks().filter(
@@ -487,9 +497,7 @@ function getProjectProgress(
         );
 
 
-    if (
-        tasks.length === 0
-    ) {
+    if (tasks.length === 0) {
 
         return 0;
 
@@ -499,8 +507,7 @@ function getProjectProgress(
     const completed =
         tasks.filter(
             task =>
-                task.status ===
-                "completed"
+                task.status === "completed"
         ).length;
 
 
@@ -526,22 +533,30 @@ function renderProjects() {
 
     }
 
+
     let filteredProjects =
         [...projects];
 
 
-    // ==========================================
-    // RECHERCHE
-    // ==========================================
+    // ==================================================
+    // IMPORTANT :
+    // LES PROJETS ARCHIVÉS NE SONT PAS AFFICHÉS
+    // ==================================================
 
-    const searchInput =
-        document.getElementById(
-            "projectSearch"
+    filteredProjects =
+        filteredProjects.filter(
+            project =>
+                !isProjectArchived(project)
         );
 
+
+    // ==================================================
+    // RECHERCHE
+    // ==================================================
+
     const search =
-        searchInput
-            ? searchInput.value
+        projectSearch
+            ? projectSearch.value
                 .trim()
                 .toLowerCase()
             : "";
@@ -553,24 +568,23 @@ function renderProjects() {
             filteredProjects.filter(
                 project => {
 
-                    return (
-
+                    const name =
                         (
                             project.name ||
                             ""
-                        )
-                            .toLowerCase()
-                            .includes(search)
+                        ).toLowerCase();
 
-                        ||
 
+                    const description =
                         (
                             project.description ||
                             ""
-                        )
-                            .toLowerCase()
-                            .includes(search)
+                        ).toLowerCase();
 
+
+                    return (
+                        name.includes(search) ||
+                        description.includes(search)
                     );
 
                 }
@@ -579,49 +593,45 @@ function renderProjects() {
     }
 
 
-    // ==========================================
+    // ==================================================
     // FILTRE STATUT
-    // ==========================================
+    // ==================================================
 
-    const statusFilter =
-        document.getElementById(
-            "statusFilter"
-        );
-
-    const status =
+    const filter =
         statusFilter
             ? statusFilter.value
             : "all";
 
 
-    if (
-        status !== "all"
-    ) {
+    if (filter === "active") {
 
         filteredProjects =
             filteredProjects.filter(
                 project =>
-                    project.status ===
-                    status
+                    project.status === "active" ||
+                    project.status === "Actif"
             );
 
     }
 
 
-    // ==========================================
-    // STATISTIQUES
-    // ==========================================
+    if (filter === "completed") {
 
-    updateStatistics();
+        filteredProjects =
+            filteredProjects.filter(
+                project =>
+                    project.status === "completed" ||
+                    project.status === "Terminé"
+            );
+
+    }
 
 
-    // ==========================================
+    // ==================================================
     // AUCUN PROJET
-    // ==========================================
+    // ==================================================
 
-    if (
-        filteredProjects.length === 0
-    ) {
+    if (filteredProjects.length === 0) {
 
         container.innerHTML = "";
 
@@ -630,6 +640,12 @@ function renderProjects() {
             emptyState.classList.remove(
                 "hidden"
             );
+
+            emptyState.querySelector("h3").textContent =
+                "Aucun projet trouvé";
+
+            emptyState.querySelector("p").textContent =
+                "Les projets archivés ne sont plus affichés ici.";
 
         }
 
@@ -647,17 +663,15 @@ function renderProjects() {
     }
 
 
-    // ==========================================
-    // CARTES
-    // ==========================================
+    // ==================================================
+    // AFFICHER LES CARTES
+    // ==================================================
 
     container.innerHTML =
         filteredProjects
             .map(
                 project =>
-                    createProjectCard(
-                        project
-                    )
+                    createProjectCard(project)
             )
             .join("");
 
@@ -668,13 +682,21 @@ function renderProjects() {
 // CARTE PROJET
 // ======================================================
 
-function createProjectCard(
-    project
-) {
+function createProjectCard(project) {
 
     const projectId =
         project._id ||
         project.id;
+
+
+    // Sécurité :
+    // un projet archivé ne doit jamais être affiché
+
+    if (isProjectArchived(project)) {
+
+        return "";
+
+    }
 
 
     const progress =
@@ -694,8 +716,7 @@ function createProjectCard(
     const completedTasks =
         tasks.filter(
             task =>
-                task.status ===
-                "completed"
+                task.status === "completed"
         ).length;
 
 
@@ -704,23 +725,42 @@ function createProjectCard(
         "#4F46E5";
 
 
+    const isCompleted =
+        project.status === "completed" ||
+        project.status === "Terminé";
+
+
     const isLate =
         project.deadline &&
-        new Date(project.deadline) <
-        new Date() &&
-        project.status !== "completed";
+        new Date(project.deadline) < new Date() &&
+        !isCompleted;
 
 
-    const statusLabel =
-        project.status === "completed"
-            ? "Terminé"
-            : "Actif";
+    // ==================================================
+    // STATUT
+    // ==================================================
+
+    let statusLabel;
+    let statusClass;
 
 
-    const statusClass =
-        project.status === "completed"
-            ? "bg-green-100 text-green-700"
-            : "bg-blue-100 text-blue-700";
+    if (isCompleted) {
+
+        statusLabel =
+            "✓ Terminé";
+
+        statusClass =
+            "bg-green-100 text-green-700";
+
+    } else {
+
+        statusLabel =
+            "● Actif";
+
+        statusClass =
+            "bg-blue-100 text-blue-700";
+
+    }
 
 
     return `
@@ -742,15 +782,11 @@ function createProjectCard(
 
                 <!-- TITRE -->
 
-                <div
-                    class="flex justify-between gap-4"
-                >
+                <div class="flex justify-between gap-4">
 
                     <div class="min-w-0">
 
-                        <div
-                            class="flex items-center gap-2"
-                        >
+                        <div class="flex items-center gap-2">
 
                             <span
                                 class="w-3 h-3 rounded-full flex-shrink-0"
@@ -760,9 +796,7 @@ function createProjectCard(
                             <h3
                                 class="font-bold text-xl truncate"
                             >
-                                ${escapeHtml(
-                                    project.name
-                                )}
+                                ${escapeHtml(project.name)}
                             </h3>
 
                         </div>
@@ -782,30 +816,13 @@ function createProjectCard(
                     </div>
 
 
-                    <div
-                        class="flex flex-col items-end gap-2"
+                    <!-- STATUT -->
+
+                    <span
+                        class="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap h-fit ${statusClass}"
                     >
-
-                        <span
-                            class="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${statusClass}"
-                        >
-                            ${statusLabel}
-                        </span>
-
-
-                        ${
-                            project.archive
-                                ? `
-                                    <span
-                                        class="px-3 py-1 rounded-full bg-slate-200 text-slate-600 text-xs font-semibold whitespace-nowrap"
-                                    >
-                                        📦 Archivé
-                                    </span>
-                                `
-                                : ""
-                        }
-
-                    </div>
+                        ${statusLabel}
+                    </span>
 
                 </div>
 
@@ -814,19 +831,13 @@ function createProjectCard(
 
                 <div class="mt-6">
 
-                    <div
-                        class="flex justify-between mb-2"
-                    >
+                    <div class="flex justify-between mb-2">
 
-                        <span
-                            class="text-sm text-slate-500"
-                        >
+                        <span class="text-sm text-slate-500">
                             Progression
                         </span>
 
-                        <span
-                            class="text-sm font-bold"
-                        >
+                        <span class="text-sm font-bold">
                             ${progress}%
                         </span>
 
@@ -838,7 +849,7 @@ function createProjectCard(
                     >
 
                         <div
-                            class="h-full rounded-full transition-all"
+                            class="h-full rounded-full"
                             style="
                                 width:${progress}%;
                                 background-color:${color};
@@ -848,12 +859,12 @@ function createProjectCard(
                     </div>
 
 
-                    <p
-                        class="text-xs text-slate-400 mt-2"
-                    >
+                    <p class="text-xs text-slate-400 mt-2">
+
                         ${completedTasks}
                         tâche(s) terminée(s) sur
                         ${tasks.length}
+
                     </p>
 
                 </div>
@@ -866,18 +877,29 @@ function createProjectCard(
 
                     <!-- CRÉATION -->
 
-                    <div
-                        class="flex justify-between text-sm"
-                    >
+                    <div class="flex justify-between text-sm">
 
                         <span class="text-slate-500">
                             📅 Création
                         </span>
 
                         <span class="font-medium">
-                            ${formatDate(
-                                project.createdAt
-                            )}
+                            ${formatDate(project.createdAt)}
+                        </span>
+
+                    </div>
+
+
+                    <!-- DÉBUT -->
+
+                    <div class="flex justify-between text-sm">
+
+                        <span class="text-slate-500">
+                            🚀 Début
+                        </span>
+
+                        <span class="font-medium">
+                            ${formatDate(project.startDate)}
                         </span>
 
                     </div>
@@ -885,9 +907,7 @@ function createProjectCard(
 
                     <!-- DEADLINE -->
 
-                    <div
-                        class="flex justify-between text-sm"
-                    >
+                    <div class="flex justify-between text-sm">
 
                         <span class="text-slate-500">
 
@@ -906,60 +926,7 @@ function createProjectCard(
                                     : "font-medium"
                             }"
                         >
-                            ${formatDate(
-                                project.deadline
-                            )}
-                        </span>
-
-                    </div>
-
-
-                    <!-- COULEUR -->
-
-                    <div
-                        class="flex justify-between items-center text-sm"
-                    >
-
-                        <span class="text-slate-500">
-                            🎨 Couleur
-                        </span>
-
-                        <div
-                            class="flex items-center gap-2"
-                        >
-
-                            <span
-                                class="w-5 h-5 rounded-full border border-slate-200"
-                                style="background-color:${color}"
-                            ></span>
-
-                            <span
-                                class="font-medium uppercase"
-                            >
-                                ${color}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- ARCHIVE -->
-
-                    <div
-                        class="flex justify-between text-sm"
-                    >
-
-                        <span class="text-slate-500">
-                            📦 Archive
-                        </span>
-
-                        <span class="font-medium">
-                            ${
-                                project.archive
-                                    ? "Oui"
-                                    : "Non"
-                            }
+                            ${formatDate(project.deadline)}
                         </span>
 
                     </div>
@@ -993,19 +960,16 @@ function createProjectCard(
                 </div>
 
 
-                ${
-                    !project.archive
-                        ? `
-                            <button
-                                type="button"
-                                onclick="archiveProject('${projectId}')"
-                                class="w-full mt-2 px-3 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm font-semibold"
-                            >
-                                📦 Archiver
-                            </button>
-                        `
-                        : ""
-                }
+                <!-- ARCHIVER -->
+
+                <button
+                    type="button"
+                    onclick="archiveProject('${projectId}')"
+                    class="w-full mt-2 px-3 py-2 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm font-semibold"
+                >
+                    📦 Archiver
+                </button>
+
 
             </div>
 
@@ -1020,9 +984,7 @@ function createProjectCard(
 // MODIFIER UN PROJET
 // ======================================================
 
-function editProject(
-    id
-) {
+function editProject(id) {
 
     const project =
         projects.find(
@@ -1030,8 +992,7 @@ function editProject(
                 String(
                     project._id ||
                     project.id
-                ) ===
-                String(id)
+                ) === String(id)
         );
 
 
@@ -1071,6 +1032,23 @@ function editProject(
         project.status || "active";
 
 
+    const startDate =
+        document.getElementById(
+            "projectStartDate"
+        );
+
+    if (startDate) {
+
+        startDate.value =
+            project.startDate
+                ? String(
+                    project.startDate
+                ).substring(0, 10)
+                : "";
+
+    }
+
+
     const deadline =
         document.getElementById(
             "projectDeadline"
@@ -1099,17 +1077,15 @@ function editProject(
     }
 
 
-    const archiveElement =
+    const archiveCheckbox =
         document.getElementById(
             "projectArchive"
         );
 
-    if (archiveElement) {
+    if (archiveCheckbox) {
 
-        archiveElement.checked =
-            Boolean(
-                project.archive
-            );
+        archiveCheckbox.checked =
+            isProjectArchived(project);
 
     }
 
@@ -1132,12 +1108,10 @@ function editProject(
 
 
 // ======================================================
-// SUPPRIMER UN PROJET
+// SUPPRIMER
 // ======================================================
 
-async function deleteProject(
-    id
-) {
+async function deleteProject(id) {
 
     const project =
         projects.find(
@@ -1145,8 +1119,7 @@ async function deleteProject(
                 String(
                     project._id ||
                     project.id
-                ) ===
-                String(id)
+                ) === String(id)
         );
 
 
@@ -1172,21 +1145,18 @@ async function deleteProject(
 
     try {
 
-        await deleteProjectAPI(
-            id
-        );
-
+        await deleteProjectAPI(id);
 
         alert(
             "Projet supprimé avec succès ✅"
         );
-
 
         await loadProjects();
 
     } catch (error) {
 
         console.error(
+            "Erreur suppression :",
             error
         );
 
@@ -1204,9 +1174,7 @@ async function deleteProject(
 // ARCHIVER UN PROJET
 // ======================================================
 
-async function archiveProject(
-    id
-) {
+async function archiveProject(id) {
 
     const project =
         projects.find(
@@ -1214,8 +1182,7 @@ async function archiveProject(
                 String(
                     project._id ||
                     project.id
-                ) ===
-                String(id)
+                ) === String(id)
         );
 
 
@@ -1228,7 +1195,7 @@ async function archiveProject(
 
     const confirmation =
         confirm(
-            `Voulez-vous archiver le projet "${project.name}" ?`
+            `Voulez-vous archiver "${project.name}" ?`
         );
 
 
@@ -1241,9 +1208,40 @@ async function archiveProject(
 
     try {
 
-        await archiveProjectAPI(
-            id
+        // Appel backend
+        const result =
+            await archiveProjectAPI(id);
+
+
+        console.log(
+            "Projet archivé :",
+            result
         );
+
+
+        // ==================================================
+        // IMPORTANT
+        // On modifie immédiatement le tableau local
+        // ==================================================
+
+        projects =
+            projects.filter(
+                project =>
+                    String(
+                        project._id ||
+                        project.id
+                    ) !== String(id)
+            );
+
+
+        // ==================================================
+        // On réaffiche la liste
+        // Le projet archivé disparaît immédiatement
+        // ==================================================
+
+        renderProjects();
+
+        updateStatistics();
 
 
         alert(
@@ -1251,11 +1249,10 @@ async function archiveProject(
         );
 
 
-        await loadProjects();
-
     } catch (error) {
 
         console.error(
+            "Erreur archivage :",
             error
         );
 
@@ -1276,60 +1273,32 @@ async function archiveProject(
 function updateStatistics() {
 
     const total =
-        projects.length;
+        projects.filter(
+            project =>
+                !isProjectArchived(project)
+        ).length;
 
 
     const active =
         projects.filter(
             project =>
-                project.status ===
-                "active"
+                !isProjectArchived(project) &&
+                (
+                    project.status === "active" ||
+                    project.status === "Actif"
+                )
         ).length;
 
 
     const completed =
         projects.filter(
             project =>
-                project.status ===
-                "completed"
+                !isProjectArchived(project) &&
+                (
+                    project.status === "completed" ||
+                    project.status === "Terminé"
+                )
         ).length;
-
-
-    let average =
-        0;
-
-
-    if (
-        total > 0
-    ) {
-
-        const totalProgress =
-            projects.reduce(
-                function (
-                    sum,
-                    project
-                ) {
-
-                    return (
-                        sum +
-                        getProjectProgress(
-                            project._id ||
-                            project.id
-                        )
-                    );
-
-                },
-                0
-            );
-
-
-        average =
-            Math.round(
-                totalProgress /
-                total
-            );
-
-    }
 
 
     const totalElement =
@@ -1337,19 +1306,16 @@ function updateStatistics() {
             "totalProjects"
         );
 
+
     const activeElement =
         document.getElementById(
             "activeProjects"
         );
 
+
     const completedElement =
         document.getElementById(
             "completedProjects"
-        );
-
-    const averageElement =
-        document.getElementById(
-            "averageProgress"
         );
 
 
@@ -1376,26 +1342,12 @@ function updateStatistics() {
 
     }
 
-
-    if (averageElement) {
-
-        averageElement.textContent =
-            `${average}%`;
-
-    }
-
 }
 
 
 // ======================================================
 // RECHERCHE
 // ======================================================
-
-const projectSearch =
-    document.getElementById(
-        "projectSearch"
-    );
-
 
 if (projectSearch) {
 
@@ -1411,12 +1363,6 @@ if (projectSearch) {
 // FILTRE
 // ======================================================
 
-const statusFilter =
-    document.getElementById(
-        "statusFilter"
-    );
-
-
 if (statusFilter) {
 
     statusFilter.addEventListener(
@@ -1431,9 +1377,7 @@ if (statusFilter) {
 // FORMAT DATE
 // ======================================================
 
-function formatDate(
-    date
-) {
+function formatDate(date) {
 
     if (!date) {
 
@@ -1470,12 +1414,10 @@ function formatDate(
 
 
 // ======================================================
-// SÉCURISER LE HTML
+// SÉCURITÉ HTML
 // ======================================================
 
-function escapeHtml(
-    value
-) {
+function escapeHtml(value) {
 
     if (
         value === null ||
@@ -1560,6 +1502,13 @@ if (logoutBtn) {
 // INITIALISATION
 // ======================================================
 
-loadProjects();
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-updateColorText();
+        updateColorText();
+
+        loadProjects();
+
+    }
+);
