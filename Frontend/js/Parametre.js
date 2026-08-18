@@ -228,4 +228,3 @@ window.matchMedia("(prefers-color-scheme: dark)")
 
 // Initialisation
 loadSettings();
-
