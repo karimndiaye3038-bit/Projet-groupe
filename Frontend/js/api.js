@@ -17,7 +17,7 @@ async function getProjectsFromAPI() {
     );
 
     if (!response.ok) {
-
+ 
         throw new Error(
             `Erreur HTTP : ${response.status}`
         );
