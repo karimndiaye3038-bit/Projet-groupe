@@ -21,6 +21,7 @@ const taskRoutes = require("./src/routes/taskRoutes");
 
 // Authentification
 const authRoutes = require("./src/routes/authRoutes");
+const userRoutes = require("./src/routes/userRoutes");
 
 // =====================================================
 // CONTROLLERS
@@ -161,6 +162,7 @@ app.put(
     projectController.updateProject(req, res);
   }
 );
+app.use("/api/users", userRoutes);
 
 // Supprimer un projet
 app.delete(

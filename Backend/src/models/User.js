@@ -1,38 +1,52 @@
-const mongoose = require("mongoose");
+exports.login = async (req, res) => {
+    try {
 
-const userSchema = new mongoose.Schema(
-  {
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-      lowercase: true,
-    },
+        const { email, password } = req.body;
 
-    password: {
-      type: String,
-      required: true,
-    },
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Email et mot de passe obligatoires."
+            });
+        }
 
-    role: {
-      type: String,
-      default: "user",
-    },
+        const user = await User.findOne({
+            email: email.toLowerCase()
+        });
 
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Email ou mot de passe incorrect."
+            });
+        }
 
-    lastLogin: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+        if (user.password !== password) {
+            return res.status(401).json({
+                success: false,
+                message: "Email ou mot de passe incorrect."
+            });
+        }
 
-module.exports = mongoose.model("User", userSchema);
+        res.json({
+            success: true,
+            message: "Connexion réussie",
+            user: {
+                id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role
+            }
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
