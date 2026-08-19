@@ -11,4 +11,4 @@ const memberRoutes = require("./src/routes/memberRoutes");
 const taskRoutes = require("./src/routes/taskRoutes");
 
 // Authentification
-const authRoutes = require("./src/routes/authRoutes");
+const authRoutes = require("./src/routes/userRoutes");

@@ -7,7 +7,14 @@ const {
     login
 } = require("../controllers/userController");
 
+// ==============================
+// INSCRIPTION
+// ==============================
 router.post("/register", register);
+
+// ==============================
+// CONNEXION
+// ==============================
 router.post("/login", login);
 
 module.exports = router;

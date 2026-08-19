@@ -1,76 +1,35 @@
-// ======================================================
-// TASKFLOW PRO - LOGIN
-// ======================================================
-
 document.addEventListener("DOMContentLoaded", () => {
 
     const form = document.getElementById("loginForm");
 
     if (!form) {
-        console.error("❌ loginForm introuvable");
+        console.error("loginForm introuvable");
         return;
     }
 
-    // ==================================================
-    // API
-    // ==================================================
-
     const API_URL =
         "https://taskflow-pro-u5yu.onrender.com/api/users";
-
-
-    // ==================================================
-    // CONNEXION
-    // ==================================================
 
     form.addEventListener("submit", async (event) => {
 
         event.preventDefault();
 
-        const emailInput =
-            document.getElementById("email");
+        const email = document
+            .getElementById("email")
+            .value
+            .trim();
 
-        const passwordInput =
-            document.getElementById("password");
-
-
-        if (!emailInput || !passwordInput) {
-            console.error(
-                "❌ Champs email ou password introuvables"
-            );
-            return;
-        }
-
-
-        const email =
-            emailInput.value.trim();
-
-        const password =
-            passwordInput.value.trim();
-
-
-        // ==================================================
-        // VALIDATION
-        // ==================================================
+        const password = document
+            .getElementById("password")
+            .value
+            .trim();
 
         if (!email || !password) {
-
-            alert(
-                "Veuillez remplir tous les champs."
-            );
-
+            alert("Veuillez remplir tous les champs.");
             return;
         }
 
-
         try {
-
-            console.log("🔄 Connexion en cours...");
-
-
-            // ==================================================
-            // APPEL BACKEND
-            // ==================================================
 
             const response = await fetch(
                 `${API_URL}/login`,
@@ -88,26 +47,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             );
 
+            const data = await response.json();
 
-            // ==================================================
-            // RÉPONSE
-            // ==================================================
+            console.log("Réponse serveur :", data);
 
-            const data =
-                await response.json();
-
-
-            console.log(
-                "Réponse serveur :",
-                data
-            );
-
-
-            // ==================================================
-            // ERREUR
-            // ==================================================
-
-            if (!response.ok || !data.success) {
+            if (!response.ok) {
 
                 alert(
                     data.message ||
@@ -117,70 +61,51 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-
-            // ==================================================
-            // CONNEXION RÉUSSIE
-            // ==================================================
-
-            console.log(
-                "✅ Connexion réussie"
-            );
-
-
-            // ==================================================
-            // SAUVEGARDER L'UTILISATEUR
-            // ==================================================
+            // ==============================
+            // ENREGISTRER LA SESSION
+            // ==============================
 
             localStorage.setItem(
                 "isLoggedIn",
                 "true"
             );
 
+            localStorage.setItem(
+                "user",
+                JSON.stringify(data.user)
+            );
 
             localStorage.setItem(
                 "userEmail",
                 data.user.email
             );
 
-
             localStorage.setItem(
                 "userId",
                 data.user.id
             );
 
-
-            localStorage.setItem(
-                "user",
-                JSON.stringify(data.user)
-            );
-
-
             console.log(
-                "👤 Utilisateur connecté :",
+                "Connexion réussie :",
                 data.user
             );
 
-
-            // ==================================================
+            // ==============================
             // REDIRECTION
-            // ==================================================
+            // ==============================
 
-            window.location.href =
-                "index.html";
-
+            window.location.href = "index.html";
 
         } catch (error) {
 
             console.error(
-                "❌ Erreur connexion :",
+                "Erreur connexion :",
                 error
             );
-
 
             alert(
                 "Impossible de communiquer avec le serveur."
             );
-
         }
 
     });
