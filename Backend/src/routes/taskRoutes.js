@@ -6,7 +6,7 @@ const {
   getTaskById,
   updateTask,
   deleteTask,
-} = require("../controllers/taskController");
+} = require("../src/controllers/taskController");
 const {
   validateTask
 } = require("../middlewares/validation");

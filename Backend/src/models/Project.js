@@ -19,15 +19,14 @@ const projectSchema = new mongoose.Schema(
       required: true,
     },
 
-  status: {
-  type: String,
-  enum: [
-    "active",
-    "paused",
-    "completed",
-    "archived"
-  ],
-  default: "active"
+   status: {
+    type: String,
+    enum: [
+        "active",
+        "paused",
+        "completed"
+    ],
+    default: "active"
 },
 
     startDate: {
