@@ -1,6 +1,8 @@
 const Task = require("../models/Task");
 
-// Créer une tâche
+// =====================================
+// CRÉER UNE TÂCHE
+// =====================================
 exports.createTask = async (req, res) => {
   try {
     const task = await Task.create(req.body);
@@ -14,11 +16,13 @@ exports.createTask = async (req, res) => {
     res.status(400).json({
       success: false,
       message: error.message,
-    // });
+    });
   }
 };
 
-// Récupérer toutes les tâches
+// =====================================
+// RÉCUPÉRER TOUTES LES TÂCHES
+// =====================================
 exports.getTasks = async (req, res) => {
   try {
     const tasks = await Task.find().sort({ createdAt: -1 });
@@ -35,7 +39,9 @@ exports.getTasks = async (req, res) => {
   }
 };
 
-// Récupérer une tâche
+// =====================================
+// RÉCUPÉRER UNE TÂCHE
+// =====================================
 exports.getTaskById = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -59,7 +65,9 @@ exports.getTaskById = async (req, res) => {
   }
 };
 
-// Modifier une tâche
+// =====================================
+// MODIFIER UNE TÂCHE
+// =====================================
 exports.updateTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndUpdate(
@@ -91,7 +99,9 @@ exports.updateTask = async (req, res) => {
   }
 };
 
-// Supprimer une tâche
+// =====================================
+// SUPPRIMER UNE TÂCHE
+// =====================================
 exports.deleteTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndDelete(req.params.id);
