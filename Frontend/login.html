@@ -1,34 +1,58 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Connexion - TaskFlow Pro</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
+
 
 <body class="min-h-screen bg-slate-100 flex items-center justify-center p-4">
 
+
     <div class="w-full max-w-md">
+
+
+        <!-- ==========================================
+             CARTE CONNEXION
+        =========================================== -->
 
         <div class="bg-white rounded-2xl shadow-xl p-8">
 
-            <!-- LOGO -->
+
+            <!-- ==========================================
+                 LOGO
+            =========================================== -->
+
             <div class="text-center mb-8">
 
                 <div
-                    class="mx-auto w-16 h-16 bg-indigo-600
-                           rounded-2xl flex items-center justify-center
-                           text-white text-2xl font-bold"
+                    class="mx-auto w-16 h-16
+                           bg-indigo-600
+                           rounded-2xl
+                           flex items-center justify-center
+                           text-white
+                           text-2xl
+                           font-bold"
                 >
                     TF
                 </div>
 
+
                 <h1 class="text-3xl font-bold text-slate-800 mt-4">
                     TaskFlow Pro
                 </h1>
+
 
                 <p class="text-slate-500 mt-2">
                     Connectez-vous à votre espace
@@ -37,69 +61,104 @@
             </div>
 
 
-            <!-- FORMULAIRE -->
+
+            <!-- ==========================================
+                 FORMULAIRE
+            =========================================== -->
+
             <form id="loginForm">
 
+
                 <!-- EMAIL -->
+
                 <div class="mb-5">
 
                     <label
                         for="email"
-                        class="block text-sm font-semibold
-                               text-slate-700 mb-2"
+                        class="block text-sm
+                               font-semibold
+                               text-slate-700
+                               mb-2"
                     >
                         Adresse email
                     </label>
 
+
                     <input
                         type="email"
                         id="email"
+                        name="email"
                         placeholder="exemple@email.com"
                         required
-                        class="w-full px-4 py-3
-                               border border-slate-300
-                               rounded-xl outline-none
+                        autocomplete="email"
+                        class="w-full
+                               px-4 py-3
+                               border
+                               border-slate-300
+                               rounded-xl
+                               outline-none
                                focus:ring-2
-                               focus:ring-indigo-500"
+                               focus:ring-indigo-500
+                               focus:border-indigo-500"
                     >
 
                 </div>
 
 
+
                 <!-- MOT DE PASSE -->
+
                 <div class="mb-6">
 
                     <label
                         for="password"
-                        class="block text-sm font-semibold
-                               text-slate-700 mb-2"
+                        class="block text-sm
+                               font-semibold
+                               text-slate-700
+                               mb-2"
                     >
                         Mot de passe
                     </label>
 
+
                     <input
                         type="password"
                         id="password"
+                        name="password"
                         placeholder="Votre mot de passe"
                         required
-                        class="w-full px-4 py-3
-                               border border-slate-300
-                               rounded-xl outline-none
+                        autocomplete="current-password"
+                        class="w-full
+                               px-4 py-3
+                               border
+                               border-slate-300
+                               rounded-xl
+                               outline-none
                                focus:ring-2
-                               focus:ring-indigo-500"
+                               focus:ring-indigo-500
+                               focus:border-indigo-500"
                     >
 
                 </div>
 
 
-                <!-- BOUTON -->
+
+                <!-- ==========================================
+                     BOUTON CONNEXION
+                =========================================== -->
+
                 <button
                     type="submit"
                     id="loginBtn"
-                    class="w-full bg-indigo-600
+                    class="w-full
+                           bg-indigo-600
                            hover:bg-indigo-700
-                           text-white font-semibold
-                           py-3 rounded-xl transition"
+                           disabled:bg-indigo-400
+                           text-white
+                           font-semibold
+                           py-3
+                           rounded-xl
+                           transition"
                 >
                     Se connecter
                 </button>
@@ -107,22 +166,83 @@
             </form>
 
 
-            <!-- MESSAGE -->
-            <p
+
+            <!-- ==========================================
+                 MESSAGE
+            =========================================== -->
+
+            <div
                 id="loginMessage"
-                class="text-center text-sm mt-4"
-            ></p>
+                class="hidden
+                       text-center
+                       text-sm
+                       mt-4
+                       p-3
+                       rounded-xl"
+            >
+            </div>
+
+
+
+            <!-- ==========================================
+                 INSCRIPTION
+            =========================================== -->
+
+            <div
+                class="text-center
+                       mt-6
+                       pt-6
+                       border-t
+                       border-slate-200"
+            >
+
+                <p class="text-sm text-slate-500">
+
+                    Vous n'avez pas encore de compte ?
+
+                </p>
+
+
+                <a
+                    href="register.html"
+                    class="inline-block
+                           mt-2
+                           text-indigo-600
+                           font-semibold
+                           hover:text-indigo-700
+                           hover:underline"
+                >
+                    Créer un compte
+                </a>
+
+            </div>
+
 
         </div>
 
+
+
+        <!-- ==========================================
+             FOOTER
+        =========================================== -->
+
         <p class="text-center text-sm text-slate-400 mt-6">
+
             © 2026 TaskFlow Pro
+
         </p>
+
 
     </div>
 
 
-   <script src="./js/login.js"></script>
-   
+
+    <!-- ==========================================
+         JAVASCRIPT
+    =========================================== -->
+
+    <script src="./js/login.js"></script>
+
 </body>
+
 </html>
