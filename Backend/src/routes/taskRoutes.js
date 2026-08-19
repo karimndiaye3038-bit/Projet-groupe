@@ -6,24 +6,37 @@ const {
   getTaskById,
   updateTask,
   deleteTask,
-} = require("../src/controllers/taskController");
+} = require("../controllers/taskController");
+
 const {
-  validateTask
+  validateTask,
 } = require("../middlewares/validation");
+
 const router = express.Router();
 
-// Créer une tâche
+// ================================
+// CRÉER UNE TÂCHE
+// ================================
 router.post("/", validateTask, createTask);
-// Afficher toutes les tâches
+
+// ================================
+// AFFICHER TOUTES LES TÂCHES
+// ================================
 router.get("/", getTasks);
 
-// Afficher une tâche
+// ================================
+// AFFICHER UNE TÂCHE
+// ================================
 router.get("/:id", getTaskById);
 
-// Modifier une tâche
+// ================================
+// MODIFIER UNE TÂCHE
+// ================================
 router.put("/:id", updateTask);
 
-// Supprimer une tâche
+// ================================
+// SUPPRIMER UNE TÂCHE
+// ================================
 router.delete("/:id", deleteTask);
 
 module.exports = router;
