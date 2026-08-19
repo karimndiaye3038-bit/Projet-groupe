@@ -582,277 +582,196 @@
     ====================================================== -->
 
     <div id="deadlineModal"
-         class="hidden fixed inset-0 z-[100]
-                bg-black/50
-                items-center justify-center
-                p-4">
+     class="hidden fixed inset-0 z-[100]
+            bg-black/50
+            items-center justify-center
+            p-4">
+
+    <div class="bg-white
+                w-full max-w-md
+                max-h-[90vh]
+                overflow-y-auto
+                rounded-2xl
+                shadow-2xl">
+
+        <!-- HEADER -->
+        <div class="flex items-center justify-between
+                    px-5 py-4
+                    border-b border-slate-200">
+
+            <div>
+                <h2 class="text-lg font-bold text-slate-800">
+                    Ajouter une deadline
+                </h2>
+
+                <p class="text-xs text-slate-500 mt-1">
+                    Définissez l'échéance de votre tâche.
+                </p>
+            </div>
+
+            <button id="closeDeadlineModal"
+                    type="button"
+                    class="text-2xl text-slate-400
+                           hover:text-slate-800">
+                ×
+            </button>
+
+        </div>
 
 
-        <div class="bg-white
-                    w-full max-w-lg
-                    rounded-2xl
-                    shadow-2xl">
+        <!-- FORMULAIRE -->
+        <form id="deadlineForm"
+              class="px-5 py-4 space-y-3">
+
+            <!-- TACHE -->
+            <div>
+                <label for="deadlineTitle"
+                       class="block text-sm font-semibold mb-1">
+                    Nom de la tâche
+                </label>
+
+                <input
+                    id="deadlineTitle"
+                    type="text"
+                    required
+                    placeholder="Ex : Créer le Dashboard"
+                    class="w-full border border-slate-200
+                           rounded-lg px-3 py-2
+                           text-sm outline-none
+                           focus:ring-2 focus:ring-indigo-500">
+            </div>
 
 
-            <!-- HEADER MODAL -->
+            <!-- DESCRIPTION -->
+            <div>
+                <label for="deadlineDescription"
+                       class="block text-sm font-semibold mb-1">
+                    Description
+                </label>
 
-            <div class="flex items-center
-                        justify-between
-                        p-6
-                        border-b
-                        border-slate-200">
-
-                <div>
-
-                    <h2 class="text-xl font-bold">
-                        Ajouter une deadline
-                    </h2>
-
-                    <p class="text-sm text-slate-500 mt-1">
-                        Définissez l'échéance de votre tâche.
-                    </p>
-
-                </div>
+                <textarea
+                    id="deadlineDescription"
+                    rows="2"
+                    placeholder="Description de la tâche..."
+                    class="w-full border border-slate-200
+                           rounded-lg px-3 py-2
+                           text-sm outline-none
+                           resize-none
+                           focus:ring-2 focus:ring-indigo-500"></textarea>
+            </div>
 
 
-                <button id="closeDeadlineModal"
-                        class="text-2xl
-                               text-slate-400
-                               hover:text-slate-800">
+            <!-- DATE -->
+            <div>
+                <label for="deadlineDate"
+                       class="block text-sm font-semibold mb-1">
+                    Date d'échéance
+                </label>
 
-                    ×
+                <input
+                    id="deadlineDate"
+                    type="date"
+                    required
+                    class="w-full border border-slate-200
+                           rounded-lg px-3 py-2
+                           text-sm">
+            </div>
+
+
+            <!-- PRIORITE -->
+            <div>
+                <label for="deadlinePriority"
+                       class="block text-sm font-semibold mb-1">
+                    Priorité
+                </label>
+
+                <select
+                    id="deadlinePriority"
+                    class="w-full border border-slate-200
+                           rounded-lg px-3 py-2
+                           text-sm">
+
+                    <option value="low">Faible</option>
+
+                    <option value="medium" selected>
+                        Moyenne
+                    </option>
+
+                    <option value="high">Haute</option>
+
+                    <option value="urgent">Urgente</option>
+
+                </select>
+            </div>
+
+
+            <!-- STATUT -->
+            <div>
+                <label for="deadlineStatus"
+                       class="block text-sm font-semibold mb-1">
+                    Statut
+                </label>
+
+                <select
+                    id="deadlineStatus"
+                    class="w-full border border-slate-200
+                           rounded-lg px-3 py-2
+                           text-sm">
+
+                    <option value="todo">
+                        À faire
+                    </option>
+
+                    <option value="in-progress">
+                        En cours
+                    </option>
+
+                    <option value="completed">
+                        Terminée
+                    </option>
+
+                </select>
+            </div>
+
+
+            <!-- BOUTONS -->
+            <div class="flex justify-end gap-2 pt-2">
+
+                <button
+                    type="button"
+                    id="cancelDeadlineBtn"
+                    class="px-4 py-2
+                           rounded-lg
+                           border border-slate-200
+                           text-sm
+                           hover:bg-slate-100">
+
+                    Annuler
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="px-4 py-2
+                           rounded-lg
+                           bg-indigo-600
+                           text-white
+                           text-sm
+                           font-semibold
+                           hover:bg-indigo-700">
+
+                    Ajouter
 
                 </button>
 
             </div>
 
-
-
-            <!-- FORMULAIRE -->
-
-            <form id="deadlineForm"
-                  class="p-6 space-y-5">
-
-
-                <!-- TACHE -->
-
-                <div>
-
-                    <label
-                        for="deadlineTitle"
-                        class="block text-sm
-                               font-semibold
-                               mb-2">
-
-                        Nom de la tâche
-
-                    </label>
-
-                    <input
-                        id="deadlineTitle"
-                        type="text"
-                        required
-                        placeholder="Ex : Créer le Dashboard"
-                        class="w-full
-                               border
-                               border-slate-200
-                               rounded-xl
-                               px-4 py-3
-                               outline-none
-                               focus:ring-2
-                               focus:ring-indigo-500"
-                    >
-
-                </div>
-
-
-
-                <!-- DESCRIPTION -->
-
-                <div>
-
-                    <label
-                        for="deadlineDescription"
-                        class="block text-sm
-                               font-semibold
-                               mb-2">
-
-                        Description
-
-                    </label>
-
-                    <textarea
-                        id="deadlineDescription"
-                        rows="3"
-                        placeholder="Description de la tâche..."
-                        class="w-full
-                               border
-                               border-slate-200
-                               rounded-xl
-                               px-4 py-3
-                               outline-none
-                               focus:ring-2
-                               focus:ring-indigo-500">
-                    </textarea>
-
-                </div>
-
-
-
-                <!-- DATE -->
-
-                <div>
-
-                    <label
-                        for="deadlineDate"
-                        class="block text-sm
-                               font-semibold
-                               mb-2">
-
-                        Date d'échéance
-
-                    </label>
-
-                    <input
-                        id="deadlineDate"
-                        type="date"
-                        required
-                        class="w-full
-                               border
-                               border-slate-200
-                               rounded-xl
-                               px-4 py-3"
-                    >
-
-                </div>
-
-
-
-                <!-- PRIORITE -->
-
-                <div>
-
-                    <label
-                        for="deadlinePriority"
-                        class="block text-sm
-                               font-semibold
-                               mb-2">
-
-                        Priorité
-
-                    </label>
-
-                    <select
-                        id="deadlinePriority"
-                        class="w-full
-                               border
-                               border-slate-200
-                               rounded-xl
-                               px-4 py-3">
-
-                        <option value="low">
-                            Faible
-                        </option>
-
-                        <option value="medium" selected>
-                            Moyenne
-                        </option>
-
-                        <option value="high">
-                            Haute
-                        </option>
-
-                        <option value="urgent">
-                            Urgente
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-
-                <!-- STATUT -->
-
-                <div>
-
-                    <label
-                        for="deadlineStatus"
-                        class="block text-sm
-                               font-semibold
-                               mb-2">
-
-                        Statut
-
-                    </label>
-
-                    <select
-                        id="deadlineStatus"
-                        class="w-full
-                               border
-                               border-slate-200
-                               rounded-xl
-                               px-4 py-3">
-
-                        <option value="todo">
-                            À faire
-                        </option>
-
-                        <option value="in-progress">
-                            En cours
-                        </option>
-
-                        <option value="completed">
-                            Terminée
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-
-                <!-- BOUTONS -->
-
-                <div class="flex justify-end
-                            gap-3 pt-3">
-
-                    <button
-                        type="button"
-                        id="cancelDeadlineBtn"
-                        class="px-5 py-3
-                               rounded-xl
-                               border
-                               border-slate-200
-                               hover:bg-slate-100">
-
-                        Annuler
-
-                    </button>
-
-
-                    <button
-                        type="submit"
-                        class="px-5 py-3
-                               rounded-xl
-                               bg-indigo-600
-                               text-white
-                               font-semibold
-                               hover:bg-indigo-700">
-
-                        Ajouter
-
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
+        </form>
 
     </div>
 
-
+</div>
 
     <!-- =====================================================
          JAVASCRIPT
