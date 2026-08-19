@@ -1,16 +1,102 @@
 // =====================================================
 // TASKFLOW PRO - TASKS.JS
-// Connexion Frontend <-> Backend <-> MongoDB
 // =====================================================
 
 document.addEventListener("DOMContentLoaded", () => {
 
     // =====================================================
-    // API
+    // DONNÉES PAR DÉFAUT
     // =====================================================
 
-    const API_URL =
-        "https://taskflow-pro-u5yu.onrender.com/api/tasks";
+    const defaultTasks = [
+        {
+            id: 1,
+            title: "Créer la page d'accueil",
+            description: "Développer la homepage de TaskFlow Pro",
+            status: "completed",
+            priority: "high",
+            project: 1,
+            assignedTo: 1,
+            tags: ["frontend", "ui"],
+            deadline: "2026-08-20",
+            createdAt: "2026-08-10"
+        },
+        {
+            id: 2,
+            title: "Créer le Dashboard",
+            description: "Créer les statistiques du dashboard",
+            status: "in-progress",
+            priority: "urgent",
+            project: 1,
+            assignedTo: 1,
+            tags: ["dashboard"],
+            deadline: "2026-08-25",
+            createdAt: "2026-08-11"
+        }
+    ];
+
+    const defaultProjects = [
+        {
+            id: 1,
+            name: "TaskFlow Pro"
+        },
+        {
+            id: 2,
+            name: "Site E-commerce"
+        },
+        {
+            id: 3,
+            name: "Application Mobile"
+        }
+    ];
+
+    const defaultMembers = [
+        {
+            id: 1,
+            firstName: "Fatou",
+            lastName: "Diop",
+            role: "Développeuse"
+        },
+        {
+            id: 2,
+            firstName: "Aminata",
+            lastName: "Ndiaye",
+            role: "Designer"
+        },
+        {
+            id: 3,
+            firstName: "Moussa",
+            lastName: "Fall",
+            role: "Chef de projet"
+        }
+    ];
+
+
+    // =====================================================
+    // INITIALISATION LOCAL STORAGE
+    // =====================================================
+
+    if (!localStorage.getItem("tasks")) {
+        localStorage.setItem(
+            "tasks",
+            JSON.stringify(defaultTasks)
+        );
+    }
+
+    if (!localStorage.getItem("projects")) {
+        localStorage.setItem(
+            "projects",
+            JSON.stringify(defaultProjects)
+        );
+    }
+
+    if (!localStorage.getItem("members")) {
+        localStorage.setItem(
+            "members",
+            JSON.stringify(defaultMembers)
+        );
+    }
+
 
     // =====================================================
     // ÉLÉMENTS HTML
@@ -18,10 +104,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const modal = document.getElementById("taskModal");
     const form = document.getElementById("taskForm");
-    const container = document.getElementById("tasksContainer");
 
     const newBtn = document.getElementById("newTaskBtn");
     const emptyBtn = document.getElementById("emptyNewTaskBtn");
+
     const closeBtn = document.getElementById("closeTaskModal");
     const cancelBtn = document.getElementById("cancelTaskBtn");
 
@@ -32,350 +118,133 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const emptyState = document.getElementById("emptyTasks");
 
-    // =====================================================
-    // DONNÉES
-    // =====================================================
-
-    let tasks = [];
-    let projects = [];
-    let members = [];
 
     // =====================================================
-    // CHARGER LES TÂCHES
+    // COLONNES DRAG & DROP
     // =====================================================
 
-    async function loadTasks() {
+    const columns = {
+        todo: document.getElementById("todoColumn"),
 
-        try {
+        "in-progress":
+            document.getElementById("progressColumn"),
 
-            container.innerHTML = `
-                <div class="p-8 text-center text-slate-500">
-                    Chargement des tâches...
-                </div>
-            `;
+        paused:
+            document.getElementById("pausedColumn"),
 
-            const response = await fetch(API_URL);
+        completed:
+            document.getElementById("completedColumn")
+    };
 
-            if (!response.ok) {
-                throw new Error(
-                    `Erreur serveur : ${response.status}`
-                );
-            }
 
-            const data = await response.json();
+    // =====================================================
+    // UTILITAIRES LOCAL STORAGE
+    // =====================================================
 
-            console.log("Réponse tâches :", data);
+    function getTasks() {
 
-            tasks = Array.isArray(data)
-                ? data
-                : data.tasks || [];
+        return JSON.parse(
+            localStorage.getItem("tasks") || "[]"
+        );
 
-            renderTasks();
-
-        } catch (error) {
-
-            console.error(
-                "Erreur lors du chargement des tâches :",
-                error
-            );
-
-            container.innerHTML = `
-                <div class="p-8 text-center">
-                    <p class="text-red-500 font-semibold">
-                        Impossible de charger les tâches.
-                    </p>
-
-                    <p class="text-sm text-slate-500 mt-2">
-                        Vérifiez que le serveur backend fonctionne.
-                    </p>
-                </div>
-            `;
-        }
     }
 
-    // =====================================================
-    // CHARGER LES PROJETS
-    // =====================================================
 
-    async function loadProjects(selected = "") {
+    function getProjects() {
 
-        try {
+        return JSON.parse(
+            localStorage.getItem("projects") || "[]"
+        );
 
-            const response = await fetch(
-                "https://taskflow-pro-u5yu.onrender.com/api/projects"
-            );
-
-            if (!response.ok) {
-                throw new Error(
-                    `Erreur projets : ${response.status}`
-                );
-            }
-
-            const data = await response.json();
-
-            projects = Array.isArray(data)
-                ? data
-                : data.projects || [];
-
-            const projectSelect =
-                document.getElementById("taskProject");
-
-            if (projectSelect) {
-
-                projectSelect.innerHTML = `
-                    <option value="">
-                        Sélectionner un projet
-                    </option>
-
-                    ${projects.map(project => `
-                        <option
-                            value="${escapeHTML(
-                                project._id || project.id
-                            )}"
-                            ${
-                                String(project._id || project.id)
-                                === String(selected)
-                                    ? "selected"
-                                    : ""
-                            }
-                        >
-                            ${escapeHTML(
-                                project.name ||
-                                project.title ||
-                                "Projet sans nom"
-                            )}
-                        </option>
-                    `).join("")}
-                `;
-            }
-
-            if (projectFilter) {
-
-                projectFilter.innerHTML = `
-                    <option value="all">
-                        Tous les projets
-                    </option>
-
-                    ${projects.map(project => `
-                        <option
-                            value="${escapeHTML(
-                                project._id || project.id
-                            )}"
-                        >
-                            ${escapeHTML(
-                                project.name ||
-                                project.title ||
-                                "Projet sans nom"
-                            )}
-                        </option>
-                    `).join("")}
-                `;
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Erreur chargement projets :",
-                error
-            );
-
-        }
     }
 
-    // =====================================================
-    // CHARGER LES MEMBRES
-    // =====================================================
 
-    async function loadMembers(selected = "") {
+    function getMembers() {
 
-        try {
+        return JSON.parse(
+            localStorage.getItem("members") || "[]"
+        );
 
-            const response = await fetch(
-                "https://taskflow-pro-u5yu.onrender.com/api/members"
-            );
-
-            if (!response.ok) {
-                throw new Error(
-                    `Erreur membres : ${response.status}`
-                );
-            }
-
-            const data = await response.json();
-
-            members = Array.isArray(data)
-                ? data
-                : data.members || [];
-
-            const memberSelect =
-                document.getElementById("taskMember");
-
-            if (!memberSelect) {
-                return;
-            }
-
-            memberSelect.innerHTML = `
-                <option value="">
-                    Sélectionner un membre
-                </option>
-
-                ${members.map(member => `
-                    <option
-                        value="${escapeHTML(
-                            member._id || member.id
-                        )}"
-                        ${
-                            String(member._id || member.id)
-                            === String(selected)
-                                ? "selected"
-                                : ""
-                        }
-                    >
-                        ${escapeHTML(
-                            `${member.firstName || ""} ${member.lastName || ""}`.trim()
-                        )}
-                    </option>
-                `).join("")}
-            `;
-
-        } catch (error) {
-
-            console.error(
-                "Erreur chargement membres :",
-                error
-            );
-
-        }
     }
 
+
+    function saveTasks(tasks) {
+
+        localStorage.setItem(
+            "tasks",
+            JSON.stringify(tasks)
+        );
+
+    }
+
+
     // =====================================================
-    // OUVRIR MODALE
+    // MODALE
     // =====================================================
 
-    async function openModal(task = null) {
-
-        if (!form || !modal) {
-            return;
-        }
+    function openModal(task = null) {
 
         form.reset();
 
-        const taskId =
-            document.getElementById("taskId");
+        document.getElementById("taskId").value =
+            task ? task.id : "";
 
-        const modalTitle =
-            document.getElementById("modalTitle");
+        document.getElementById("modalTitle").textContent =
+            task
+                ? "Modifier la tâche"
+                : "Nouvelle tâche";
 
-        const taskStatus =
-            document.getElementById("taskStatus");
 
-        const taskPriority =
-            document.getElementById("taskPriority");
+        document.getElementById("taskStatus").value =
+            task?.status || "todo";
 
-        const taskTitle =
-            document.getElementById("taskTitle");
 
-        const taskDescription =
-            document.getElementById("taskDescription");
+        document.getElementById("taskPriority").value =
+            task?.priority || "medium";
 
-        const taskTags =
-            document.getElementById("taskTags");
-
-        const taskDeadline =
-            document.getElementById("taskDeadline");
-
-        if (taskId) {
-            taskId.value =
-                task ? task._id : "";
-        }
-
-        if (modalTitle) {
-            modalTitle.textContent =
-                task
-                    ? "Modifier la tâche"
-                    : "Nouvelle tâche";
-        }
-
-        if (taskStatus) {
-            taskStatus.value =
-                task?.status || "todo";
-        }
-
-        if (taskPriority) {
-            taskPriority.value =
-                task?.priority || "medium";
-        }
 
         if (task) {
 
-            if (taskTitle) {
-                taskTitle.value =
-                    task.title || "";
-            }
+            document.getElementById("taskTitle").value =
+                task.title || "";
 
-            if (taskDescription) {
-                taskDescription.value =
-                    task.description || "";
-            }
 
-            if (taskTags) {
-                taskTags.value =
-                    (task.tags || []).join(", ");
-            }
+            document.getElementById("taskDescription").value =
+                task.description || "";
 
-            if (taskDeadline) {
 
-                taskDeadline.value =
-                    task.deadline
-                        ? formatDateForInput(task.deadline)
-                        : "";
-            }
+            document.getElementById("taskTags").value =
+                (task.tags || []).join(", ");
+
+
+            document.getElementById("taskDeadline").value =
+                task.deadline || "";
 
         }
 
-        await loadProjects(
-            task?.project || ""
-        );
 
-        await loadMembers(
-            task?.assignedMember || ""
-        );
+        loadProjects(task?.project);
+
+        loadMembers(task?.assignedTo);
 
         modal.classList.remove("hidden");
+
     }
 
-    // =====================================================
-    // FERMER MODALE
-    // =====================================================
 
     function closeModal() {
-
-        if (!modal || !form) {
-            return;
-        }
 
         modal.classList.add("hidden");
 
         form.reset();
 
-        const taskId =
-            document.getElementById("taskId");
+        document.getElementById("taskId").value = "";
 
-        const modalTitle =
-            document.getElementById("modalTitle");
+        document.getElementById("modalTitle").textContent =
+            "Nouvelle tâche";
 
-        if (taskId) {
-            taskId.value = "";
-        }
-
-        if (modalTitle) {
-            modalTitle.textContent =
-                "Nouvelle tâche";
-        }
     }
 
-    // =====================================================
-    // BOUTONS MODALE
-    // =====================================================
 
     if (newBtn) {
         newBtn.addEventListener(
@@ -384,12 +253,14 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+
     if (emptyBtn) {
         emptyBtn.addEventListener(
             "click",
             () => openModal()
         );
     }
+
 
     if (closeBtn) {
         closeBtn.addEventListener(
@@ -398,12 +269,14 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+
     if (cancelBtn) {
         cancelBtn.addEventListener(
             "click",
             closeModal
         );
     }
+
 
     if (modal) {
 
@@ -417,291 +290,396 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
         );
+
     }
 
+
     // =====================================================
-    // CRÉER / MODIFIER UNE TÂCHE
+    // PROJETS
     // =====================================================
 
-    if (form) {
+    function loadProjects(selected = "") {
 
-        form.addEventListener(
-            "submit",
-            async event => {
+        const projects = getProjects();
 
-                event.preventDefault();
+        const taskProject =
+            document.getElementById("taskProject");
 
-                const id =
-                    document.getElementById("taskId")?.value;
+        projectFilter.innerHTML = `
+            <option value="all">
+                Tous les projets
+            </option>
 
-                const title =
-                    document.getElementById("taskTitle")?.value
-                        .trim();
+            ${projects.map(project => `
+                <option value="${project.id}">
+                    ${escapeHTML(project.name)}
+                </option>
+            `).join("")}
+        `;
 
-                const description =
-                    document.getElementById("taskDescription")?.value
-                        .trim();
 
-                const status =
-                    document.getElementById("taskStatus")?.value;
+        taskProject.innerHTML = `
+            <option value="">
+                Aucun projet
+            </option>
 
-                const priority =
-                    document.getElementById("taskPriority")?.value;
-
-                const project =
-                    document.getElementById("taskProject")?.value;
-
-                const assignedMember =
-                    document.getElementById("taskMember")?.value;
-
-                const tags =
-                    document.getElementById("taskTags")?.value
-                        .split(",")
-                        .map(tag => tag.trim())
-                        .filter(Boolean);
-
-                const deadline =
-                    document.getElementById("taskDeadline")?.value;
-
-                // ==============================
-                // VALIDATION
-                // ==============================
-
-                if (!title) {
-                    alert(
-                        "Veuillez saisir le titre de la tâche."
-                    );
-                    return;
-                }
-
-                if (!project) {
-                    alert(
-                        "Veuillez sélectionner un projet."
-                    );
-                    return;
-                }
-
-                if (!assignedMember) {
-                    alert(
-                        "Veuillez sélectionner un membre."
-                    );
-                    return;
-                }
-
-                if (!deadline) {
-                    alert(
-                        "Veuillez sélectionner une deadline."
-                    );
-                    return;
-                }
-
-                // ==============================
-                // DONNÉES POUR MONGODB
-                // ==============================
-
-                const taskData = {
-
-                    title,
-
-                    description,
-
-                    status:
-                        status || "todo",
-
-                    priority:
-                        priority || "medium",
-
-                    project,
-
-                    assignedMember,
-
-                    tags,
-
-                    deadline
-
-                };
-
-                try {
-
-                    const url = id
-                        ? `${API_URL}/${id}`
-                        : API_URL;
-
-                    const method = id
-                        ? "PUT"
-                        : "POST";
-
-                    console.log(
-                        "Envoi tâche :",
-                        taskData
-                    );
-
-                    const response =
-                        await fetch(
-                            url,
-                            {
-                                method,
-
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
-
-                                body:
-                                    JSON.stringify(taskData)
-                            }
-                        );
-
-                    const data =
-                        await response.json();
-
-                    console.log(
-                        "Réponse backend :",
-                        data
-                    );
-
-                    if (!response.ok) {
-
-                        throw new Error(
-                            data.message ||
-                            "Erreur lors de l'enregistrement de la tâche."
-                        );
+            ${projects.map(project => `
+                <option
+                    value="${project.id}"
+                    ${
+                        String(project.id) === String(selected)
+                            ? "selected"
+                            : ""
                     }
+                >
+                    ${escapeHTML(project.name)}
+                </option>
+            `).join("")}
+        `;
 
-                    closeModal();
+    }
 
-                    await loadTasks();
 
-                    alert(
-                        id
-                            ? "Tâche modifiée avec succès !"
-                            : "Tâche créée avec succès !"
-                    );
+    // =====================================================
+    // MEMBRES
+    // =====================================================
 
-                } catch (error) {
+    function loadMembers(selected = "") {
 
-                    console.error(
-                        "Erreur enregistrement tâche :",
-                        error
-                    );
+        const members = getMembers();
 
-                    alert(
-                        error.message ||
-                        "Impossible de communiquer avec le serveur."
-                    );
-                }
+        const taskMember =
+            document.getElementById("taskMember");
+
+
+        taskMember.innerHTML = `
+            <option value="">
+                Non assignée
+            </option>
+
+            ${members.map(member => `
+                <option
+                    value="${member.id}"
+                    ${
+                        String(member.id) === String(selected)
+                            ? "selected"
+                            : ""
+                    }
+                >
+                    ${escapeHTML(member.firstName)}
+                    ${escapeHTML(member.lastName)}
+                </option>
+            `).join("")}
+        `;
+
+    }
+
+
+    // =====================================================
+    // ENREGISTRER UNE TÂCHE
+    // =====================================================
+
+    form.addEventListener("submit", event => {
+
+        event.preventDefault();
+
+
+        const id =
+            document.getElementById("taskId").value;
+
+
+        const existingTask =
+            id
+                ? getTasks().find(
+                    task =>
+                        String(task.id) === String(id)
+                )
+                : null;
+
+
+        const task = {
+
+            id:
+                id
+                    ? Number(id)
+                    : Date.now(),
+
+            title:
+                document
+                    .getElementById("taskTitle")
+                    .value
+                    .trim(),
+
+            description:
+                document
+                    .getElementById("taskDescription")
+                    .value
+                    .trim(),
+
+            status:
+                document
+                    .getElementById("taskStatus")
+                    .value,
+
+            priority:
+                document
+                    .getElementById("taskPriority")
+                    .value,
+
+            project:
+                document
+                    .getElementById("taskProject")
+                    .value,
+
+            assignedTo:
+                document
+                    .getElementById("taskMember")
+                    .value,
+
+            tags:
+                document
+                    .getElementById("taskTags")
+                    .value
+                    .split(",")
+                    .map(tag => tag.trim())
+                    .filter(Boolean),
+
+            deadline:
+                document
+                    .getElementById("taskDeadline")
+                    .value,
+
+            createdAt:
+                existingTask?.createdAt ||
+                new Date()
+                    .toISOString()
+                    .split("T")[0]
+        };
+
+
+        if (!task.title) {
+
+            alert(
+                "Veuillez saisir le titre de la tâche."
+            );
+
+            return;
+        }
+
+
+        if (!task.project) {
+
+            alert(
+                "Veuillez sélectionner un projet."
+            );
+
+            return;
+        }
+
+
+        const tasks = getTasks();
+
+
+        if (id) {
+
+            const index =
+                tasks.findIndex(
+                    task =>
+                        String(task.id) === String(id)
+                );
+
+
+            if (index !== -1) {
+
+                tasks[index] = task;
 
             }
+
+        } else {
+
+            tasks.unshift(task);
+
+        }
+
+
+        saveTasks(tasks);
+
+        closeModal();
+
+        renderTasks();
+
+        alert(
+            id
+                ? "Tâche modifiée avec succès !"
+                : "Tâche ajoutée avec succès !"
         );
-    }
+
+    });
+
 
     // =====================================================
-    // AFFICHER LES TÂCHES
+    // AFFICHAGE
     // =====================================================
 
     function renderTasks() {
 
-        if (!container) {
-            return;
-        }
+        let tasks = getTasks();
 
-        let filteredTasks =
-            [...tasks];
+
+        // ---------------------------------------------
+        // FILTRES
+        // ---------------------------------------------
 
         const text =
-            search?.value
+            search.value
                 .toLowerCase()
-                .trim() || "";
+                .trim();
 
-        const status =
-            statusFilter?.value || "all";
 
-        const priority =
-            priorityFilter?.value || "all";
+        const selectedStatus =
+            statusFilter.value;
 
-        const project =
-            projectFilter?.value || "all";
 
-        filteredTasks =
-            filteredTasks.filter(task => {
+        const selectedPriority =
+            priorityFilter.value;
 
-                const matchesSearch =
-                    !text ||
-                    (task.title || "")
-                        .toLowerCase()
-                        .includes(text) ||
-                    (task.description || "")
-                        .toLowerCase()
-                        .includes(text);
 
-                const matchesStatus =
-                    status === "all" ||
-                    task.status === status;
+        const selectedProject =
+            projectFilter.value;
 
-                const matchesPriority =
-                    priority === "all" ||
-                    task.priority === priority;
 
-                const matchesProject =
-                    project === "all" ||
-                    String(task.project) ===
-                    String(project);
+        tasks = tasks.filter(task => {
 
-                return (
-                    matchesSearch &&
-                    matchesStatus &&
-                    matchesPriority &&
-                    matchesProject
+            const matchesSearch =
+                !text ||
+                String(task.title || "")
+                    .toLowerCase()
+                    .includes(text) ||
+                String(task.description || "")
+                    .toLowerCase()
+                    .includes(text);
+
+
+            const matchesStatus =
+                selectedStatus === "all" ||
+                task.status === selectedStatus;
+
+
+            const matchesPriority =
+                selectedPriority === "all" ||
+                task.priority === selectedPriority;
+
+
+            const matchesProject =
+                selectedProject === "all" ||
+                String(task.project) ===
+                String(selectedProject);
+
+
+            return (
+                matchesSearch &&
+                matchesStatus &&
+                matchesPriority &&
+                matchesProject
+            );
+
+        });
+
+
+        // ---------------------------------------------
+        // VIDER LES COLONNES
+        // ---------------------------------------------
+
+        Object.values(columns).forEach(column => {
+
+            if (column) {
+                column.innerHTML = "";
+            }
+
+        });
+
+
+        // ---------------------------------------------
+        // AJOUTER LES TÂCHES DANS LES COLONNES
+        // ---------------------------------------------
+
+        tasks.forEach(task => {
+
+            const column =
+                columns[task.status];
+
+
+            if (!column) {
+
+                console.warn(
+                    "Statut inconnu :",
+                    task.status
                 );
-            });
+
+                return;
+
+            }
+
+
+            column.insertAdjacentHTML(
+                "beforeend",
+                createTaskCard(task)
+            );
+
+        });
+
+
+        // ---------------------------------------------
+        // STATISTIQUES
+        // ---------------------------------------------
 
         updateStats();
 
-        if (!filteredTasks.length) {
 
-            container.innerHTML = "";
+        // ---------------------------------------------
+        // COMPTEUR
+        // ---------------------------------------------
 
-            if (emptyState) {
-                emptyState.classList.remove("hidden");
-            }
-
-            const count =
-                document.getElementById(
-                    "taskCountText"
-                );
-
-            if (count) {
-                count.textContent =
-                    "0 tâche";
-            }
-
-            return;
-        }
-
-        if (emptyState) {
-            emptyState.classList.add("hidden");
-        }
-
-        const count =
+        const taskCountText =
             document.getElementById(
                 "taskCountText"
             );
 
-        if (count) {
 
-            count.textContent =
-                `${filteredTasks.length} tâche${
-                    filteredTasks.length > 1
-                        ? "s"
-                        : ""
-                }`;
+        if (taskCountText) {
+
+            taskCountText.textContent =
+                `${tasks.length} tâche${tasks.length > 1 ? "s" : ""}`;
+
         }
 
-        container.innerHTML =
-            filteredTasks
-                .map(createTaskCard)
-                .join("");
+
+        // ---------------------------------------------
+        // ÉTAT VIDE
+        // ---------------------------------------------
+
+        const allTasks = getTasks();
+
+
+        if (!allTasks.length) {
+
+            emptyState.classList.remove("hidden");
+
+        } else {
+
+            emptyState.classList.add("hidden");
+
+        }
+
+
+        // ---------------------------------------------
+        // DRAG & DROP
+        // ---------------------------------------------
+
+        activateDragAndDrop();
+
     }
+
 
     // =====================================================
     // CARTE TÂCHE
@@ -710,28 +688,22 @@ document.addEventListener("DOMContentLoaded", () => {
     function createTaskCard(task) {
 
         const project =
-            projects.find(
+            getProjects().find(
                 project =>
-                    String(
-                        project._id ||
-                        project.id
-                    ) ===
+                    String(project.id) ===
                     String(task.project)
             );
 
+
         const member =
-            members.find(
+            getMembers().find(
                 member =>
-                    String(
-                        member._id ||
-                        member.id
-                    ) ===
-                    String(
-                        task.assignedMember
-                    )
+                    String(member.id) ===
+                    String(task.assignedTo)
             );
 
-        const statusMap = {
+
+        const statusData = {
 
             todo: [
                 "À faire",
@@ -755,7 +727,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         };
 
-        const priorityMap = {
+
+        const status =
+            statusData[task.status] ||
+            [
+                "Inconnu",
+                "bg-slate-100 text-slate-600"
+            ];
+
+
+        const priorityData = {
 
             low: [
                 "Faible",
@@ -779,19 +760,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         };
 
-        const status =
-            statusMap[task.status] ||
-            [
-                "Inconnu",
-                "bg-slate-100 text-slate-600"
-            ];
 
         const priority =
-            priorityMap[task.priority] ||
-            [
-                "",
-                ""
-            ];
+            priorityData[task.priority] ||
+            ["", ""];
+
 
         const late =
             task.deadline &&
@@ -799,198 +772,139 @@ document.addEventListener("DOMContentLoaded", () => {
             new Date() &&
             task.status !== "completed";
 
-        const memberName =
-            member
-                ? `${member.firstName || ""} ${
-                    member.lastName || ""
-                }`.trim()
-                : "Non assigné";
-
-        const projectName =
-            project
-                ? project.name ||
-                  project.title ||
-                  "Projet"
-                : "Aucun projet";
 
         return `
 
             <div
-                class="p-6 border-b border-slate-200 bg-white"
+                class="task-card bg-white rounded-xl border border-slate-200 shadow-sm p-4 mb-3 cursor-grab hover:shadow-md transition"
+                draggable="true"
+                data-task-id="${task.id}"
             >
 
-                <div
-                    class="flex justify-between gap-4"
-                >
+                <!-- TITRE -->
 
-                    <div>
+                <div class="flex items-start justify-between gap-2">
 
-                        <div
-                            class="flex items-center gap-2 flex-wrap"
-                        >
-
-                            <h3
-                                class="
-                                    text-lg
-                                    font-bold
-                                    ${
-                                        task.status ===
-                                        "completed"
-                                            ? "line-through text-slate-400"
-                                            : "text-slate-900"
-                                    }
-                                "
-                            >
-                                ${escapeHTML(task.title)}
-                            </h3>
-
-                            <span
-                                class="
-                                    px-3
-                                    py-1
-                                    rounded-full
-                                    text-xs
-                                    font-semibold
-                                    ${priority[1]}
-                                "
-                            >
-                                ${priority[0]}
-                            </span>
-
-                        </div>
-
-                        <p
-                            class="
-                                text-sm
-                                text-slate-500
-                                mt-2
-                            "
-                        >
+                    <h3
+                        class="
+                            font-bold
+                            text-sm
+                            leading-5
                             ${
-                                escapeHTML(
-                                    task.description ||
-                                    "Aucune description"
-                                )
+                                task.status === "completed"
+                                    ? "line-through text-slate-400"
+                                    : "text-slate-800"
                             }
-                        </p>
-
-                    </div>
+                        "
+                    >
+                        ${escapeHTML(task.title)}
+                    </h3>
 
                     <span
                         class="
-                            h-fit
-                            px-3
+                            flex-shrink-0
+                            px-2
                             py-1
                             rounded-full
-                            text-xs
-                            ${status[1]}
+                            text-[10px]
+                            font-semibold
+                            ${priority[1]}
                         "
                     >
-                        ${status[0]}
+                        ${priority[0]}
                     </span>
 
                 </div>
 
-                <div
-                    class="
-                        grid
-                        md:grid-cols-2
-                        gap-4
-                        mt-5
-                    "
+
+                <!-- DESCRIPTION -->
+
+                <p
+                    class="text-xs text-slate-500 mt-2 line-clamp-2"
                 >
+                    ${escapeHTML(
+                        task.description ||
+                        "Aucune description"
+                    )}
+                </p>
 
-                    <div
-                        class="
-                            bg-slate-50
-                            rounded-xl
-                            p-4
-                        "
-                    >
 
-                        <p
-                            class="
-                                text-xs
-                                text-slate-400
-                            "
-                        >
-                            Projet
-                        </p>
+                <!-- PROJET -->
 
-                        <p class="font-semibold">
-                            ${escapeHTML(projectName)}
-                        </p>
+                <div class="mt-3">
 
-                    </div>
+                    <p class="text-[11px] text-slate-400">
+                        Projet
+                    </p>
 
-                    <div
-                        class="
-                            bg-slate-50
-                            rounded-xl
-                            p-4
-                        "
-                    >
-
-                        <p
-                            class="
-                                text-xs
-                                text-slate-400
-                            "
-                        >
-                            Assigné à
-                        </p>
-
-                        <p class="font-semibold">
-                            ${escapeHTML(memberName)}
-                        </p>
-
-                    </div>
+                    <p class="text-xs font-semibold text-slate-700">
+                        ${
+                            project
+                                ? escapeHTML(project.name)
+                                : "Aucun projet"
+                        }
+                    </p>
 
                 </div>
 
-                ${
-                    task.tags &&
-                    task.tags.length
-                        ? `
-                            <div
-                                class="
-                                    flex
-                                    flex-wrap
-                                    gap-2
-                                    mt-4
-                                "
-                            >
 
-                                ${task.tags
-                                    .map(
-                                        tag => `
-                                            <span
-                                                class="
-                                                    px-2
-                                                    py-1
-                                                    bg-indigo-50
-                                                    text-indigo-600
-                                                    rounded-lg
-                                                    text-xs
-                                                "
-                                            >
-                                                #${escapeHTML(tag)}
-                                            </span>
-                                        `
-                                    )
-                                    .join("")}
+                <!-- MEMBRE -->
+
+                <div class="mt-3">
+
+                    <p class="text-[11px] text-slate-400">
+                        Assigné à
+                    </p>
+
+                    <p class="text-xs font-semibold text-slate-700">
+                        ${
+                            member
+                                ? escapeHTML(
+                                    member.firstName +
+                                    " " +
+                                    member.lastName
+                                )
+                                : "Non assigné"
+                        }
+                    </p>
+
+                </div>
+
+
+                <!-- TAGS -->
+
+                ${
+                    task.tags?.length
+                        ? `
+                            <div class="flex flex-wrap gap-1 mt-3">
+
+                                ${task.tags.map(tag => `
+
+                                    <span
+                                        class="px-2 py-1 bg-indigo-50 text-indigo-600 rounded-md text-[10px]"
+                                    >
+                                        #${escapeHTML(tag)}
+                                    </span>
+
+                                `).join("")}
 
                             </div>
                         `
                         : ""
                 }
 
+
+                <!-- DEADLINE -->
+
                 <div
                     class="
                         flex
                         justify-between
-                        mt-5
-                        text-sm
+                        mt-4
+                        pt-3
+                        border-t
+                        border-slate-100
+                        text-xs
                         ${
                             late
                                 ? "text-red-600"
@@ -1000,11 +914,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 >
 
                     <span>
-                        ${
-                            late
-                                ? "⚠️ En retard"
-                                : "📅 Deadline"
-                        }
+                        ${late ? "⚠️ En retard" : "📅 Deadline"}
                     </span>
 
                     <strong>
@@ -1013,266 +923,459 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 </div>
 
-                <div
-                    class="
-                        flex
-                        flex-wrap
-                        gap-2
-                        mt-5
-                        pt-5
-                        border-t
-                    "
-                >
+
+                <!-- ACTIONS -->
+
+                <div class="flex gap-2 mt-3">
 
                     ${
-                        task.status ===
-                        "completed"
+                        task.status === "completed"
 
                             ? `
+
                                 <button
-                                    onclick="reopenTask('${task._id}')"
-                                    class="
-                                        px-3
-                                        py-2
-                                        rounded-lg
-                                        bg-blue-50
-                                        text-blue-600
-                                        text-sm
-                                    "
+                                    onclick="reopenTask(${task.id})"
+                                    class="flex-1 px-2 py-2 rounded-lg bg-blue-50 text-blue-600 text-xs font-semibold hover:bg-blue-100"
                                 >
                                     ↩ Réouvrir
                                 </button>
+
                             `
 
                             : `
+
                                 <button
-                                    onclick="completeTask('${task._id}')"
-                                    class="
-                                        px-3
-                                        py-2
-                                        rounded-lg
-                                        bg-green-50
-                                        text-green-600
-                                        text-sm
-                                    "
+                                    onclick="completeTask(${task.id})"
+                                    class="flex-1 px-2 py-2 rounded-lg bg-green-50 text-green-600 text-xs font-semibold hover:bg-green-100"
                                 >
                                     ✓ Terminer
                                 </button>
+
                             `
                     }
 
-                    <button
-                        onclick="editTask('${task._id}')"
-                        class="
-                            px-3
-                            py-2
-                            rounded-lg
-                            bg-indigo-50
-                            text-indigo-600
-                            text-sm
-                        "
-                    >
-                        ✏ Modifier
-                    </button>
 
                     <button
-                        onclick="deleteTask('${task._id}')"
-                        class="
-                            px-3
-                            py-2
-                            rounded-lg
-                            bg-red-50
-                            text-red-600
-                            text-sm
-                        "
+                        onclick="editTask(${task.id})"
+                        class="px-3 py-2 rounded-lg bg-indigo-50 text-indigo-600 text-xs font-semibold hover:bg-indigo-100"
                     >
-                        🗑 Supprimer
+                        ✏
+                    </button>
+
+
+                    <button
+                        onclick="deleteTask(${task.id})"
+                        class="px-3 py-2 rounded-lg bg-red-50 text-red-600 text-xs font-semibold hover:bg-red-100"
+                    >
+                        🗑
                     </button>
 
                 </div>
 
             </div>
+
         `;
+
     }
 
+
     // =====================================================
-    // TERMINER UNE TÂCHE
+    // DRAG & DROP
     // =====================================================
 
-    window.completeTask =
-        async function (id) {
+    function activateDragAndDrop() {
 
-            try {
+        const cards =
+            document.querySelectorAll(
+                ".task-card"
+            );
 
-                const response =
-                    await fetch(
-                        `${API_URL}/${id}`,
-                        {
-                            method: "PUT",
 
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
+        cards.forEach(card => {
 
-                            body:
-                                JSON.stringify({
-                                    status:
-                                        "completed"
-                                })
-                        }
+            // -----------------------------------------
+            // DRAG START
+            // -----------------------------------------
+
+            card.addEventListener(
+                "dragstart",
+                event => {
+
+                    const taskId =
+                        card.dataset.taskId;
+
+
+                    event.dataTransfer.setData(
+                        "text/plain",
+                        taskId
                     );
 
-                const data =
-                    await response.json();
 
-                if (!response.ok) {
+                    event.dataTransfer.effectAllowed =
+                        "move";
 
-                    throw new Error(
-                        data.message ||
-                        "Impossible de terminer la tâche."
+
+                    card.classList.add(
+                        "opacity-50"
                     );
+
                 }
+            );
 
-                await loadTasks();
 
-            } catch (error) {
+            // -----------------------------------------
+            // DRAG END
+            // -----------------------------------------
 
-                console.error(error);
+            card.addEventListener(
+                "dragend",
+                () => {
 
-                alert(
-                    error.message
+                    card.classList.remove(
+                        "opacity-50"
+                    );
+
+                }
+            );
+
+        });
+
+
+        // ---------------------------------------------
+        // COLONNES
+        // ---------------------------------------------
+
+        Object.entries(columns).forEach(
+            ([status, column]) => {
+
+                if (!column) return;
+
+
+                // DRAG OVER
+
+                column.addEventListener(
+                    "dragover",
+                    event => {
+
+                        event.preventDefault();
+
+                        event.dataTransfer.dropEffect =
+                            "move";
+
+
+                        column.classList.add(
+                            "bg-indigo-50"
+                        );
+
+                    }
                 );
+
+
+                // DRAG LEAVE
+
+                column.addEventListener(
+                    "dragleave",
+                    event => {
+
+                        if (
+                            !column.contains(
+                                event.relatedTarget
+                            )
+                        ) {
+
+                            column.classList.remove(
+                                "bg-indigo-50"
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                // DROP
+
+                column.addEventListener(
+                    "drop",
+                    event => {
+
+                        event.preventDefault();
+
+
+                        column.classList.remove(
+                            "bg-indigo-50"
+                        );
+
+
+                        const taskId =
+                            event.dataTransfer.getData(
+                                "text/plain"
+                            );
+
+
+                        if (!taskId) return;
+
+
+                        changeTaskStatus(
+                            taskId,
+                            status
+                        );
+
+                    }
+                );
+
             }
+        );
+
+    }
+
+
+    // =====================================================
+    // CHANGER LE STATUT
+    // =====================================================
+
+    function changeTaskStatus(
+        taskId,
+        newStatus
+    ) {
+
+        const tasks = getTasks();
+
+
+        const task =
+            tasks.find(
+                task =>
+                    String(task.id) ===
+                    String(taskId)
+            );
+
+
+        if (!task) {
+
+            console.error(
+                "Tâche introuvable :",
+                taskId
+            );
+
+            return;
+
+        }
+
+
+        // Si elle est déjà dans cette colonne
+        if (task.status === newStatus) {
+
+            renderTasks();
+
+            return;
+
+        }
+
+
+        // Ancien statut
+        const oldStatus =
+            task.status;
+
+
+        // Nouveau statut
+        task.status =
+            newStatus;
+
+
+        // Sauvegarde localStorage
+        saveTasks(tasks);
+
+
+        console.log(
+            `Tâche ${task.id} : ${oldStatus} → ${newStatus}`
+        );
+
+
+        // Actualiser le tableau
+        renderTasks();
+
+
+        // Statistiques recalculées
+        updateStats();
+
+
+        // Petit message
+        showStatusMessage(
+            `Tâche déplacée vers "${getStatusLabel(newStatus)}"`
+        );
+
+    }
+
+
+    // =====================================================
+    // LABEL STATUT
+    // =====================================================
+
+    function getStatusLabel(status) {
+
+        const labels = {
+
+            todo: "À faire",
+
+            "in-progress": "En cours",
+
+            paused: "En pause",
+
+            completed: "Terminée"
+
         };
 
+
+        return labels[status] || status;
+
+    }
+
+
     // =====================================================
-    // RÉOUVRIR UNE TÂCHE
+    // MESSAGE DE CONFIRMATION
     // =====================================================
 
-    window.reopenTask =
-        async function (id) {
+    function showStatusMessage(message) {
 
-            try {
+        const oldMessage =
+            document.getElementById(
+                "dragStatusMessage"
+            );
 
-                const response =
-                    await fetch(
-                        `${API_URL}/${id}`,
-                        {
-                            method: "PUT",
 
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
+        if (oldMessage) {
+            oldMessage.remove();
+        }
 
-                            body:
-                                JSON.stringify({
-                                    status: "todo"
-                                })
-                        }
-                    );
 
-                const data =
-                    await response.json();
+        const div =
+            document.createElement("div");
 
-                if (!response.ok) {
 
-                    throw new Error(
-                        data.message ||
-                        "Impossible de réouvrir la tâche."
-                    );
-                }
+        div.id =
+            "dragStatusMessage";
 
-                await loadTasks();
 
-            } catch (error) {
+        div.className =
+            `
+                fixed
+                bottom-6
+                right-6
+                z-[200]
+                bg-slate-900
+                text-white
+                px-5
+                py-3
+                rounded-xl
+                shadow-xl
+                text-sm
+                font-semibold
+            `;
 
-                console.error(error);
 
-                alert(
-                    error.message
-                );
-            }
-        };
+        div.textContent =
+            "✓ " + message;
+
+
+        document.body.appendChild(div);
+
+
+        setTimeout(() => {
+
+            div.remove();
+
+        }, 2000);
+
+    }
+
+
+    // =====================================================
+    // TERMINER
+    // =====================================================
+
+    window.completeTask = id => {
+
+        changeTaskStatus(
+            id,
+            "completed"
+        );
+
+    };
+
+
+    // =====================================================
+    // RÉOUVRIR
+    // =====================================================
+
+    window.reopenTask = id => {
+
+        changeTaskStatus(
+            id,
+            "todo"
+        );
+
+    };
+
 
     // =====================================================
     // SUPPRIMER
     // =====================================================
 
-    window.deleteTask =
-        async function (id) {
+    window.deleteTask = id => {
 
-            const task =
-                tasks.find(
-                    task =>
-                        String(task._id) ===
-                        String(id)
-                );
+        const tasks =
+            getTasks();
 
-            if (!task) {
-                return;
-            }
 
-            if (
-                !confirm(
-                    `Supprimer "${task.title}" ?`
+        const task =
+            tasks.find(
+                task => task.id === id
+            );
+
+
+        if (!task) return;
+
+
+        if (
+            confirm(
+                `Supprimer "${task.title}" ?`
+            )
+        ) {
+
+            saveTasks(
+                tasks.filter(
+                    task => task.id !== id
                 )
-            ) {
-                return;
-            }
+            );
 
-            try {
 
-                const response =
-                    await fetch(
-                        `${API_URL}/${id}`,
-                        {
-                            method: "DELETE"
-                        }
-                    );
+            renderTasks();
 
-                const data =
-                    await response.json();
+        }
 
-                if (!response.ok) {
+    };
 
-                    throw new Error(
-                        data.message ||
-                        "Impossible de supprimer la tâche."
-                    );
-                }
-
-                await loadTasks();
-
-            } catch (error) {
-
-                console.error(error);
-
-                alert(
-                    error.message
-                );
-            }
-        };
 
     // =====================================================
     // MODIFIER
     // =====================================================
 
-    window.editTask =
-        function (id) {
+    window.editTask = id => {
 
-            const task =
-                tasks.find(
-                    task =>
-                        String(task._id) ===
-                        String(id)
-                );
+        const task =
+            getTasks().find(
+                task => task.id === id
+            );
 
-            if (task) {
-                openModal(task);
-            }
-        };
+
+        if (task) {
+
+            openModal(task);
+
+        }
+
+    };
+
 
     // =====================================================
     // STATISTIQUES
@@ -1280,165 +1383,202 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateStats() {
 
-        const total =
-            document.getElementById(
-                "totalTasks"
-            );
+        const tasks =
+            getTasks();
+
 
         const todo =
-            document.getElementById(
-                "todoTasks"
-            );
+            tasks.filter(
+                task => task.status === "todo"
+            ).length;
+
 
         const progress =
-            document.getElementById(
-                "progressTasks"
-            );
+            tasks.filter(
+                task =>
+                    task.status === "in-progress"
+            ).length;
+
+
+        const paused =
+            tasks.filter(
+                task =>
+                    task.status === "paused"
+            ).length;
+
 
         const completed =
+            tasks.filter(
+                task =>
+                    task.status === "completed"
+            ).length;
+
+
+        // ---------------------------------------------
+        // CARTES STATISTIQUES PRINCIPALES
+        // ---------------------------------------------
+
+        document.getElementById(
+            "totalTasks"
+        ).textContent =
+            tasks.length;
+
+
+        document.getElementById(
+            "todoTasks"
+        ).textContent =
+            todo;
+
+
+        document.getElementById(
+            "progressTasks"
+        ).textContent =
+            progress;
+
+
+        document.getElementById(
+            "completedTasks"
+        ).textContent =
+            completed;
+
+
+        // ---------------------------------------------
+        // COMPTEURS COLONNES
+        // ---------------------------------------------
+
+        const todoCount =
             document.getElementById(
-                "completedTasks"
+                "todoCount"
             );
 
-        if (total) {
-            total.textContent =
-                tasks.length;
+
+        const progressCount =
+            document.getElementById(
+                "progressCount"
+            );
+
+
+        const pausedCount =
+            document.getElementById(
+                "pausedCount"
+            );
+
+
+        const completedCount =
+            document.getElementById(
+                "completedCount"
+            );
+
+
+        if (todoCount) {
+            todoCount.textContent =
+                todo;
         }
 
-        if (todo) {
 
-            todo.textContent =
-                tasks.filter(
-                    task =>
-                        task.status ===
-                        "todo"
-                ).length;
+        if (progressCount) {
+            progressCount.textContent =
+                progress;
         }
 
-        if (progress) {
 
-            progress.textContent =
-                tasks.filter(
-                    task =>
-                        task.status ===
-                        "in-progress"
-                ).length;
+        if (pausedCount) {
+            pausedCount.textContent =
+                paused;
         }
 
-        if (completed) {
 
-            completed.textContent =
-                tasks.filter(
-                    task =>
-                        task.status ===
-                        "completed"
-                ).length;
+        if (completedCount) {
+            completedCount.textContent =
+                completed;
         }
+
     }
+
 
     // =====================================================
     // FILTRES
     // =====================================================
 
     if (search) {
+
         search.addEventListener(
             "input",
             renderTasks
         );
+
     }
 
+
     if (statusFilter) {
+
         statusFilter.addEventListener(
             "change",
             renderTasks
         );
+
     }
 
+
     if (priorityFilter) {
+
         priorityFilter.addEventListener(
             "change",
             renderTasks
         );
+
     }
 
+
     if (projectFilter) {
+
         projectFilter.addEventListener(
             "change",
             renderTasks
         );
+
     }
 
+
     // =====================================================
-    // UTILITAIRES
+    // DATE
     // =====================================================
 
     function formatDate(date) {
 
-        if (!date) {
-            return "-";
-        }
+        if (!date) return "-";
+
 
         return new Date(date)
             .toLocaleDateString("fr-FR");
+
     }
 
-    function formatDateForInput(date) {
 
-        if (!date) {
-            return "";
-        }
-
-        const d =
-            new Date(date);
-
-        if (Number.isNaN(d.getTime())) {
-            return "";
-        }
-
-        return d
-            .toISOString()
-            .split("T")[0];
-    }
+    // =====================================================
+    // SÉCURITÉ HTML
+    // =====================================================
 
     function escapeHTML(value) {
 
         return String(value ?? "")
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-    }
-
-    // =====================================================
-    // INITIALISATION
-    // =====================================================
-
-    async function init() {
-
-        await Promise.all([
-            loadProjects(),
-            loadMembers(),
-            loadTasks()
-        ]);
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
 
     }
 
-    init();
+
+    // =====================================================
+    // LANCEMENT
+    // =====================================================
+
+    loadProjects();
+
+    loadMembers();
+
+    renderTasks();
 
 });
