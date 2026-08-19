@@ -1,4 +1,8 @@
-document.addEventListener("DOMContentLoaded", function () {
+// ======================================================
+// TASKFLOW PRO - LOGIN
+// ======================================================
+
+document.addEventListener("DOMContentLoaded", () => {
 
     const form = document.getElementById("loginForm");
 
@@ -7,29 +11,69 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    form.addEventListener("submit", async function (event) {
+    // ==================================================
+    // API
+    // ==================================================
+
+    const API_URL =
+        "https://taskflow-pro-u5yu.onrender.com/api/users";
+
+
+    // ==================================================
+    // CONNEXION
+    // ==================================================
+
+    form.addEventListener("submit", async (event) => {
 
         event.preventDefault();
 
-        const email = document
-            .getElementById("email")
-            .value
-            .trim();
+        const emailInput =
+            document.getElementById("email");
 
-        const password = document
-            .getElementById("password")
-            .value
-            .trim();
+        const passwordInput =
+            document.getElementById("password");
 
-        if (!email || !password) {
-            alert("Veuillez remplir tous les champs.");
+
+        if (!emailInput || !passwordInput) {
+            console.error(
+                "❌ Champs email ou password introuvables"
+            );
             return;
         }
 
+
+        const email =
+            emailInput.value.trim();
+
+        const password =
+            passwordInput.value.trim();
+
+
+        // ==================================================
+        // VALIDATION
+        // ==================================================
+
+        if (!email || !password) {
+
+            alert(
+                "Veuillez remplir tous les champs."
+            );
+
+            return;
+        }
+
+
         try {
 
+            console.log("🔄 Connexion en cours...");
+
+
+            // ==================================================
+            // APPEL BACKEND
+            // ==================================================
+
             const response = await fetch(
-                "https://taskflow-pro-u5yu.onrender.com/api/users/login",
+                `${API_URL}/login`,
                 {
                     method: "POST",
 
@@ -44,43 +88,86 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             );
 
-            const data = await response.json();
 
-            console.log("Réponse serveur :", data);
+            // ==================================================
+            // RÉPONSE
+            // ==================================================
 
-            if (!response.ok) {
+            const data =
+                await response.json();
+
+
+            console.log(
+                "Réponse serveur :",
+                data
+            );
+
+
+            // ==================================================
+            // ERREUR
+            // ==================================================
+
+            if (!response.ok || !data.success) {
+
                 alert(
                     data.message ||
-                    "Erreur lors de la connexion."
+                    "Email ou mot de passe incorrect."
                 );
+
                 return;
             }
 
-            // ==============================
+
+            // ==================================================
             // CONNEXION RÉUSSIE
-            // ==============================
+            // ==================================================
+
+            console.log(
+                "✅ Connexion réussie"
+            );
+
+
+            // ==================================================
+            // SAUVEGARDER L'UTILISATEUR
+            // ==================================================
 
             localStorage.setItem(
                 "isLoggedIn",
                 "true"
             );
 
+
             localStorage.setItem(
                 "userEmail",
                 data.user.email
             );
+
 
             localStorage.setItem(
                 "userId",
                 data.user.id
             );
 
-            console.log(
-                "✅ Utilisateur enregistré dans MongoDB"
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(data.user)
             );
 
-            // Redirection
-            window.location.href = "index.html";
+
+            console.log(
+                "👤 Utilisateur connecté :",
+                data.user
+            );
+
+
+            // ==================================================
+            // REDIRECTION
+            // ==================================================
+
+            window.location.href =
+                "index.html";
+
 
         } catch (error) {
 
@@ -89,9 +176,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
+
             alert(
                 "Impossible de communiquer avec le serveur."
             );
+
         }
 
     });
