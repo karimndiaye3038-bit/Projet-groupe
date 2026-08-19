@@ -1,54 +1,163 @@
 const User = require("../models/User");
 
-// =====================================================
-// CONNEXION
-// =====================================================
 
-const login = async (req, res) => {
+// ==========================================
+// INSCRIPTION
+// ==========================================
+
+const register = async (req, res) => {
+
     try {
 
-        const { email, password } = req.body;
+        const {
+            firstName,
+            lastName,
+            email,
+            password
+        } = req.body;
 
-        if (!email || !password) {
+
+        // Vérification
+        if (
+            !firstName ||
+            !lastName ||
+            !email ||
+            !password
+        ) {
+
             return res.status(400).json({
                 success: false,
-                message: "Email et mot de passe obligatoires"
+                message: "Tous les champs sont obligatoires."
             });
+
         }
 
-        const cleanEmail = email.trim().toLowerCase();
 
-        // Chercher l'utilisateur dans MongoDB
-        const user = await User.findOne({
-            email: cleanEmail
+        // Vérifier si l'utilisateur existe
+        const existingUser =
+            await User.findOne({ email });
+
+
+        if (existingUser) {
+
+            return res.status(409).json({
+                success: false,
+                message: "Cet email est déjà utilisé."
+            });
+
+        }
+
+
+        // Créer utilisateur
+        const user = await User.create({
+
+            firstName,
+            lastName,
+            email,
+            password
+
         });
 
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: "Utilisateur introuvable"
-            });
-        }
 
-        // Vérifier le mot de passe
-        if (user.password !== password) {
-            return res.status(401).json({
-                success: false,
-                message: "Mot de passe incorrect"
-            });
-        }
+        res.status(201).json({
 
-        // Connexion réussie
-        return res.status(200).json({
             success: true,
-            message: "Connexion réussie",
+
+            message: "Utilisateur créé avec succès.",
 
             user: {
+
                 id: user._id,
-                name: user.name,
+                firstName: user.firstName,
+                lastName: user.lastName,
                 email: user.email
+
             }
+
         });
+
+
+    } catch (error) {
+
+        console.error(
+            "Erreur inscription :",
+            error
+        );
+
+        res.status(500).json({
+
+            success: false,
+
+            message: "Erreur serveur."
+
+        });
+
+    }
+
+};
+
+
+// ==========================================
+// CONNEXION
+// ==========================================
+
+const login = async (req, res) => {
+
+    try {
+
+        const {
+            email,
+            password
+        } = req.body;
+
+
+        const user =
+            await User.findOne({ email });
+
+
+        if (!user) {
+
+            return res.status(401).json({
+
+                success: false,
+
+                message: "Email ou mot de passe incorrect."
+
+            });
+
+        }
+
+
+        if (user.password !== password) {
+
+            return res.status(401).json({
+
+                success: false,
+
+                message: "Email ou mot de passe incorrect."
+
+            });
+
+        }
+
+
+        res.json({
+
+            success: true,
+
+            message: "Connexion réussie.",
+
+            user: {
+
+                id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email
+
+            }
+
+        });
+
 
     } catch (error) {
 
@@ -57,14 +166,20 @@ const login = async (req, res) => {
             error
         );
 
-        return res.status(500).json({
+        res.status(500).json({
+
             success: false,
-            message: "Erreur serveur",
-            error: error.message
+
+            message: "Erreur serveur."
+
         });
+
     }
+
 };
 
+
 module.exports = {
+    register,
     login
 };

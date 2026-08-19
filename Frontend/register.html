@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inscription - TaskFlow Pro</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-slate-100 flex items-center justify-center p-6">
+
+    <div class="w-full max-w-md">
+
+        <!-- LOGO -->
+        <div class="text-center mb-8">
+
+            <div class="inline-flex items-center justify-center
+                        w-14 h-14
+                        rounded-2xl
+                        bg-indigo-600
+                        text-white
+                        font-bold
+                        text-xl
+                        mb-4">
+                TF
+            </div>
+
+            <h1 class="text-3xl font-bold text-slate-800">
+                TaskFlow Pro
+            </h1>
+
+            <p class="text-slate-500 mt-2">
+                Créer votre compte
+            </p>
+
+        </div>
+
+
+        <!-- FORMULAIRE -->
+
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+
+            <h2 class="text-xl font-bold text-slate-800 mb-6">
+                Inscription
+            </h2>
+
+            <form id="registerForm" class="space-y-5">
+
+                <!-- PRÉNOM -->
+
+                <div>
+
+                    <label
+                        for="firstName"
+                        class="block text-sm font-semibold text-slate-700 mb-2">
+                        Prénom
+                    </label>
+
+                    <input
+                        id="firstName"
+                        type="text"
+                        required
+                        placeholder="Fatou"
+                        class="w-full px-4 py-3
+                               border border-slate-200
+                               rounded-xl
+                               outline-none
+                               focus:ring-2
+                               focus:ring-indigo-500">
+                </div>
+
+
+                <!-- NOM -->
+
+                <div>
+
+                    <label
+                        for="lastName"
+                        class="block text-sm font-semibold text-slate-700 mb-2">
+                        Nom
+                    </label>
+
+                    <input
+                        id="lastName"
+                        type="text"
+                        required
+                        placeholder="Diop"
+                        class="w-full px-4 py-3
+                               border border-slate-200
+                               rounded-xl
+                               outline-none
+                               focus:ring-2
+                               focus:ring-indigo-500">
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div>
+
+                    <label
+                        for="email"
+                        class="block text-sm font-semibold text-slate-700 mb-2">
+                        Email
+                    </label>
+
+                    <input
+                        id="email"
+                        type="email"
+                        required
+                        placeholder="exemple@gmail.com"
+                        class="w-full px-4 py-3
+                               border border-slate-200
+                               rounded-xl
+                               outline-none
+                               focus:ring-2
+                               focus:ring-indigo-500">
+                </div>
+
+
+                <!-- MOT DE PASSE -->
+
+                <div>
+
+                    <label
+                        for="password"
+                        class="block text-sm font-semibold text-slate-700 mb-2">
+                        Mot de passe
+                    </label>
+
+                    <input
+                        id="password"
+                        type="password"
+                        required
+                        minlength="6"
+                        placeholder="••••••••"
+                        class="w-full px-4 py-3
+                               border border-slate-200
+                               rounded-xl
+                               outline-none
+                               focus:ring-2
+                               focus:ring-indigo-500">
+                </div>
+
+
+                <!-- CONFIRMATION -->
+
+                <div>
+
+                    <label
+                        for="confirmPassword"
+                        class="block text-sm font-semibold text-slate-700 mb-2">
+                        Confirmer le mot de passe
+                    </label>
+
+                    <input
+                        id="confirmPassword"
+                        type="password"
+                        required
+                        minlength="6"
+                        placeholder="••••••••"
+                        class="w-full px-4 py-3
+                               border border-slate-200
+                               rounded-xl
+                               outline-none
+                               focus:ring-2
+                               focus:ring-indigo-500">
+                </div>
+
+
+                <!-- MESSAGE -->
+
+                <div
+                    id="message"
+                    class="hidden p-3 rounded-xl text-sm">
+                </div>
+
+
+                <!-- BOUTON -->
+
+                <button
+                    type="submit"
+                    id="registerBtn"
+                    class="w-full
+                           bg-indigo-600
+                           hover:bg-indigo-700
+                           text-white
+                           font-semibold
+                           py-3
+                           rounded-xl
+                           transition">
+
+                    Créer mon compte
+
+                </button>
+
+            </form>
+
+
+            <!-- CONNEXION -->
+
+            <p class="text-center text-sm text-slate-500 mt-6">
+
+                Vous avez déjà un compte ?
+
+                <a
+                    href="login.html"
+                    class="text-indigo-600 font-semibold hover:underline">
+
+                    Se connecter
+
+                </a>
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <script src="./js/register.js"></script>
+
+</body>
+
+</html>
