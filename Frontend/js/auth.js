@@ -1,11 +1,101 @@
-const express = require("express");
+document.addEventListener("DOMContentLoaded", () => {
 
-const {
-  login
-} = require("../controllers/authController");
+    const form = document.getElementById("loginForm");
 
-const router = express.Router();
+    if (!form) {
+        console.error("loginForm introuvable");
+        return;
+    }
 
-router.post("/login", login);
+    const API_URL =
+        "https://taskflow-pro-u5yu.onrender.com/api/users";
 
-module.exports = router;
+    form.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const password =
+            document.getElementById("password").value.trim();
+
+        if (!email || !password) {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
+
+        try {
+
+            const response = await fetch(
+                `${API_URL}/login`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            console.log("Réponse connexion :", data);
+
+            if (!response.ok) {
+
+                alert(
+                    data.message ||
+                    "Email ou mot de passe incorrect."
+                );
+
+                return;
+            }
+
+            // ======================================
+            // CONNEXION RÉUSSIE
+            // ======================================
+
+            localStorage.setItem(
+                "isLoggedIn",
+                "true"
+            );
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(data.user)
+            );
+
+            localStorage.setItem(
+                "userEmail",
+                data.user.email
+            );
+
+            console.log(
+                "Connexion réussie :",
+                data.user
+            );
+
+            // Redirection
+            window.location.href = "index.html";
+
+        } catch (error) {
+
+            console.error(
+                "Erreur connexion :",
+                error
+            );
+
+            alert(
+                "Impossible de communiquer avec le serveur."
+            );
+        }
+
+    });
+
+});
