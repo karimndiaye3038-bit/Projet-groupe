@@ -3,18 +3,12 @@ const express = require("express");
 const router = express.Router();
 
 const {
-    register,
     login
 } = require("../controllers/userController");
 
-// ==============================
-// INSCRIPTION
-// ==============================
-router.post("/register", register);
-
-// ==============================
-// CONNEXION
-// ==============================
-router.post("/login", login);
+router.post(
+    "/login",
+    login
+);
 
 module.exports = router;

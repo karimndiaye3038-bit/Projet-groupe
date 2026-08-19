@@ -14,15 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         event.preventDefault();
 
-        const email = document
-            .getElementById("email")
-            .value
-            .trim();
+        const email =
+            document.getElementById("email").value.trim();
 
-        const password = document
-            .getElementById("password")
-            .value
-            .trim();
+        const password =
+            document.getElementById("password").value.trim();
 
         if (!email || !password) {
             alert("Veuillez remplir tous les champs.");
@@ -55,14 +51,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 alert(
                     data.message ||
-                    "Email ou mot de passe incorrect."
+                    "Impossible de se connecter."
                 );
 
                 return;
             }
 
             // ==============================
-            // ENREGISTRER LA SESSION
+            // SESSION
             // ==============================
 
             localStorage.setItem(
@@ -76,25 +72,21 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             localStorage.setItem(
-                "userEmail",
-                data.user.email
-            );
-
-            localStorage.setItem(
                 "userId",
                 data.user.id
             );
 
-            console.log(
-                "Connexion réussie :",
-                data.user
+            localStorage.setItem(
+                "userEmail",
+                data.user.email
             );
 
             // ==============================
             // REDIRECTION
             // ==============================
 
-            window.location.href = "index.html";
+            window.location.href =
+                "index.html";
 
         } catch (error) {
 
@@ -107,7 +99,5 @@ document.addEventListener("DOMContentLoaded", () => {
                 "Impossible de communiquer avec le serveur."
             );
         }
-
     });
-
 });
