@@ -1,9 +1,9 @@
 const User = require("../models/User");
 
 
-// ==========================================
+// =====================================================
 // INSCRIPTION
-// ==========================================
+// =====================================================
 
 const register = async (req, res) => {
 
@@ -17,7 +17,7 @@ const register = async (req, res) => {
         } = req.body;
 
 
-        // Vérification
+        // Vérifier les champs
         if (
             !firstName ||
             !lastName ||
@@ -33,9 +33,10 @@ const register = async (req, res) => {
         }
 
 
-        // Vérifier si l'utilisateur existe
-        const existingUser =
-            await User.findOne({ email });
+        // Vérifier si l'email existe déjà
+        const existingUser = await User.findOne({
+            email: email.toLowerCase()
+        });
 
 
         if (existingUser) {
@@ -48,28 +49,40 @@ const register = async (req, res) => {
         }
 
 
-        // Créer utilisateur
+        // Créer l'utilisateur
         const user = await User.create({
 
-            firstName,
-            lastName,
-            email,
-            password
+            firstName: firstName.trim(),
+
+            lastName: lastName.trim(),
+
+            email: email.toLowerCase().trim(),
+
+            password: password
 
         });
 
 
-        res.status(201).json({
+        console.log(
+            "✅ Utilisateur créé :",
+            user.email
+        );
+
+
+        return res.status(201).json({
 
             success: true,
 
-            message: "Utilisateur créé avec succès.",
+            message: "Compte créé avec succès.",
 
             user: {
 
                 id: user._id,
+
                 firstName: user.firstName,
+
                 lastName: user.lastName,
+
                 email: user.email
 
             }
@@ -80,11 +93,12 @@ const register = async (req, res) => {
     } catch (error) {
 
         console.error(
-            "Erreur inscription :",
+            "❌ Erreur inscription :",
             error
         );
 
-        res.status(500).json({
+
+        return res.status(500).json({
 
             success: false,
 
@@ -97,9 +111,9 @@ const register = async (req, res) => {
 };
 
 
-// ==========================================
+// =====================================================
 // CONNEXION
-// ==========================================
+// =====================================================
 
 const login = async (req, res) => {
 
@@ -111,37 +125,67 @@ const login = async (req, res) => {
         } = req.body;
 
 
-        const user =
-            await User.findOne({ email });
+        // Vérification
+        if (!email || !password) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Email et mot de passe obligatoires."
+
+            });
+
+        }
 
 
+        // Rechercher l'utilisateur
+        const user = await User.findOne({
+
+            email: email.toLowerCase().trim()
+
+        });
+
+
+        // Utilisateur inexistant
         if (!user) {
 
             return res.status(401).json({
 
                 success: false,
 
-                message: "Email ou mot de passe incorrect."
+                message:
+                    "Email ou mot de passe incorrect."
 
             });
 
         }
 
 
+        // Vérifier le mot de passe
         if (user.password !== password) {
 
             return res.status(401).json({
 
                 success: false,
 
-                message: "Email ou mot de passe incorrect."
+                message:
+                    "Email ou mot de passe incorrect."
 
             });
 
         }
 
 
-        res.json({
+        console.log(
+            "✅ Connexion :",
+            user.email
+        );
+
+
+        // Réponse
+        return res.status(200).json({
 
             success: true,
 
@@ -150,8 +194,11 @@ const login = async (req, res) => {
             user: {
 
                 id: user._id,
+
                 firstName: user.firstName,
+
                 lastName: user.lastName,
+
                 email: user.email
 
             }
@@ -162,11 +209,12 @@ const login = async (req, res) => {
     } catch (error) {
 
         console.error(
-            "Erreur connexion :",
+            "❌ Erreur connexion :",
             error
         );
 
-        res.status(500).json({
+
+        return res.status(500).json({
 
             success: false,
 
@@ -179,7 +227,14 @@ const login = async (req, res) => {
 };
 
 
+// =====================================================
+// EXPORT
+// =====================================================
+
 module.exports = {
+
     register,
+
     login
+
 };
