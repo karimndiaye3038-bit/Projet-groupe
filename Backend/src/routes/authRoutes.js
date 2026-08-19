@@ -1,11 +1,12 @@
 const express = require("express");
 
 const {
-  login
+  login,
 } = require("../controllers/authController");
 
 const router = express.Router();
 
+// Connexion
 router.post("/login", login);
 
 module.exports = router;
